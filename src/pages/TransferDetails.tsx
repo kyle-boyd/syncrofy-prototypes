@@ -423,13 +423,13 @@ function TransferDetails() {
             <Grid container spacing={2}>
               <Grid item xs={12} md={6}>
                 <Grid container spacing={2}>
-                  <Grid item xs={8}>
+              <Grid item xs={8}>
                     <Typography variant="body2" color="text.secondary" gutterBottom>
                       Sender File Name
                     </Typography>
                     <Typography variant="h5">payroll_run_7759.zip</Typography>
                   </Grid>
-                  <Grid item xs={4}>
+              <Grid item xs={4}>
                     <Typography variant="body2" color="text.secondary" gutterBottom>
                       Sender File Size
                     </Typography>
@@ -460,13 +460,13 @@ function TransferDetails() {
             <Grid container spacing={2}>
               <Grid item xs={12} md={8}>
                 <Grid container spacing={2}>
-                  <Grid item xs={6}>
+              <Grid item xs={6}>
                     <Typography variant="body2" color="text.secondary" gutterBottom>
                       Sent By
                     </Typography>
                     <Typography variant="h5">John Deere</Typography>
                   </Grid>
-                  <Grid item xs={6}>
+              <Grid item xs={6}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
                       <Box sx={{ width: '96px', height: '48px', display: 'flex', alignItems: 'center' }}>
                         <svg width="96px" height="48px" viewBox="0 0 24 24" fill="#a0a0a0" xmlns="http://www.w3.org/2000/svg">
@@ -483,7 +483,7 @@ function TransferDetails() {
               </Grid>
               <Grid item xs={12} md={4}>
                 <Grid container spacing={2}>
-                  <Grid item xs={6}>
+              <Grid item xs={6}>
                     <Typography variant="body2" color="text.secondary" gutterBottom>
                       Start
                     </Typography>
@@ -494,7 +494,7 @@ function TransferDetails() {
                       </Typography>
                     </Box>
                   </Grid>
-                  <Grid item xs={6}>
+              <Grid item xs={6}>
                     <Typography variant="body2" color="text.secondary" gutterBottom>
                       End
                     </Typography>
@@ -525,7 +525,7 @@ function TransferDetails() {
                 >
                   <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                     <Grid container spacing={2} alignItems="center">
-                      <Grid item xs={1}>
+              <Grid item xs={1}>
                         <Box>
                           <Typography variant="body1">{item.time}</Typography>
                           <Typography variant="body1" color="text.secondary">
@@ -533,7 +533,7 @@ function TransferDetails() {
                           </Typography>
                         </Box>
                       </Grid>
-                      <Grid item xs={8}>
+              <Grid item xs={8}>
                         {item.subtitle && (
                           <Typography variant="body2" color="text.secondary" gutterBottom>
                             {item.subtitle}
@@ -541,7 +541,7 @@ function TransferDetails() {
                         )}
                         <Typography variant="h5">{item.title}</Typography>
                       </Grid>
-                      <Grid item xs={3}>
+              <Grid item xs={3}>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                           <Typography variant="body1">{item.actionCount} Actions</Typography>
                           <Box sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 1, px: 1.5, py: 0.5, display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -556,58 +556,58 @@ function TransferDetails() {
                     {item.connectionDetails && (
                       <Box sx={{ mb: 2, p: 2, bgcolor: 'background.default', borderRadius: 1 }}>
                         <Grid container spacing={2}>
-                          <Grid item xs={6}>
+              <Grid item xs={6}>
                             <Grid container spacing={1}>
-                              <Grid item xs={5.5}>
+              <Grid item xs={5.5}>
                                 <Typography variant="body2" color="text.secondary">Protocol</Typography>
                               </Grid>
-                              <Grid item xs={6.5}>
+              <Grid item xs={6.5}>
                                 <Typography variant="body2">{item.connectionDetails.protocol}</Typography>
                               </Grid>
-                              <Grid item xs={5.5}>
+              <Grid item xs={5.5}>
                                 <Typography variant="body2" color="text.secondary">Port</Typography>
                               </Grid>
-                              <Grid item xs={6.5}>
+              <Grid item xs={6.5}>
                                 <Typography variant="body2">{item.connectionDetails.port}</Typography>
                               </Grid>
-                              <Grid item xs={5.5}>
+              <Grid item xs={5.5}>
                                 <Typography variant="body2" color="text.secondary">User</Typography>
                               </Grid>
-                              <Grid item xs={6.5}>
+              <Grid item xs={6.5}>
                                 <Typography variant="body2">{item.connectionDetails.user}</Typography>
                               </Grid>
-                              <Grid item xs={5.5}>
+              <Grid item xs={5.5}>
                                 <Typography variant="body2" color="text.secondary">Transaction/Route ID</Typography>
                               </Grid>
-                              <Grid item xs={6.5}>
+              <Grid item xs={6.5}>
                                 <Typography variant="body2">{item.connectionDetails.transactionId}</Typography>
                               </Grid>
                             </Grid>
                           </Grid>
-                          <Grid item xs={6}>
+              <Grid item xs={6}>
                             <Grid container spacing={1}>
-                              <Grid item xs={5.5}>
+              <Grid item xs={5.5}>
                                 <Typography variant="body2" color="text.secondary">Host</Typography>
                               </Grid>
-                              <Grid item xs={6.5}>
+              <Grid item xs={6.5}>
                                 <Typography variant="body2">{item.connectionDetails.host}</Typography>
                               </Grid>
-                              <Grid item xs={5.5}>
+              <Grid item xs={5.5}>
                                 <Typography variant="body2" color="text.secondary">Directory</Typography>
                               </Grid>
-                              <Grid item xs={6.5}>
+              <Grid item xs={6.5}>
                                 <Typography variant="body2">{item.connectionDetails.directory}</Typography>
                               </Grid>
-                              <Grid item xs={5.5}>
+              <Grid item xs={5.5}>
                                 <Typography variant="body2" color="text.secondary">Transfer Size</Typography>
                               </Grid>
-                              <Grid item xs={6.5}>
+              <Grid item xs={6.5}>
                                 <Typography variant="body2">{item.connectionDetails.transferSize}</Typography>
                               </Grid>
-                              <Grid item xs={5.5}>
+              <Grid item xs={5.5}>
                                 <Typography variant="body2" color="text.secondary">Interaction Type</Typography>
                               </Grid>
-                              <Grid item xs={6.5}>
+              <Grid item xs={6.5}>
                                 <Typography variant="body2">{item.connectionDetails.interactionType}</Typography>
                               </Grid>
                             </Grid>
@@ -620,7 +620,7 @@ function TransferDetails() {
                         {item.details.map((detail, detailIndex) => (
                           <Box key={detailIndex} sx={{ mb: 2, p: 2, bgcolor: 'background.default', borderRadius: 1 }}>
                             <Grid container spacing={2} alignItems="center">
-                              <Grid item xs={1}>
+              <Grid item xs={1}>
                                 <Box>
                                   <Typography variant="body2">{item.time}</Typography>
                                   <Typography variant="body2" color="text.secondary">
@@ -628,17 +628,17 @@ function TransferDetails() {
                                   </Typography>
                                 </Box>
                               </Grid>
-                              <Grid item xs={11}>
+              <Grid item xs={11}>
                                 <Grid container spacing={2} alignItems="center">
-                                  <Grid item xs={2}>
+              <Grid item xs={2}>
                                     <Typography variant="body1" fontWeight={500}>
                                       {detail.type}
                                     </Typography>
                                   </Grid>
-                                  <Grid item xs={6.5}>
+              <Grid item xs={6.5}>
                                     <Typography variant="body1">{detail.description}</Typography>
                                   </Grid>
-                                  <Grid item xs={3.5}>
+              <Grid item xs={3.5}>
                                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                                       <Typography variant="body1">{detail.fileName}</Typography>
                                       <Box sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 1, px: 1, py: 0.5, display: 'flex', alignItems: 'center' }}>
