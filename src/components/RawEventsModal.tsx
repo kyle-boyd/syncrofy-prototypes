@@ -11,7 +11,7 @@ import {
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
-import { Button } from '@syncrofy/design-system';
+import { Button } from '@kyleboyd/design-system';
 
 interface RawEventsModalProps {
   open: boolean;

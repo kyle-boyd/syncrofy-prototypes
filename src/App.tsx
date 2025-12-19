@@ -1,7 +1,7 @@
 import React from 'react';
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { theme } from '@syncrofy/design-system';
+import { theme } from '@kyleboyd/design-system';
 import Home from './pages/Home';
 import TransferDetails from './pages/TransferDetails';
 import Transfers from './pages/Transfers';

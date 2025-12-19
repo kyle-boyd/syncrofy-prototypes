@@ -18,7 +18,7 @@ import {
   ViewControls,
   FilterControls,
   FilterOption
-} from '@syncrofy/design-system';
+} from '@kyleboyd/design-system';
 import { PageLayout } from '../components/PageLayout';
 
 // Transfer data interface

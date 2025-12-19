@@ -20,7 +20,7 @@ import EmailIcon from '@mui/icons-material/Email';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import CodeIcon from '@mui/icons-material/Code';
-import { Button, Tag, Chips } from '@syncrofy/design-system';
+import { Button, Tag, Chips } from '@kyleboyd/design-system';
 import { RawEventsModal } from '../components/RawEventsModal';
 import { PageLayout } from '../components/PageLayout';
 

@@ -12,7 +12,7 @@ import ErrorRoundedIcon from '@mui/icons-material/ErrorRounded';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
 import RefreshIcon from '@mui/icons-material/Refresh';
-import { CollapsibleSideNav, Header, type CollapsibleSideNavItem } from '@syncrofy/design-system';
+import { CollapsibleSideNav, Header, type CollapsibleSideNavItem } from '@kyleboyd/design-system';
 
 interface PageLayoutProps {
   children: ReactNode;
