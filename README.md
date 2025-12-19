@@ -146,7 +146,7 @@ The design system is now consumed as an npm package (`@syncrofy/design-system`).
 - ✅ No submodule setup required
 - ✅ Automatic dependency management via npm
 
-**Note:** To update the design system, simply update the version in `package.json` and run `npm install`. See [DESIGN_SYSTEM_PUBLISHING.md](./DESIGN_SYSTEM_PUBLISHING.md) for details.
+**Note:** To update the design system, simply update the version in `package.json` and run `npm install`. See [DESIGN_SYSTEM_PUBLISHING.md](./DESIGN_SYSTEM_PUBLISHING.md) for detailed workflow documentation.
 
 #### Deployment Steps
 
@@ -181,12 +181,12 @@ The design system is now consumed as an npm package (`@syncrofy/design-system`).
 #### Build Process
 
 The build process automatically:
-1. Runs `prepare-ds` script to copy the design system (if available locally)
+1. Installs dependencies (including `@syncrofy/design-system` from npm)
 2. Compiles TypeScript
 3. Builds the Vite project
 4. Outputs to `dist` directory
 
-**Note**: For Vercel builds, ensure the design system is available either as a git submodule or included in the repository structure.
+The design system is installed automatically from npm during the build process.
 
 ## License
 

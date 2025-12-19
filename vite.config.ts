@@ -23,16 +23,8 @@ export default defineConfig({
       // Force single emotion instance to prevent styling issues
       '@emotion/react': path.resolve(__dirname, './node_modules/@emotion/react'),
       '@emotion/styled': path.resolve(__dirname, './node_modules/@emotion/styled'),
-      // Resolve design-system package to ensure proper resolution
-      '@syncrofy/design-system': path.resolve(__dirname, './design-system'),
     },
-    preserveSymlinks: true,
     dedupe: ['react', 'react-dom'],
-  },
-  server: {
-    fs: {
-      allow: ['..'],
-    },
   },
   optimizeDeps: {
     // Ensure design system dependencies are optimized
@@ -46,7 +38,6 @@ export default defineConfig({
       '@emotion/styled',
       'framer-motion',
     ],
-    exclude: ['@syncrofy/design-system'],
   },
   esbuild: {
     jsx: 'automatic',

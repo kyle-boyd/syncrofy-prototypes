@@ -19,32 +19,41 @@ The design system is now published as `@syncrofy/design-system` on npm. This rep
 
 2. **Make your changes** to components, theme, or other design system code
 
-3. **Update the version** in `package.json`:
+3. **Commit your changes** (if not already committed):
    ```bash
-   npm version patch  # for bug fixes (0.1.0 -> 0.1.1)
-   npm version minor  # for new features (0.1.0 -> 0.2.0)
-   npm version major  # for breaking changes (0.1.0 -> 1.0.0)
+   git add .
+   git commit -m "Description of changes"
+   git push origin main
    ```
 
-4. **Commit and push the version change**:
+4. **Bump version and create tag**:
    ```bash
-   git add package.json package-lock.json
-   git commit -m "Bump version to X.Y.Z"
-   git push
+   npm version patch  # for bug fixes (1.0.0 -> 1.0.1)
+   npm version minor  # for new features (1.0.0 -> 1.1.0)
+   npm version major  # for breaking changes (1.0.0 -> 2.0.0)
+   ```
+   This command automatically:
+   - Updates version in `package.json`
+   - Creates a git commit with version change
+   - Creates a git tag (e.g., v1.0.1)
+
+5. **Push version tag**:
+   ```bash
+   git push origin main
+   git push origin --tags
    ```
 
-5. **Create and push a git tag**:
-   ```bash
-   git tag vX.Y.Z
-   git push origin vX.Y.Z
-   ```
+6. **GitHub Actions automatically publishes**:
+   - Detects the version tag
+   - Builds the package
+   - Runs type checks
+   - Publishes to npm
+   - Usually takes 2-5 minutes
 
-6. **GitHub Actions will automatically**:
-   - Build the package
-   - Run type checks
-   - Publish to npm
-
-The package will be available on npm within a few minutes.
+The package will be available on npm within a few minutes. Verify publication:
+```bash
+npm view @syncrofy/design-system version
+```
 
 ## Consuming Updates in This Repository
 
@@ -99,20 +108,123 @@ import { Button, Input } from '@syncrofy/design-system/components';
 - **Components** (`@syncrofy/design-system/components`): Exports only components
 - **Theme** (`@syncrofy/design-system/theme`): Exports only theme utilities
 
+## Daily Development Workflow
+
+### Viewing Changes Locally in Both DS and Prototypes
+
+#### Option A: Using npm link (Recommended for rapid iteration)
+
+This allows you to test design system changes in prototypes without publishing to npm.
+
+**In syncrofy-ds:**
+```bash
+cd syncrofy-ds
+npm run build  # Build the design system
+npm link       # Create a global symlink
+```
+
+**In syncrofy-prototypes:**
+```bash
+cd syncrofy-prototypes
+npm link @syncrofy/design-system  # Link to local build
+npm run dev  # Start dev server to see changes
+```
+
+**To unlink when done:**
+```bash
+cd syncrofy-prototypes
+npm unlink @syncrofy/design-system
+npm install  # Restore npm package
+```
+
+#### Option B: Using file: reference (Alternative)
+
+Temporarily change `package.json` in prototypes:
+```json
+"@syncrofy/design-system": "file:../syncrofy-ds"
+```
+Then run `npm install` in prototypes. Remember to change it back before committing.
+
+### Syncing Changes from DS to Prototypes Locally
+
+**Step 1: Make changes in syncrofy-ds**
+```bash
+cd syncrofy-ds
+# Edit component files, theme, etc.
+```
+
+**Step 2: Build the design system**
+```bash
+cd syncrofy-ds
+npm run build
+```
+
+**Step 3: If using npm link**
+- Changes are automatically reflected when you rebuild
+- Just run `npm run build` in syncrofy-ds again
+- Refresh prototype dev server
+
+**Step 4: Test in prototypes**
+```bash
+cd syncrofy-prototypes
+npm run dev  # View changes in browser
+```
+
+### Syncing Changes to GitHub / Vercel
+
+See the "Publishing a New Version" section above for publishing design system changes.
+
+#### Updating Prototypes to Use New Design System Version:
+
+**Step 1: Update package.json**
+```bash
+cd syncrofy-prototypes
+# Edit package.json, change version:
+# "@syncrofy/design-system": "^1.0.1"  # or whatever new version
+```
+
+**Step 2: Install new version**
+```bash
+cd syncrofy-prototypes
+npm install
+```
+
+**Step 3: Test locally**
+```bash
+cd syncrofy-prototypes
+npm run dev  # Verify everything works
+npm run build  # Verify build works
+```
+
+**Step 4: Commit and push**
+```bash
+cd syncrofy-prototypes
+git add package.json package-lock.json
+git commit -m "Update design system to v1.0.1"
+git push origin main
+```
+
+**Step 5: Vercel automatically deploys**
+- Vercel detects the push to main branch
+- Runs `npm install` (gets new design system version)
+- Builds the prototype
+- Deploys to production
+- Usually takes 2-3 minutes
+
 ## Migration from Old Approach
 
 If you're migrating from the old submodule/copy approach:
 
-1. ✅ All imports have been updated from `@ds/*` to `@syncrofy/design-system`
-2. ✅ Vite configuration has been simplified (removed alias logic)
-3. ✅ TypeScript configuration has been updated
-4. ✅ The `prepare-ds` script is no longer needed
+1. ✅ All imports have been updated to use `@syncrofy/design-system`
+2. ✅ Vite configuration has been simplified (removed submodule alias)
+3. ✅ Dependencies now use npm package instead of local file reference
+4. ✅ The `design-system/` submodule folder can be removed
 
 ### What Changed
 
-- **Imports**: Changed from `@ds/components/atoms/Button` to `@syncrofy/design-system`
-- **Configuration**: Removed `@ds` alias from `vite.config.ts` and `tsconfig.json`
-- **Dependencies**: Added `@syncrofy/design-system` to `package.json`
+- **Dependencies**: Changed from `"file:./design-system"` to `"^1.0.0"` (npm version)
+- **Configuration**: Removed `@syncrofy/design-system` alias from `vite.config.ts` pointing to local folder
+- **Imports**: Continue using `@syncrofy/design-system` (works the same way)
 
 ## Troubleshooting
 

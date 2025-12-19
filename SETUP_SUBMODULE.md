@@ -1,5 +1,13 @@
 # Setting Up Design System as Git Submodule
 
+> **⚠️ DEPRECATED**: This repository now uses the npm package `@syncrofy/design-system` instead of git submodules. See [DESIGN_SYSTEM_PUBLISHING.md](./DESIGN_SYSTEM_PUBLISHING.md) for the current setup.
+
+This guide is kept for historical reference. The design system is now published to npm and consumed as a regular dependency.
+
+---
+
+## Legacy Instructions (Deprecated)
+
 This guide will help you add the Syncrofy Design System as a git submodule to this repository.
 
 ## Step 1: Add the Submodule
