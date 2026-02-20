@@ -1,9 +1,13 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
+import { existsSync } from 'fs';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+const localDsPath = path.resolve('/Users/coe-kboyd/Documents/GitHub/syncrofy-ds/dist/index.js');
+const useLocalDesignSystem = existsSync(localDsPath);
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -17,8 +21,8 @@ export default defineConfig({
     alias: {
       // Our project's src alias
       '@': path.resolve(__dirname, './src'),
-      // Pull design system from external syncrofy-ds repo
-      '@kyleboyd/design-system': path.resolve('/Users/coe-kboyd/Documents/GitHub/syncrofy-ds/dist/index.js'),
+      // Pull design system from external syncrofy-ds repo (local) or use npm package (Vercel)
+      ...(useLocalDesignSystem ? { '@kyleboyd/design-system': localDsPath } : {}),
       // Force single React instance to prevent "Invalid hook call" errors
       'react': path.resolve(__dirname, './node_modules/react'),
       'react-dom': path.resolve(__dirname, './node_modules/react-dom'),

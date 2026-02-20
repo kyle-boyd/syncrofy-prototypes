@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "npm run build:design-system && vite build --mode production",
+    "build:vercel": "vite build --mode production",
     "build:design-system": "cd /Users/coe-kboyd/Documents/GitHub/syncrofy-ds && npm install && npm run build",
     "build:check": "tsc --noEmit && vite build",
     "preview": "vite preview",
