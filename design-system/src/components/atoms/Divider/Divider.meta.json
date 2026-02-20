@@ -1,0 +1,37 @@
+{
+  "name": "Divider",
+  "displayName": "Divider",
+  "category": "atom",
+  "description": "Divider component for separating content sections. Can be horizontal or vertical and optionally contain text labels.",
+  "muiComponent": "Divider",
+  "muiPackage": "@mui/material",
+  "props": [
+    {"name": "variant", "type": "'fullWidth' | 'inset' | 'middle'", "required": false, "description": "The variant to use"},
+    {"name": "orientation", "type": "'horizontal' | 'vertical'", "required": false, "description": "The orientation"},
+    {"name": "children", "type": "React.ReactNode", "required": false, "description": "If provided, adds a text label to the divider"},
+    {"name": "textAlign", "type": "'center' | 'left' | 'right'", "required": false, "description": "The text alignment of the divider's children"},
+    {"name": "light", "type": "boolean", "required": false, "description": "If true, applies light styling"}
+  ],
+  "examples": [
+    {"title": "Basic", "description": "Horizontal divider", "code": "import { Divider } from '@/components';\n\n<Divider />"},
+    {"title": "With Text", "description": "Divider with text label", "code": "import { Divider } from '@/components';\n\n<Divider>OR</Divider>"},
+    {"title": "Vertical", "description": "Vertical divider", "code": "import { Divider } from '@/components';\n\n<Divider orientation=\"vertical\" flexItem />"}
+  ],
+  "migrationExamples": [
+    {"mui": "import { Divider } from '@mui/material';\n<Divider />", "designSystem": "import { Divider } from '@/components';\n<Divider />", "description": "Replace MUI Divider with design system Divider"}
+  ],
+  "relatedComponents": ["Slot"],
+  "accessibility": {
+    "ariaAttributes": ["role=\"separator\""],
+    "keyboardNavigation": "Not interactive",
+    "screenReaderNotes": "Announced as separator"
+  },
+  "usageGuidelines": {
+    "whenToUse": ["Separating content sections", "List item separators", "Menu item separators", "Section breaks"],
+    "whenNotToUse": ["For decorative lines (use CSS border instead)", "When spacing alone is sufficient"],
+    "bestPractices": ["Use inset variant for list dividers", "Use text labels sparingly"],
+    "commonPatterns": ["List section dividers", "Form section separators", "Menu group dividers"]
+  },
+  "importPath": "@/components/atoms/Divider",
+  "exportPath": "@/components"
+}

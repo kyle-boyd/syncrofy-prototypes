@@ -1,0 +1,36 @@
+{
+  "name": "ButtonGroup",
+  "displayName": "ButtonGroup",
+  "category": "molecule",
+  "description": "ButtonGroup component for grouping related buttons together with consistent styling.",
+  "muiComponent": "ButtonGroup",
+  "muiPackage": "@mui/material",
+  "props": [
+    {"name": "children", "type": "React.ReactNode", "required": true, "description": "The buttons to group"},
+    {"name": "variant", "type": "'contained' | 'outlined' | 'text'", "required": false, "description": "The variant of the buttons"},
+    {"name": "color", "type": "'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning' | 'inherit'", "required": false, "description": "The color of the buttons"},
+    {"name": "size", "type": "'small' | 'medium' | 'large'", "required": false, "description": "The size of the buttons"},
+    {"name": "disabled", "type": "boolean", "required": false, "description": "If true, all buttons are disabled"},
+    {"name": "orientation", "type": "'horizontal' | 'vertical'", "required": false, "description": "The orientation of the button group"}
+  ],
+  "examples": [
+    {"title": "Basic Button Group", "description": "Group of related action buttons", "code": "import { ButtonGroup, Button } from '@/components';\n\n<ButtonGroup variant=\"outlined\">\n  <Button>Save</Button>\n  <Button>Cancel</Button>\n</ButtonGroup>"}
+  ],
+  "migrationExamples": [
+    {"mui": "import { ButtonGroup, Button } from '@mui/material';\n<ButtonGroup>\n  <Button>One</Button>\n  <Button>Two</Button>\n</ButtonGroup>", "designSystem": "import { ButtonGroup, Button } from '@/components';\n<ButtonGroup>\n  <Button>One</Button>\n  <Button>Two</Button>\n</ButtonGroup>", "description": "Replace MUI ButtonGroup with design system ButtonGroup"}
+  ],
+  "relatedComponents": ["Button", "ToggleButton"],
+  "accessibility": {
+    "ariaAttributes": [],
+    "keyboardNavigation": "",
+    "screenReaderNotes": ""
+  },
+  "usageGuidelines": {
+    "whenToUse": ["Related actions that should be grouped", "Split buttons", "Toolbar button groups"],
+    "whenNotToUse": ["Unrelated buttons", "Navigation (use Tabs instead)"],
+    "bestPractices": ["Use consistent variant within the group", "Limit to 2-5 buttons"],
+    "commonPatterns": ["Save/Cancel button pair", "View mode selector"]
+  },
+  "importPath": "@/components/molecules/ButtonGroup",
+  "exportPath": "@/components"
+}

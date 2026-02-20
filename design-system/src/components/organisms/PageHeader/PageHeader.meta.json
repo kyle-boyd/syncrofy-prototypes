@@ -1,0 +1,33 @@
+{
+  "name": "PageHeader",
+  "displayName": "PageHeader",
+  "category": "organism",
+  "description": "PageHeader component for displaying page titles with optional breadcrumbs and refresh controls. Provides a consistent header layout.",
+  "props": [
+    {"name": "title", "type": "string", "required": true, "description": "The main title"},
+    {"name": "showBreadcrumb", "type": "boolean", "required": false, "defaultValue": true, "description": "Show breadcrumb navigation"},
+    {"name": "breadcrumbLabel", "type": "string", "required": false, "defaultValue": "Transfers", "description": "Breadcrumb label"},
+    {"name": "onBreadcrumbClick", "type": "function", "required": false, "description": "Breadcrumb click handler"},
+    {"name": "showInfoIcon", "type": "boolean", "required": false, "defaultValue": true, "description": "Show info icon"},
+    {"name": "onInfoClick", "type": "function", "required": false, "description": "Info icon click handler"},
+    {"name": "refreshStatus", "type": "string", "required": false, "defaultValue": "Last refreshed 1 minute ago", "description": "Refresh status text"},
+    {"name": "onRefreshClick", "type": "function", "required": false, "description": "Refresh button click handler"}
+  ],
+  "examples": [
+    {"title": "Basic Page Header", "description": "Page header with breadcrumb and refresh", "code": "import { PageHeader } from '@/components';\n\n<PageHeader\n  title=\"Transfer Details\"\n  breadcrumbLabel=\"Transfers\"\n  onBreadcrumbClick={handleBack}\n  refreshStatus=\"Last refreshed 1 minute ago\"\n  onRefreshClick={handleRefresh}\n/>"}
+  ],
+  "relatedComponents": ["Breadcrumbs", "Button", "IconButton"],
+  "accessibility": {
+    "ariaAttributes": [],
+    "keyboardNavigation": "",
+    "screenReaderNotes": ""
+  },
+  "usageGuidelines": {
+    "whenToUse": ["Top of content pages", "Detail page headers with breadcrumbs", "Pages with refresh capability"],
+    "whenNotToUse": ["For navigation headers (use Header instead)", "For section headings within a page"],
+    "bestPractices": ["Use breadcrumbs for nested pages", "Show refresh status for data-driven pages", "Keep titles concise"],
+    "commonPatterns": ["Detail page with breadcrumb back navigation", "Dashboard page header with refresh"]
+  },
+  "importPath": "@/components/organisms/PageHeader",
+  "exportPath": "@/components"
+}

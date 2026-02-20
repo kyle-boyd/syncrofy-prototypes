@@ -1,0 +1,40 @@
+{
+  "name": "Pagination",
+  "displayName": "Pagination",
+  "category": "organism",
+  "description": "Pagination component for navigating through pages of content.",
+  "muiComponent": "Pagination",
+  "muiPackage": "@mui/material",
+  "props": [
+    {"name": "page", "type": "number", "required": true, "description": "Current page 1-indexed"},
+    {"name": "count", "type": "number", "required": true, "description": "Total pages"},
+    {"name": "onChange", "type": "function", "required": false, "description": "Callback when page changes"},
+    {"name": "variant", "type": "'outlined' | 'text'", "required": false, "description": "Button variant"},
+    {"name": "shape", "type": "'circular' | 'rounded'", "required": false, "description": "Button shape"},
+    {"name": "size", "type": "'small' | 'medium' | 'large'", "required": false, "description": "Size of pagination"},
+    {"name": "showFirstButton", "type": "boolean", "required": false, "description": "Show first page button"},
+    {"name": "showLastButton", "type": "boolean", "required": false, "description": "Show last page button"},
+    {"name": "hidePrevButton", "type": "boolean", "required": false, "description": "Hide previous button"},
+    {"name": "hideNextButton", "type": "boolean", "required": false, "description": "Hide next button"}
+  ],
+  "examples": [
+    {"title": "Basic Pagination", "description": "Page navigation", "code": "import { Pagination } from '@/components';\n\n<Pagination\n  page={page}\n  count={10}\n  onChange={handlePageChange}\n/>"}
+  ],
+  "migrationExamples": [
+    {"mui": "import { Pagination } from '@mui/material';\n<Pagination count={10} page={1} />", "designSystem": "import { Pagination } from '@/components';\n<Pagination count={10} page={1} />", "description": "Replace MUI Pagination with design system Pagination"}
+  ],
+  "relatedComponents": ["Table", "Button"],
+  "accessibility": {
+    "ariaAttributes": ["aria-label=\"pagination\"", "aria-current=\"page\""],
+    "keyboardNavigation": "Tab navigates between page buttons, Enter selects page",
+    "screenReaderNotes": "Current page and total pages announced"
+  },
+  "usageGuidelines": {
+    "whenToUse": ["Paginated data tables", "Search results pagination", "Content list navigation"],
+    "whenNotToUse": ["For infinite scroll interfaces", "When all content fits on one page"],
+    "bestPractices": ["Show first/last buttons for large page counts", "Use rounded shape for consistency with the design system", "Keep page size options available nearby"],
+    "commonPatterns": ["Table footer pagination", "Search results navigation"]
+  },
+  "importPath": "@/components/organisms/Pagination",
+  "exportPath": "@/components"
+}

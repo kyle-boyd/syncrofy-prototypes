@@ -1,9 +1,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Box, IconButton } from '@mui/material';
+import { Box } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import MenuIcon from '@mui/icons-material/Menu';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { BaseComponentProps } from '@/types';
 import { Tooltip } from '@/components/atoms/Tooltip';
 
@@ -129,7 +127,6 @@ export const CollapsibleSideNav: React.FC<CollapsibleSideNavProps> = ({
           <img
             src={expanded ? '/logos/Syncrofy Logo.svg' : '/logos/Syncrofy Logo Collapsed.svg'}
             alt="Syncrofy Logo"
-            style={{ height: 30, width: 'auto' }}
           />
         </Box>
 
@@ -230,7 +227,7 @@ export const CollapsibleSideNav: React.FC<CollapsibleSideNavProps> = ({
           })}
         </Box>
 
-        {/* Bottom toggle button */}
+        {/* Bottom toggle button - medium size */}
         <Box
           sx={{
             display: 'flex',
@@ -240,18 +237,43 @@ export const CollapsibleSideNav: React.FC<CollapsibleSideNavProps> = ({
             minHeight: 48,
           }}
         >
-          <IconButton
+          <Box
             onClick={handleToggleExpand}
             sx={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              px: expanded ? 1.5 : 0,
+              py: 0.5,
+              borderRadius: 999,
+              cursor: 'pointer',
               color: theme.palette.text.secondary,
               '&:hover': {
                 backgroundColor: theme.palette.action.hover,
               },
             }}
-            size="small"
           >
-            {expanded ? <ChevronLeftIcon /> : <MenuIcon />}
-          </IconButton>
+            <Box
+              component="span"
+              sx={{
+                fontSize: 14,
+                lineHeight: 1,
+              }}
+            >
+              {expanded ? '«' : '»'}
+            </Box>
+            {expanded && (
+              <Box
+                component="span"
+                sx={{
+                  ml: 1,
+                  fontSize: 12,
+                }}
+              >
+                Collapse
+              </Box>
+            )}
+          </Box>
         </Box>
       </motion.div>
     </Box>

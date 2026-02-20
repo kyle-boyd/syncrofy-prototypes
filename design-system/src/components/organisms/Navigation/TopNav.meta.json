@@ -1,0 +1,35 @@
+{
+  "name": "TopNav",
+  "displayName": "TopNav",
+  "category": "organism",
+  "description": "TopNav component for top navigation bar. Provides a three-section layout (left, center, right) within an AppBar.",
+  "muiComponent": "AppBar",
+  "muiPackage": "@mui/material",
+  "props": [
+    {"name": "leftContent", "type": "React.ReactNode", "required": false, "description": "Left section content"},
+    {"name": "centerContent", "type": "React.ReactNode", "required": false, "description": "Center section content"},
+    {"name": "rightContent", "type": "React.ReactNode", "required": false, "description": "Right section content"},
+    {"name": "position", "type": "'fixed' | 'absolute' | 'sticky' | 'static' | 'relative'", "required": false, "description": "AppBar position"},
+    {"name": "color", "type": "'default' | 'inherit' | 'primary' | 'secondary' | 'transparent'", "required": false, "description": "AppBar color"}
+  ],
+  "examples": [
+    {"title": "Basic TopNav", "description": "Simple app header", "code": "import { TopNav } from '@/components';\n\n<TopNav\n  leftContent={<Logo />}\n  centerContent={<NavLinks />}\n  rightContent={<UserMenu />}\n/>"}
+  ],
+  "migrationExamples": [
+    {"mui": "import { AppBar, Toolbar } from '@mui/material';\n<AppBar><Toolbar>...</Toolbar></AppBar>", "designSystem": "import { TopNav } from '@/components';\n<TopNav leftContent={...} centerContent={...} rightContent={...} />", "description": "Replace MUI AppBar with TopNav"}
+  ],
+  "relatedComponents": ["Header", "SideNav"],
+  "accessibility": {
+    "ariaAttributes": ["role=\"navigation\""],
+    "keyboardNavigation": "Tab navigates between interactive elements in the bar",
+    "screenReaderNotes": "Navigation landmark announced"
+  },
+  "usageGuidelines": {
+    "whenToUse": ["Simple top navigation bars", "Application header bars"],
+    "whenNotToUse": ["For complex headers with search/notifications (use Header instead)"],
+    "bestPractices": ["Place logo in leftContent", "Place navigation in centerContent", "Place user actions in rightContent"],
+    "commonPatterns": ["Simple app header with logo and actions"]
+  },
+  "importPath": "@/components/organisms/Navigation/TopNav",
+  "exportPath": "@/components"
+}

@@ -1,0 +1,37 @@
+{
+  "name": "Breadcrumbs",
+  "displayName": "Breadcrumbs",
+  "category": "atom",
+  "description": "Breadcrumbs component for navigation hierarchy. Shows the user's current location in the application and provides navigation to parent pages.",
+  "muiComponent": "Breadcrumbs",
+  "muiPackage": "@mui/material",
+  "props": [
+    {"name": "children", "type": "React.ReactNode", "required": false, "description": "The content of the component"},
+    {"name": "separator", "type": "React.ReactNode", "required": false, "description": "Separator element"},
+    {"name": "maxItems", "type": "number", "required": false, "description": "Maximum number of breadcrumbs to display"}
+  ],
+  "examples": [
+    {"title": "Basic", "description": "Simple breadcrumb navigation", "code": "import { Breadcrumbs } from '@/components';\nimport { Link } from '@/components';\n\n<Breadcrumbs>\n  <Link href=\"/\">Home</Link>\n  <Link href=\"/transfers\">Transfers</Link>\n  <span>Current Page</span>\n</Breadcrumbs>"}
+  ],
+  "migrationExamples": [
+    {
+      "mui": "import { Breadcrumbs } from '@mui/material';\n\n<Breadcrumbs>\n  <Link href=\"/\">Home</Link>\n  <Typography>Current</Typography>\n</Breadcrumbs>",
+      "designSystem": "import { Breadcrumbs } from '@/components';\n\n<Breadcrumbs>\n  <Link href=\"/\">Home</Link>\n  <Typography>Current</Typography>\n</Breadcrumbs>",
+      "description": "Replace MUI Breadcrumbs with design system Breadcrumbs"
+    }
+  ],
+  "relatedComponents": ["Link", "Button"],
+  "accessibility": {
+    "ariaAttributes": ["aria-label=\"breadcrumb\"", "aria-current=\"page\""],
+    "keyboardNavigation": "Tab to navigate between breadcrumb links",
+    "screenReaderNotes": "Navigation landmark with breadcrumb trail announced"
+  },
+  "usageGuidelines": {
+    "whenToUse": ["Multi-level page navigation", "Showing current location in app hierarchy", "Deep navigation structures"],
+    "whenNotToUse": ["Single-level navigation", "When there are only 1-2 levels"],
+    "bestPractices": ["Last item should represent current page and not be a link", "Use maxItems for deep hierarchies", "Keep labels short and descriptive"],
+    "commonPatterns": ["Page header with breadcrumb navigation", "File browser navigation trail"]
+  },
+  "importPath": "@/components/atoms/Breadcrumbs",
+  "exportPath": "@/components"
+}

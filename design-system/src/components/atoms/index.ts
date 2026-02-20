@@ -56,11 +56,14 @@ export type { SlotProps } from './Slot';
 export { Spinner } from './Spinner';
 export type { SpinnerProps } from './Spinner';
 
+export { Tag } from './Tag';
+export type { TagProps } from './Tag';
+
 export { Toggle } from './Toggle';
 export type { ToggleProps } from './Toggle';
 
-export { Tag } from './Tag';
-export type { TagProps } from './Tag';
+export { ToggleButton } from './ToggleButton';
+export type { ToggleButtonProps } from './ToggleButton';
 
 export { Tooltip } from './Tooltip';
 export type { TooltipProps } from './Tooltip';

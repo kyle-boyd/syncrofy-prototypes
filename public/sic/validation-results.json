@@ -1,0 +1,34 @@
+{
+  "mrsId": "mrs-850-demo-001",
+  "validatedAt": "2025-11-05T15:01:00Z",
+  "summary": {
+    "status": "fail",
+    "errorCount": 2,
+    "warningCount": 1
+  },
+  "issues": [
+    {
+      "id": "val-001",
+      "severity": "error",
+      "mappingId": "map-011",
+      "message": "Currency is required by the target system but no source mapping exists."
+    },
+    {
+      "id": "val-002",
+      "severity": "error",
+      "mappingId": "map-012",
+      "message": "Buyer reference is mandatory and currently unmapped."
+    },
+    {
+      "id": "val-003",
+      "severity": "warning",
+      "mappingId": "map-004",
+      "message": "Ship-to address mapping confidence is low."
+    }
+  ],
+  "outputPreview": {
+    "format": "X12_850_OUTBOUND",
+    "content": "ISA*00*          *00*          *ZZ*DEMOCO        *ZZ*TARGETSYS    *251105*1501*U*00401*000000123*0*T*~\nGS*PO*DEMOCO*TARGETSYS*20251105*1501*123*X*004010\nST*850*0001\nBEG*00*DR*4636610649**20220915\nPO1*1*1*EA*49.41**VN*010020095\nPO1*2*5*EA*12.75**VN*020030110\nCTT*2\nSE*7*0001\nGE*1*123\nIEA*1*000000123"
+  },
+  "canMarkReady": false
+}

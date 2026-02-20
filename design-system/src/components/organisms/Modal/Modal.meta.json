@@ -1,0 +1,121 @@
+{
+  "name": "Modal",
+  "displayName": "Modal",
+  "category": "organism",
+  "description": "Modal component for displaying dialog content. This component replaces Material UI's Dialog component with a simplified API that matches the Syncrofy design system. It provides built-in title, content, and actions sections.",
+  "muiComponent": "Dialog",
+  "muiPackage": "@mui/material",
+  "props": [
+    {
+      "name": "open",
+      "type": "boolean",
+      "required": true,
+      "description": "If true, the modal is open"
+    },
+    {
+      "name": "onClose",
+      "type": "(event?: {}, reason?: 'backdropClick' | 'escapeKeyDown') => void",
+      "required": false,
+      "description": "Callback fired when the modal should close"
+    },
+    {
+      "name": "title",
+      "type": "React.ReactNode",
+      "required": false,
+      "description": "The title of the modal"
+    },
+    {
+      "name": "children",
+      "type": "React.ReactNode",
+      "required": true,
+      "description": "The content of the modal"
+    },
+    {
+      "name": "actions",
+      "type": "React.ReactNode",
+      "required": false,
+      "description": "Actions to display at the bottom of the modal. Typically contains buttons for actions like \"Cancel\" and \"Confirm\""
+    },
+    {
+      "name": "showCloseButton",
+      "type": "boolean",
+      "required": false,
+      "defaultValue": true,
+      "description": "If true, displays a close button (X) in the title bar"
+    },
+    {
+      "name": "maxWidth",
+      "type": "'xs' | 'sm' | 'md' | 'lg' | 'xl' | false",
+      "required": false,
+      "defaultValue": "sm",
+      "description": "The maximum width of the modal"
+    },
+    {
+      "name": "closeOnBackdropClick",
+      "type": "boolean",
+      "required": false,
+      "defaultValue": true,
+      "description": "If true, clicking the backdrop will close the modal"
+    }
+  ],
+  "examples": [
+    {
+      "title": "Default",
+      "description": "Basic modal with title and content",
+      "code": "import { Modal } from '@/components';\nimport { useState } from 'react';\n\nconst [open, setOpen] = useState(false);\n\n<Modal \n  open={open} \n  onClose={() => setOpen(false)}\n  title=\"Modal Title\"\n>\n  <Typography>Modal content goes here</Typography>\n</Modal>"
+    },
+    {
+      "title": "With Actions",
+      "description": "Modal with action buttons",
+      "code": "import { Modal, Button } from '@/components';\n\n<Modal \n  open={open}\n  onClose={handleClose}\n  title=\"Confirm Action\"\n  actions={\n    <>\n      <Button onClick={handleClose}>Cancel</Button>\n      <Button variant=\"contained\" onClick={handleConfirm}>Confirm</Button>\n    </>\n  }\n>\n  <Typography>Are you sure you want to perform this action?</Typography>\n</Modal>"
+    },
+    {
+      "title": "Different Sizes",
+      "description": "Modal with different maxWidth options",
+      "code": "import { Modal } from '@/components';\n\n<Modal maxWidth=\"lg\" title=\"Large Modal\">\n  Content\n</Modal>"
+    }
+  ],
+  "migrationExamples": [
+    {
+      "mui": "import { Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';\n\n<Dialog open={open} onClose={handleClose}>\n  <DialogTitle>Title</DialogTitle>\n  <DialogContent>\n    Content here\n  </DialogContent>\n  <DialogActions>\n    <Button>Cancel</Button>\n    <Button>Confirm</Button>\n  </DialogActions>\n</Dialog>",
+      "designSystem": "import { Modal } from '@/components';\n\n<Modal \n  open={open} \n  onClose={handleClose}\n  title=\"Title\"\n  actions={\n    <>\n      <Button>Cancel</Button>\n      <Button>Confirm</Button>\n    </>\n  }\n>\n  Content here\n</Modal>",
+      "description": "Replace MUI Dialog with design system Modal"
+    }
+  ],
+  "relatedComponents": ["SnackBar", "Tooltip"],
+  "accessibility": {
+    "ariaAttributes": ["role=\"dialog\"", "aria-labelledby", "aria-describedby", "aria-modal"],
+    "keyboardNavigation": "ESC key closes modal (if enabled), Tab key cycles through focusable elements, focus trap when open",
+    "screenReaderNotes": "Modal title and content are announced when opened, focus returns to trigger element on close"
+  },
+  "usageGuidelines": {
+    "whenToUse": [
+      "Confirmation dialogs",
+      "Forms in overlays",
+      "Important information that requires user attention",
+      "Multi-step workflows",
+      "Content that should interrupt user flow"
+    ],
+    "whenNotToUse": [
+      "Simple notifications (use SnackBar instead)",
+      "Non-blocking information (use Tooltip instead)",
+      "Full-page content (use a separate page/route instead)"
+    ],
+    "bestPractices": [
+      "Always provide a title for accessibility",
+      "Use actions prop for buttons at the bottom",
+      "Consider closeOnBackdropClick for destructive actions",
+      "Ensure modal content is scrollable if needed"
+    ],
+    "commonPatterns": [
+      "Confirmation dialogs with Cancel/Confirm buttons",
+      "Form modals with Save/Cancel actions",
+      "Information modals with single Close button"
+    ]
+  },
+  "importPath": "@/components/organisms/Modal",
+  "exportPath": "@/components"
+}
+
+
+

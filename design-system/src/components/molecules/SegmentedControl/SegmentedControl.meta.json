@@ -1,0 +1,30 @@
+{
+  "name": "SegmentedControl",
+  "displayName": "SegmentedControl",
+  "category": "molecule",
+  "description": "SegmentedControl component for selecting between multiple options. Uses SegmentedControlItem atoms with keyboard navigation and smooth Framer Motion animations.",
+  "props": [
+    {"name": "items", "type": "SegmentedControlItemData[]", "required": true, "description": "Array of items with id, text, icon, size, disabled"},
+    {"name": "defaultSelectedId", "type": "string | number", "required": false, "description": "Initially selected item ID"},
+    {"name": "onChange", "type": "(selectedId: string | number) => void", "required": false, "description": "Callback when selection changes"},
+    {"name": "size", "type": "'sm' | 'md'", "required": false, "defaultValue": "md", "description": "Size of the control"},
+    {"name": "disabled", "type": "boolean", "required": false, "defaultValue": false, "description": "If true, control is disabled"}
+  ],
+  "examples": [
+    {"title": "Basic Segmented Control", "description": "Time range selector", "code": "import { SegmentedControl } from '@/components';\n\n<SegmentedControl\n  items={[\n    { id: '1d', text: '1D' },\n    { id: '7d', text: '7D' },\n    { id: '30d', text: '30D' }\n  ]}\n  defaultSelectedId=\"7d\"\n  onChange={handleChange}\n/>"}
+  ],
+  "relatedComponents": ["SegmentedControlItem", "Tabs", "ToggleButton"],
+  "accessibility": {
+    "ariaAttributes": ["role=\"radiogroup\""],
+    "keyboardNavigation": "Arrow Left/Right navigates, Space/Enter selects",
+    "screenReaderNotes": "Acts as a radiogroup with item states announced"
+  },
+  "usageGuidelines": {
+    "whenToUse": ["Selecting between 2-5 options", "View mode toggles", "Time range selectors", "Tab-like selection within a toolbar"],
+    "whenNotToUse": ["For many options (use Dropdown or Tabs instead)", "For content tabs with panels (use Tabs instead)"],
+    "bestPractices": ["Limit to 2-5 items", "Keep labels short", "Use sm size for compact toolbars"],
+    "commonPatterns": ["Time range selector", "View mode toggle", "Filter control group"]
+  },
+  "importPath": "@/components/molecules/SegmentedControl",
+  "exportPath": "@/components"
+}

@@ -1,0 +1,35 @@
+{
+  "name": "SideNav",
+  "displayName": "SideNav",
+  "category": "organism",
+  "description": "SideNav component for side navigation drawer. Displays a list of navigation items in a drawer panel.",
+  "muiComponent": "Drawer",
+  "muiPackage": "@mui/material",
+  "props": [
+    {"name": "items", "type": "SideNavItem[]", "required": true, "description": "Navigation items with id, label, icon, onClick, disabled, selected"},
+    {"name": "open", "type": "boolean", "required": true, "description": "If true, drawer is open"},
+    {"name": "onClose", "type": "function", "required": false, "description": "Callback when drawer closes"},
+    {"name": "width", "type": "number | string", "required": false, "defaultValue": 280, "description": "Drawer width"},
+    {"name": "variant", "type": "'permanent' | 'persistent' | 'temporary'", "required": false, "defaultValue": "temporary", "description": "Drawer variant"}
+  ],
+  "examples": [
+    {"title": "Basic SideNav", "description": "Side navigation drawer", "code": "import { SideNav } from '@/components';\n\n<SideNav\n  open={open}\n  onClose={handleClose}\n  items={[\n    { id: '1', label: 'Dashboard', icon: <DashboardIcon />, onClick: () => {} },\n    { id: '2', label: 'Transfers', icon: <TransferIcon />, selected: true }\n  ]}\n/>"}
+  ],
+  "migrationExamples": [
+    {"mui": "import { Drawer, List, ListItem } from '@mui/material';\n<Drawer open={open}><List>...</List></Drawer>", "designSystem": "import { SideNav } from '@/components';\n<SideNav open={open} items={items} />", "description": "Replace MUI Drawer with SideNav"}
+  ],
+  "relatedComponents": ["CollapsibleSideNav", "TopNav", "Header", "ListItem"],
+  "accessibility": {
+    "ariaAttributes": ["role=\"navigation\""],
+    "keyboardNavigation": "Tab navigates items, Escape closes temporary drawer",
+    "screenReaderNotes": "Navigation landmark with item labels announced"
+  },
+  "usageGuidelines": {
+    "whenToUse": ["Application sidebar navigation", "Section navigation", "Off-canvas navigation on mobile"],
+    "whenNotToUse": ["For top horizontal navigation (use TopNav or Header instead)", "For breadcrumb navigation"],
+    "bestPractices": ["Use permanent variant for desktop layouts", "Use temporary variant for mobile/responsive", "Highlight the selected navigation item", "Use icons for visual navigation cues"],
+    "commonPatterns": ["Desktop app sidebar", "Mobile hamburger menu", "Settings sidebar"]
+  },
+  "importPath": "@/components/organisms/Navigation/SideNav",
+  "exportPath": "@/components"
+}

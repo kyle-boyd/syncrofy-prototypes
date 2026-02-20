@@ -1,0 +1,126 @@
+{
+  "name": "Button",
+  "displayName": "Button",
+  "category": "atom",
+  "description": "Button component for user actions. This component replaces Material UI's Button component with custom styling that matches the Syncrofy design system.",
+  "muiComponent": "Button",
+  "muiPackage": "@mui/material",
+  "props": [
+    {
+      "name": "children",
+      "type": "React.ReactNode",
+      "required": true,
+      "description": "The content of the button"
+    },
+    {
+      "name": "variant",
+      "type": "'contained' | 'outlined' | 'text'",
+      "required": false,
+      "defaultValue": "contained",
+      "description": "The variant to use. Contained has a filled background, outlined has a border, text has no background or border."
+    },
+    {
+      "name": "color",
+      "type": "'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning' | 'inherit'",
+      "required": false,
+      "defaultValue": "primary",
+      "description": "The color of the component"
+    },
+    {
+      "name": "size",
+      "type": "'small' | 'medium' | 'large'",
+      "required": false,
+      "defaultValue": "medium",
+      "description": "The size of the component"
+    },
+    {
+      "name": "fullWidth",
+      "type": "boolean",
+      "required": false,
+      "defaultValue": false,
+      "description": "If true, the button will take up the full width of its container"
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "required": false,
+      "defaultValue": false,
+      "description": "If true, the button is disabled"
+    },
+    {
+      "name": "onClick",
+      "type": "(event: React.MouseEvent<HTMLButtonElement>) => void",
+      "required": false,
+      "description": "Callback fired when the button is clicked"
+    },
+    {
+      "name": "startIcon",
+      "type": "React.ReactNode",
+      "required": false,
+      "description": "Adds an icon before the button text"
+    },
+    {
+      "name": "endIcon",
+      "type": "React.ReactNode",
+      "required": false,
+      "description": "Adds an icon after the button text"
+    }
+  ],
+  "examples": [
+    {
+      "title": "Primary",
+      "description": "Primary button variant",
+      "code": "import { Button } from '@/components';\n\n<Button variant=\"contained\" color=\"primary\">\n  Button\n</Button>"
+    },
+    {
+      "title": "Outlined",
+      "description": "Outlined button variant",
+      "code": "import { Button } from '@/components';\n\n<Button variant=\"outlined\" color=\"primary\">\n  Button\n</Button>"
+    },
+    {
+      "title": "With Icons",
+      "description": "Button with start and end icons",
+      "code": "import { Button } from '@/components';\nimport ArrowBackIcon from '@mui/icons-material/ArrowBack';\nimport ArrowForwardIcon from '@mui/icons-material/ArrowForward';\n\n<Button \n  variant=\"contained\" \n  startIcon={<ArrowBackIcon />}\n  endIcon={<ArrowForwardIcon />}\n>\n  Navigate\n</Button>"
+    }
+  ],
+  "migrationExamples": [
+    {
+      "mui": "import { Button } from '@mui/material';\n\n<Button variant=\"contained\" color=\"primary\">\n  Click me\n</Button>",
+      "designSystem": "import { Button } from '@/components';\n\n<Button variant=\"contained\" color=\"primary\">\n  Click me\n</Button>",
+      "description": "Replace MUI Button with design system Button"
+    }
+  ],
+  "relatedComponents": ["IconButton", "ToggleButton", "Link"],
+  "accessibility": {
+    "ariaAttributes": ["aria-label", "aria-disabled"],
+    "keyboardNavigation": "Enter or Space key activates the button",
+    "screenReaderNotes": "Button state (enabled/disabled) is announced to screen readers"
+  },
+  "usageGuidelines": {
+    "whenToUse": [
+      "Triggering actions (submit, save, cancel)",
+      "Navigation (with Link component)",
+      "Confirming or canceling operations"
+    ],
+    "whenNotToUse": [
+      "For icon-only actions (use IconButton instead)",
+      "For toggle states (use ToggleButton instead)",
+      "For navigation links without actions (use Link component)"
+    ],
+    "bestPractices": [
+      "Use descriptive button text",
+      "Provide loading states for async actions",
+      "Use appropriate button variants for hierarchy"
+    ],
+    "commonPatterns": [
+      "Primary action: contained variant",
+      "Secondary action: outlined variant",
+      "Tertiary action: text variant"
+    ]
+  },
+  "importPath": "@/components/atoms/Button",
+  "exportPath": "@/components"
+}
+
+
+

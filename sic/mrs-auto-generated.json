@@ -1,0 +1,133 @@
+{
+  "mrsId": "mrs-850-demo-001",
+  "generatedAt": "2025-11-05T14:32:00Z",
+  "documentType": "X12_850",
+  "summary": {
+    "totalFields": 14,
+    "mapped": 9,
+    "lowConfidence": 3,
+    "missing": 2
+  },
+  "mappings": [
+    {
+      "id": "map-001",
+      "sourcePath": "BEG.poNumber",
+      "sourceLabel": "Purchase Order Number",
+      "targetPath": "Order.header.orderNumber",
+      "targetLabel": "Order Number",
+      "confidence": 0.96,
+      "status": "mapped",
+      "comment": ""
+    },
+    {
+      "id": "map-002",
+      "sourcePath": "BEG.poDate",
+      "sourceLabel": "Purchase Order Date",
+      "targetPath": "Order.header.orderDate",
+      "targetLabel": "Order Date",
+      "confidence": 0.92,
+      "status": "mapped",
+      "comment": ""
+    },
+    {
+      "id": "map-003",
+      "sourcePath": "N1[Buyer].name",
+      "sourceLabel": "Buyer Name",
+      "targetPath": "Order.parties.buyer.name",
+      "targetLabel": "Buyer Name",
+      "confidence": 0.88,
+      "status": "mapped",
+      "comment": ""
+    },
+    {
+      "id": "map-004",
+      "sourcePath": "N1[ShipTo].address",
+      "sourceLabel": "Ship To Address",
+      "targetPath": "Order.parties.shipTo.address",
+      "targetLabel": "Ship To Address",
+      "confidence": 0.61,
+      "status": "ambiguous",
+      "comment": "Multiple address candidates detected"
+    },
+    {
+      "id": "map-005",
+      "sourcePath": "PO1.quantity",
+      "sourceLabel": "Line Item Quantity",
+      "targetPath": "Order.lines[].quantity",
+      "targetLabel": "Quantity",
+      "confidence": 0.97,
+      "status": "mapped",
+      "comment": ""
+    },
+    {
+      "id": "map-006",
+      "sourcePath": "PO1.unitPrice",
+      "sourceLabel": "Unit Price",
+      "targetPath": "Order.lines[].price",
+      "targetLabel": "Unit Price",
+      "confidence": 0.94,
+      "status": "mapped",
+      "comment": ""
+    },
+    {
+      "id": "map-007",
+      "sourcePath": "PO1.buyerPartNumber",
+      "sourceLabel": "Buyer Part Number",
+      "targetPath": "Order.lines[].productCode",
+      "targetLabel": "Product Code",
+      "confidence": 0.67,
+      "status": "mapped",
+      "comment": "Verify qualifier usage with partner"
+    },
+    {
+      "id": "map-008",
+      "sourcePath": "PID.description",
+      "sourceLabel": "Item Description",
+      "targetPath": "Order.lines[].description",
+      "targetLabel": "Item Description",
+      "confidence": 0.58,
+      "status": "ambiguous",
+      "comment": ""
+    },
+    {
+      "id": "map-009",
+      "sourcePath": "SCH.requestedDate",
+      "sourceLabel": "Requested Delivery Date",
+      "targetPath": "Order.lines[].requestedDate",
+      "targetLabel": "Requested Date",
+      "confidence": 0.89,
+      "status": "mapped",
+      "comment": ""
+    },
+    {
+      "id": "map-010",
+      "sourcePath": "CTT.lineItemCount",
+      "sourceLabel": "Total Line Item Count",
+      "targetPath": "Order.summary.lineCount",
+      "targetLabel": "Line Count",
+      "confidence": 0.93,
+      "status": "mapped",
+      "comment": ""
+    },
+    {
+      "id": "map-011",
+      "sourcePath": "CUR.currencyCode",
+      "sourceLabel": "Currency Code",
+      "targetPath": "Order.header.currency",
+      "targetLabel": "Currency",
+      "confidence": 0.0,
+      "status": "missing",
+      "comment": "Currency segment not found in sample"
+    },
+    {
+      "id": "map-012",
+      "sourcePath": "REF.buyerReference",
+      "sourceLabel": "Buyer Reference",
+      "targetPath": "Order.header.buyerReference",
+      "targetLabel": "Buyer Reference",
+      "confidence": 0.0,
+      "status": "missing",
+      "comment": "Optional but required by target system"
+    }
+  ]
+}

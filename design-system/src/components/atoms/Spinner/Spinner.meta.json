@@ -1,0 +1,37 @@
+{
+  "name": "Spinner",
+  "displayName": "Spinner",
+  "category": "atom",
+  "description": "Spinner component for loading states. Extends MUI CircularProgress with a convenient loading prop for conditional rendering.",
+  "muiComponent": "CircularProgress",
+  "muiPackage": "@mui/material",
+  "props": [
+    {"name": "size", "type": "number | string", "required": false, "description": "The size of the spinner"},
+    {"name": "color", "type": "'inherit' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning'", "required": false, "description": "Color of the spinner"},
+    {"name": "variant", "type": "'determinate' | 'indeterminate'", "required": false, "description": "Progress variant"},
+    {"name": "value", "type": "number", "required": false, "description": "Progress value 0-100 for determinate variant"},
+    {"name": "loading", "type": "boolean", "required": false, "defaultValue": true, "description": "If false, the spinner is hidden"}
+  ],
+  "examples": [
+    {"title": "Basic", "description": "Indeterminate loading spinner", "code": "import { Spinner } from '@/components';\n\n<Spinner />"},
+    {"title": "With Loading Prop", "description": "Conditional spinner display", "code": "import { Spinner } from '@/components';\n\n<Spinner loading={isLoading} />"},
+    {"title": "Determinate Progress", "description": "Spinner with known progress value", "code": "import { Spinner } from '@/components';\n\n<Spinner variant=\"determinate\" value={75} />"}
+  ],
+  "migrationExamples": [
+    {"mui": "import { CircularProgress } from '@mui/material';\n<CircularProgress />", "designSystem": "import { Spinner } from '@/components';\n<Spinner />", "description": "Replace MUI CircularProgress with Spinner component"}
+  ],
+  "relatedComponents": ["Button"],
+  "accessibility": {
+    "ariaAttributes": ["role=\"progressbar\"", "aria-valuenow", "aria-label"],
+    "keyboardNavigation": "Not interactive",
+    "screenReaderNotes": "Loading state and progress value announced"
+  },
+  "usageGuidelines": {
+    "whenToUse": ["Loading states for data fetching", "Button loading indicators", "Page loading overlays", "File upload progress"],
+    "whenNotToUse": ["For linear progress (use LinearProgress directly)", "For skeleton loading placeholders"],
+    "bestPractices": ["Use loading prop to conditionally show/hide", "Use determinate variant with value for known progress", "Provide aria-label for context"],
+    "commonPatterns": ["Button with loading spinner", "Page loading overlay", "Inline content loading"]
+  },
+  "importPath": "@/components/atoms/Spinner",
+  "exportPath": "@/components"
+}

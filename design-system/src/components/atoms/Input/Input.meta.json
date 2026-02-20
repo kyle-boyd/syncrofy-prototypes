@@ -1,0 +1,160 @@
+{
+  "name": "Input",
+  "displayName": "Input",
+  "category": "atom",
+  "description": "Input component for text input fields. This component replaces Material UI's TextField component with custom styling that matches the Syncrofy design system. It provides enhanced label formatting for required fields and custom error display with icons.",
+  "muiComponent": "TextField",
+  "muiPackage": "@mui/material",
+  "props": [
+    {
+      "name": "label",
+      "type": "string",
+      "required": false,
+      "description": "The label content"
+    },
+    {
+      "name": "variant",
+      "type": "'outlined' | 'filled' | 'standard'",
+      "required": false,
+      "defaultValue": "outlined",
+      "description": "The variant to use"
+    },
+    {
+      "name": "size",
+      "type": "'small' | 'medium'",
+      "required": false,
+      "defaultValue": "medium",
+      "description": "The size of the component"
+    },
+    {
+      "name": "value",
+      "type": "string",
+      "required": false,
+      "description": "The value of the input"
+    },
+    {
+      "name": "onChange",
+      "type": "(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void",
+      "required": false,
+      "description": "Callback fired when the value changes"
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "required": false,
+      "defaultValue": false,
+      "description": "If true, the input is disabled"
+    },
+    {
+      "name": "required",
+      "type": "boolean",
+      "required": false,
+      "defaultValue": false,
+      "description": "If true, the input is required. When true, the label will display \"(required) *\" format"
+    },
+    {
+      "name": "error",
+      "type": "boolean",
+      "required": false,
+      "defaultValue": false,
+      "description": "If true, the input will be in an error state. When true, displays error icon and styles helper text in red"
+    },
+    {
+      "name": "helperText",
+      "type": "string",
+      "required": false,
+      "description": "Helper text displayed below the input. Displays with error icon if error prop is true"
+    },
+    {
+      "name": "placeholder",
+      "type": "string",
+      "required": false,
+      "description": "The placeholder content"
+    },
+    {
+      "name": "type",
+      "type": "string",
+      "required": false,
+      "defaultValue": "text",
+      "description": "Type of the input element"
+    },
+    {
+      "name": "multiline",
+      "type": "boolean",
+      "required": false,
+      "defaultValue": false,
+      "description": "If true, the input will be multiline (textarea)"
+    },
+    {
+      "name": "rows",
+      "type": "number",
+      "required": false,
+      "defaultValue": 4,
+      "description": "Number of rows to display when multiline option is set"
+    }
+  ],
+  "examples": [
+    {
+      "title": "Default",
+      "description": "Basic input field",
+      "code": "import { Input } from '@/components';\n\n<Input label=\"Label\" placeholder=\"Enter text\" variant=\"outlined\" />"
+    },
+    {
+      "title": "Required",
+      "description": "Required input field with formatted label",
+      "code": "import { Input } from '@/components';\n\n<Input label=\"Email\" required variant=\"outlined\" />"
+    },
+    {
+      "title": "Error State",
+      "description": "Input with error state and custom error icon",
+      "code": "import { Input } from '@/components';\n\n<Input \n  label=\"Email\" \n  error \n  helperText=\"Invalid email address\" \n  variant=\"outlined\" \n/>"
+    },
+    {
+      "title": "Multiline",
+      "description": "Multiline textarea input",
+      "code": "import { Input } from '@/components';\n\n<Input \n  label=\"Comments\" \n  multiline \n  rows={4} \n  placeholder=\"Enter your comments here\" \n  variant=\"outlined\" \n/>"
+    }
+  ],
+  "migrationExamples": [
+    {
+      "mui": "import { TextField } from '@mui/material';\n\n<TextField \n  label=\"Email\" \n  variant=\"outlined\" \n  required \n  error={hasError}\n  helperText={errorMessage}\n/>",
+      "designSystem": "import { Input } from '@/components';\n\n<Input \n  label=\"Email\" \n  variant=\"outlined\" \n  required \n  error={hasError}\n  helperText={errorMessage}\n/>",
+      "description": "Replace MUI TextField with design system Input"
+    }
+  ],
+  "relatedComponents": ["PasswordInput", "DatePicker", "Search"],
+  "accessibility": {
+    "ariaAttributes": ["aria-label", "aria-required", "aria-invalid", "aria-describedby"],
+    "keyboardNavigation": "Standard keyboard navigation supported",
+    "screenReaderNotes": "Label association, error messages, and required state are announced to screen readers"
+  },
+  "usageGuidelines": {
+    "whenToUse": [
+      "Text input fields in forms",
+      "Email, password, number, and other input types",
+      "Multiline text areas",
+      "Form inputs with validation states"
+    ],
+    "whenNotToUse": [
+      "For password inputs with show/hide toggle (use PasswordInput instead)",
+      "For date selection (use DatePicker instead)",
+      "For search functionality (use Search component instead)"
+    ],
+    "bestPractices": [
+      "Always provide a label for accessibility",
+      "Use helperText for validation messages",
+      "Use error prop and helperText together for error states",
+      "Use required prop for required fields"
+    ],
+    "commonPatterns": [
+      "Form inputs with validation",
+      "Controlled inputs with value and onChange",
+      "Multiline inputs for longer text"
+    ]
+  },
+  "importPath": "@/components/atoms/Input",
+  "exportPath": "@/components"
+}
+
+
+

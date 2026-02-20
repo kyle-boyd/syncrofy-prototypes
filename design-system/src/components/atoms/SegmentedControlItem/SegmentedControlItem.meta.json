@@ -1,0 +1,33 @@
+{
+  "name": "SegmentedControlItem",
+  "displayName": "SegmentedControlItem",
+  "category": "atom",
+  "description": "Individual item component for SegmentedControl. Supports selected/unselected variants, different sizes, and various content options.",
+  "props": [
+    {"name": "variant", "type": "'selected' | 'unselected'", "required": false, "defaultValue": "unselected", "description": "Visual variant of the item"},
+    {"name": "size", "type": "'sm' | 'md'", "required": false, "defaultValue": "md", "description": "Size of the item"},
+    {"name": "content", "type": "'icon-only' | 'text-only' | 'icon-text'", "required": false, "defaultValue": "text-only", "description": "Content layout type"},
+    {"name": "children", "type": "string", "required": false, "description": "The text content"},
+    {"name": "icon", "type": "React.ReactNode", "required": false, "description": "The icon to display"},
+    {"name": "disabled", "type": "boolean", "required": false, "defaultValue": false, "description": "If true, the item is disabled"},
+    {"name": "onClick", "type": "() => void", "required": false, "description": "Click handler"}
+  ],
+  "examples": [
+    {"title": "Text Only", "description": "SegmentedControlItem with text content", "code": "import { SegmentedControlItem } from '@/components';\n\n<SegmentedControlItem variant=\"selected\">Option 1</SegmentedControlItem>"},
+    {"title": "Icon and Text", "description": "SegmentedControlItem with icon and text", "code": "import { SegmentedControlItem } from '@/components';\nimport ListIcon from '@mui/icons-material/List';\n\n<SegmentedControlItem variant=\"unselected\" content=\"icon-text\" icon={<ListIcon />}>\n  List View\n</SegmentedControlItem>"}
+  ],
+  "relatedComponents": ["SegmentedControl", "ToggleButton", "Button"],
+  "accessibility": {
+    "ariaAttributes": ["aria-pressed"],
+    "keyboardNavigation": "Enter or Space activates, part of radiogroup in SegmentedControl",
+    "screenReaderNotes": "Selected state announced via aria-pressed"
+  },
+  "usageGuidelines": {
+    "whenToUse": ["Building custom segmented controls", "Tab-like selection items"],
+    "whenNotToUse": ["Use SegmentedControl molecule for complete segmented controls"],
+    "bestPractices": ["Usually used within SegmentedControl, not standalone", "Provide text for accessibility when using icon-only"],
+    "commonPatterns": ["Part of SegmentedControl molecule"]
+  },
+  "importPath": "@/components/atoms/SegmentedControlItem",
+  "exportPath": "@/components"
+}

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Minimal Storybook Test</title>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="module">
+        // Test if we can at least load the storybook iframe
+        const iframe = document.createElement('iframe');
+        iframe.src = 'http://localhost:6011/iframe.html?id=test-simple--basic';
+        iframe.style.width = '100%';
+        iframe.style.height = '600px';
+        iframe.style.border = '1px solid #ccc';
+        document.getElementById('root').appendChild(iframe);
+
+        console.log('Iframe created and loaded');
+    </script>
+</body>
+</html>

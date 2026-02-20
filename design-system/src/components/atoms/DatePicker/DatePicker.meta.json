@@ -1,0 +1,41 @@
+{
+  "name": "DatePicker",
+  "displayName": "DatePicker",
+  "category": "atom",
+  "description": "DatePicker component for selecting dates. Extends MUI X DatePicker with custom styling that matches the design system.",
+  "muiComponent": "DatePicker",
+  "muiPackage": "@mui/x-date-pickers",
+  "props": [
+    {"name": "value", "type": "Date | null", "required": false, "description": "The selected date"},
+    {"name": "onChange", "type": "(value: Date | null) => void", "required": false, "description": "Callback fired when the date changes"},
+    {"name": "label", "type": "string", "required": false, "description": "The label of the input"},
+    {"name": "disabled", "type": "boolean", "required": false, "description": "If true, the input is disabled"},
+    {"name": "required", "type": "boolean", "required": false, "description": "If true, the input is required"},
+    {"name": "error", "type": "boolean", "required": false, "description": "Error state"},
+    {"name": "helperText", "type": "string", "required": false, "description": "Helper text to display below the input"}
+  ],
+  "examples": [
+    {"title": "Basic", "description": "Simple date picker", "code": "import { DatePicker } from '@/components';\n\n<DatePicker label=\"Select date\" />"}
+  ],
+  "migrationExamples": [
+    {
+      "mui": "import { DatePicker } from '@mui/x-date-pickers/DatePicker';\n\n<DatePicker label=\"Select date\" />",
+      "designSystem": "import { DatePicker } from '@/components';\n\n<DatePicker label=\"Select date\" />",
+      "description": "Replace MUI X DatePicker with design system DatePicker"
+    }
+  ],
+  "relatedComponents": ["Input", "Search"],
+  "accessibility": {
+    "ariaAttributes": ["aria-label", "aria-required", "aria-invalid"],
+    "keyboardNavigation": "Arrow keys navigate calendar, Enter selects date, Escape closes",
+    "screenReaderNotes": "Selected date and available dates are announced"
+  },
+  "usageGuidelines": {
+    "whenToUse": ["Date selection in forms", "Date range filters", "Scheduling interfaces"],
+    "whenNotToUse": ["For time-only selection", "For simple text date input without calendar"],
+    "bestPractices": ["Provide a label for accessibility", "Use error and helperText for validation", "Consider date format localization"],
+    "commonPatterns": ["Form date field with validation", "Date range filter with two pickers"]
+  },
+  "importPath": "@/components/atoms/DatePicker",
+  "exportPath": "@/components"
+}

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Button Component Test</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+    />
+    <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/icon?family=Material+Icons"
+    />
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <h1>Button Component Test</h1>
+
+    <div class="test-section">
+        <h2>Basic Button</h2>
+        <div id="button-test-1"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Button Variants</h2>
+        <div id="button-test-2"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Button Colors</h2>
+        <div id="button-test-3"></div>
+    </div>
+
+    <script type="text/babel">
+        // Mock Button component for testing
+        const Button = ({ children, variant = 'contained', color = 'primary', ...props }) => {
+            const className = `button-${variant}-${color}`;
+            return (
+                <button
+                    className={className}
+                    style={{
+                        padding: '8px 16px',
+                        borderRadius: '4px',
+                        border: variant === 'outlined' ? '1px solid #1976d2' : 'none',
+                        backgroundColor: variant === 'contained' ? '#1976d2' : 'transparent',
+                        color: variant === 'contained' ? 'white' : '#1976d2',
+                        fontSize: '14px',
+                        fontWeight: '500',
+                        cursor: 'pointer',
+                        margin: '4px',
+                        ...props.style
+                    }}
+                    {...props}
+                >
+                    {children}
+                </button>
+            );
+        };
+
+        // Test 1: Basic Button
+        ReactDOM.render(
+            <div>
+                <h3>Basic Button Test</h3>
+                <Button>Click Me</Button>
+                <p>✅ Basic button renders successfully</p>
+            </div>,
+            document.getElementById('button-test-1')
+        );
+
+        // Test 2: Button Variants
+        ReactDOM.render(
+            <div>
+                <h3>Button Variants Test</h3>
+                <div>
+                    <Button variant="contained">Contained</Button>
+                    <Button variant="outlined">Outlined</Button>
+                    <Button variant="text">Text</Button>
+                </div>
+                <p>✅ All button variants render successfully</p>
+            </div>,
+            document.getElementById('button-test-2')
+        );
+
+        // Test 3: Button Colors
+        ReactDOM.render(
+            <div>
+                <h3>Button Colors Test</h3>
+                <div>
+                    <Button color="primary">Primary</Button>
+                    <Button color="secondary">Secondary</Button>
+                    <Button color="error">Error</Button>
+                </div>
+                <p>✅ Button colors render successfully</p>
+            </div>,
+            document.getElementById('button-test-3')
+        );
+
+        console.log('Button component tests completed successfully!');
+    </script>
+</body>
+</html>

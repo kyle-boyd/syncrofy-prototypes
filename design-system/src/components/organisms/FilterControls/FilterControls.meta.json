@@ -1,0 +1,37 @@
+{
+  "name": "FilterControls",
+  "displayName": "FilterControls",
+  "category": "organism",
+  "description": "FilterControls component for filtering tables and content. Combines search, filter dropdowns, active filter chips, time range selector, and action buttons in a unified toolbar.",
+  "props": [
+    {"name": "search", "type": "{placeholder, value, onChange, onSearch}", "required": false, "description": "Search configuration"},
+    {"name": "filters", "type": "FilterOption[]", "required": false, "description": "Filter dropdowns"},
+    {"name": "onFilterChange", "type": "function", "required": false, "description": "Callback when filter changes"},
+    {"name": "activeFilters", "type": "ActiveFilter[]", "required": false, "description": "Currently active filters"},
+    {"name": "onFilterRemove", "type": "function", "required": false, "description": "Callback when filter is removed"},
+    {"name": "onClearAll", "type": "function", "required": false, "description": "Callback when clear all is clicked"},
+    {"name": "resultCount", "type": "string", "required": false, "description": "e.g., \"1.3 million transfers\""},
+    {"name": "timeRange", "type": "{items, selectedId, onChange}", "required": false, "description": "Time range selector config"},
+    {"name": "actions", "type": "{primary: {label, onClick, icon}, secondary: {label, onClick, options, onSelect}}", "required": false, "description": "Action buttons"},
+    {"name": "layoutToggle", "type": "{mode, onChange}", "required": false, "description": "Layout toggle config"},
+    {"name": "editButton", "type": "{onClick}", "required": false, "description": "Edit button config"},
+    {"name": "showClearAll", "type": "boolean", "required": false, "defaultValue": true, "description": "Show clear all button"}
+  ],
+  "examples": [
+    {"title": "Table Filter Bar", "description": "Filter controls above a data table", "code": "import { FilterControls } from '@/components';\n\n<FilterControls\n  search={{ placeholder: 'Search...', value, onChange }}\n  filters={filterOptions}\n  activeFilters={activeFilters}\n  resultCount=\"1,234 results\"\n/>"}
+  ],
+  "relatedComponents": ["Search", "Dropdown", "Chips", "SegmentedControl", "Table"],
+  "accessibility": {
+    "ariaAttributes": [],
+    "keyboardNavigation": "",
+    "screenReaderNotes": ""
+  },
+  "usageGuidelines": {
+    "whenToUse": ["Above data tables for filtering", "Content list filtering", "Dashboard filter toolbars"],
+    "whenNotToUse": ["For simple search-only interfaces (use Search directly)", "For navigation (use Tabs or SideNav)"],
+    "bestPractices": ["Show active filters as removable chips", "Provide clear all functionality", "Display result count for context", "Use consistent filter ordering"],
+    "commonPatterns": ["Table toolbar with search and filters", "Dashboard filter bar with time range", "Report controls with actions"]
+  },
+  "importPath": "@/components/organisms/FilterControls",
+  "exportPath": "@/components"
+}

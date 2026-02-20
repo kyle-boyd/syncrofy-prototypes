@@ -1,0 +1,58 @@
+{
+  "name": "Table",
+  "displayName": "Table",
+  "category": "organism",
+  "description": "Table component for displaying tabular data. Provides a data-driven API with custom column rendering, sticky headers, and striped rows.",
+  "muiComponent": "Table",
+  "muiPackage": "@mui/material",
+  "props": [
+    {"name": "columns", "type": "TableColumn[]", "required": true, "description": "Columns with id, label, align, headerCheckbox, render, sortable, sortValue, width, minWidth, maxWidth"},
+    {"name": "rows", "type": "T[]", "required": true, "description": "Row data array"},
+    {"name": "stickyHeader", "type": "boolean", "required": false, "defaultValue": false, "description": "If true, header stays visible on scroll"},
+    {"name": "striped", "type": "boolean", "required": false, "defaultValue": false, "description": "If true, alternate row background"},
+    {"name": "size", "type": "'small' | 'medium'", "required": false, "defaultValue": "medium", "description": "Row density"},
+    {"name": "maxHeight", "type": "number", "required": false, "description": "Max height for scrollable table"},
+    {"name": "sortBy", "type": "string", "required": false, "description": "Column id currently sorted (controlled when onSort is provided)"},
+    {"name": "sortDirection", "type": "'asc' | 'desc'", "required": false, "description": "Sort direction (controlled when onSort is provided)"},
+    {"name": "onSort", "type": "(columnId: string, direction: 'asc' | 'desc') => void", "required": false, "description": "Called when user requests sort; when provided, sorting is controlled"},
+    {"name": "resizableColumns", "type": "boolean", "required": false, "defaultValue": false, "description": "When true, columns can be resized by dragging the header edge"}
+  ],
+  "examples": [
+    {"title": "Basic Table", "description": "Data table with columns", "code": "import { Table } from '@/components';\n\n<Table\n  columns={[\n    { id: 'name', label: 'Name' },\n    { id: 'email', label: 'Email' }\n  ]}\n  rows={data}\n/>"}
+  ],
+  "migrationExamples": [
+    {"mui": "import { Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';\n// Manual table structure", "designSystem": "import { Table } from '@/components';\n<Table\n  columns={[{ id: 'name', label: 'Name' }]}\n  rows={data}\n/>", "description": "Replace manual MUI Table composition with data-driven Table"}
+  ],
+  "relatedComponents": ["Pagination", "FilterControls", "Checkbox"],
+  "accessibility": {
+    "ariaAttributes": ["role=\"table\"", "aria-label"],
+    "keyboardNavigation": "Tab navigates interactive cells, Arrow keys for cell navigation",
+    "screenReaderNotes": "Column headers, cell content, and row context announced"
+  },
+  "usageGuidelines": {
+    "whenToUse": ["Displaying structured data", "Data grids with sorting/filtering", "Report views"],
+    "whenNotToUse": ["For simple key-value display (use list)", "For card-based layouts"],
+    "bestPractices": ["Use stickyHeader for long tables", "Provide custom render functions for complex cells", "Use striped for readability in dense tables", "Pair with FilterControls and Pagination"],
+    "commonPatterns": ["Data table with filtering and pagination", "Report table with checkbox selection"]
+  },
+  "dataCellComponents": {
+    "displayOnly": [
+      "TextCell – plain text; variant primary/secondary, optional bold",
+      "NumberCell – numeric value, right-aligned; optional format",
+      "BadgeCell – circular icon + label; variant inbound/outbound/success/failed/unknown",
+      "TwoLineCell – primary (bold) + secondary line; e.g. time + date",
+      "EmptyCell – placeholder for missing data (default —)"
+    ],
+    "editableOrCompound": [
+      "TextInputCell",
+      "NumberStepperCell",
+      "LabelCell",
+      "TagCell",
+      "TagsCell",
+      "CheckboxCell",
+      "ActionIconsCell"
+    ]
+  },
+  "importPath": "@/components/organisms/Table",
+  "exportPath": "@/components"
+}

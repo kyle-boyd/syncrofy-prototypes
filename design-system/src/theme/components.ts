@@ -8,7 +8,7 @@ export const components: ThemeOptions['components'] = {
     defaultProps: {
       disableElevation: false,
     },
-    styleOverrides: {
+    styleOverrides: ((theme: any) => ({
       root: {
         fontFamily: 'Geist, sans-serif',
         borderRadius: 8,
@@ -18,77 +18,16 @@ export const components: ThemeOptions['components'] = {
         transition: 'background 0.15s, color 0.15s, border 0.15s, box-shadow 0.15s',
         fontSize: '0.9375rem',
       },
-      containedPrimary: ({ theme }) => ({
+      contained: {
         backgroundColor: theme.palette.primary.main,
         color: theme.palette.primary.contrastText,
+        boxShadow: theme.shadows[1], // use elevation-1
         '&:hover': {
           backgroundColor: theme.palette.primary.dark,
-        },
-      }),
-      containedSecondary: ({ theme }) => ({
-        backgroundColor: theme.palette.secondary.main,
-        color: theme.palette.secondary.contrastText,
-        '&:hover': {
-          backgroundColor: theme.palette.secondary.dark,
-        },
-      }),
-      containedError: ({ theme }) => ({
-        backgroundColor: theme.palette.error.main,
-        color: theme.palette.error.contrastText,
-        '&:hover': {
-          backgroundColor: theme.palette.error.dark,
-        },
-      }),
-      outlinedPrimary: ({ theme }) => ({
-        border: `1.5px solid ${theme.palette.primary.main}`,
-        color: theme.palette.primary.main,
-        '&:hover': {
-          borderColor: theme.palette.primary.dark,
-          color: theme.palette.primary.dark,
-        },
-      }),
-      outlinedSecondary: ({ theme }) => ({
-        border: `1.5px solid var(--variant-outlinedBorder)`,
-        borderColor: 'var(--variant-outlinedBorder)',
-        borderImage: 'none',
-        color: theme.palette.secondary.main,
-        '&:hover': {
-          borderColor: theme.palette.secondary.dark,
-          color: theme.palette.secondary.dark,
-        },
-      }),
-      outlinedError: ({ theme }) => ({
-        border: `1.5px solid ${theme.palette.error.main}`,
-        color: theme.palette.error.main,
-        '&:hover': {
-          borderColor: theme.palette.error.dark,
-          color: theme.palette.error.dark,
-        },
-      }),
-      textPrimary: ({ theme }) => ({
-        color: theme.palette.primary.main,
-        '&:hover': {
-          color: theme.palette.primary.dark,
-        },
-      }),
-      textSecondary: ({ theme }) => ({
-        color: theme.palette.secondary.main,
-        '&:hover': {
-          color: theme.palette.secondary.dark,
-        },
-      }),
-      textError: ({ theme }) => ({
-        color: theme.palette.error.main,
-        '&:hover': {
-          color: theme.palette.error.dark,
-        },
-      }),
-      contained: ({ theme }) => ({
-        boxShadow: theme.shadows[1],
-        '&:hover': {
           boxShadow: theme.shadows[1],
         },
         '&:active': {
+          backgroundColor: theme.palette.primary.dark,
           boxShadow: theme.shadows[1],
         },
         '&.Mui-disabled': {
@@ -96,13 +35,16 @@ export const components: ThemeOptions['components'] = {
           color: theme.palette.text.disabled,
           boxShadow: theme.shadows[1],
         }
-      }),
-      outlined: ({ theme }) => ({
+      },
+      outlined: {
+        border: `1.5px solid ${theme.palette.primary.main}`,
+        color: theme.palette.primary.main,
         backgroundColor: 'transparent',
-        borderImage: 'none',
-        boxShadow: theme.shadows[1],
+        boxShadow: theme.shadows[1], // use elevation-1
         '&:hover': {
           backgroundColor: theme.palette.action.hover,
+          borderColor: theme.palette.primary.dark,
+          color: theme.palette.primary.dark,
           boxShadow: theme.shadows[1],
         },
         '&:active': {
@@ -114,10 +56,12 @@ export const components: ThemeOptions['components'] = {
           color: theme.palette.text.disabled,
           boxShadow: theme.shadows[1],
         },
-      }),
-      text: ({ theme }) => ({
+      },
+      text: {
+        color: theme.palette.primary.main,
         '&:hover': {
           backgroundColor: theme.palette.action.hover,
+          color: theme.palette.primary.dark,
         },
         '&:active': {
           backgroundColor: theme.palette.action.selected,
@@ -125,7 +69,7 @@ export const components: ThemeOptions['components'] = {
         '&.Mui-disabled': {
           color: theme.palette.text.disabled,
         }
-      }),
+      },
       sizeSmall: {
         padding: '6px 16px',
         fontSize: '0.8125rem',
@@ -134,7 +78,7 @@ export const components: ThemeOptions['components'] = {
         padding: '12px 32px',
         fontSize: '1.05rem',
       },
-    },
+    })) as any,
   },
   MuiTextField: {
     styleOverrides: {
@@ -146,8 +90,8 @@ export const components: ThemeOptions['components'] = {
     },
   },
   MuiOutlinedInput: {
-    styleOverrides: {
-      root: ({ theme }) => ({
+    styleOverrides: ((theme: any) => ({
+      root: {
         borderRadius: 8,
         backgroundColor: theme.palette.background.default,
         fontSize: '14px',
@@ -168,12 +112,12 @@ export const components: ThemeOptions['components'] = {
             borderColor: theme.palette.grey[300],
           },
         },
-      }),
-      notchedOutline: ({ theme }) => ({
+      },
+      notchedOutline: {
         borderColor: theme.palette.grey[400],
         borderWidth: '1px',
-      }),
-      input: ({ theme }) => ({
+      },
+      input: {
         padding: '10px 14px',
         fontSize: '14px',
         lineHeight: '20px',
@@ -181,12 +125,12 @@ export const components: ThemeOptions['components'] = {
           color: theme.palette.text.disabled,
           opacity: 1,
         },
-      }),
-    },
+      },
+    })) as any,
   },
   MuiInputLabel: {
-    styleOverrides: {
-      root: ({ theme }) => ({
+    styleOverrides: ((theme: any) => ({
+      root: {
         fontSize: '14px',
         fontFamily: 'Geist, sans-serif',
         fontWeight: 700,
@@ -198,7 +142,7 @@ export const components: ThemeOptions['components'] = {
         '&.Mui-error': {
           color: theme.palette.text.primary,
         },
-      }),
+      },
       outlined: {
         transform: 'translate(0, 0) scale(1)',
         position: 'static',
@@ -208,11 +152,11 @@ export const components: ThemeOptions['components'] = {
         transform: 'translate(0, 0) scale(1)',
         position: 'static',
       },
-    },
+    })) as any,
   },
   MuiFormHelperText: {
-    styleOverrides: {
-      root: ({ theme }) => ({
+    styleOverrides: ((theme: any) => ({
+      root: {
         marginTop: '4px',
         marginLeft: 0,
         fontSize: '14px',
@@ -225,8 +169,8 @@ export const components: ThemeOptions['components'] = {
           alignItems: 'center',
           gap: '8px',
         },
-      }),
-    },
+      },
+    })) as any,
   },
   MuiCard: {
     styleOverrides: {
@@ -257,7 +201,7 @@ export const components: ThemeOptions['components'] = {
         borderRadius: 8,
       },
       elevation0: {
-        backgroundColor: '#FFFFFF',
+        backgroundColor: '#FAFCFC',
       },
       elevation1: {
         backgroundColor: '#FAFCFC',
@@ -342,51 +286,6 @@ export const components: ThemeOptions['components'] = {
         lineHeight: 1.5,
         letterSpacing: 0,
       },
-    },
-  },
-  MuiTypography: {
-    styleOverrides: {
-      // Ensure variant styles are applied with sufficient specificity
-      // This ensures that variant styles override browser defaults even when component prop changes the HTML element
-      h6: ({ theme }) => ({
-        fontWeight: theme.typography.h6.fontWeight || 600,
-        fontSize: theme.typography.h6.fontSize,
-        fontFamily: theme.typography.h6.fontFamily,
-        lineHeight: theme.typography.h6.lineHeight,
-        letterSpacing: theme.typography.h6.letterSpacing,
-      }),
-      h5: ({ theme }) => ({
-        fontWeight: theme.typography.h5.fontWeight,
-        fontSize: theme.typography.h5.fontSize,
-        fontFamily: theme.typography.h5.fontFamily,
-        lineHeight: theme.typography.h5.lineHeight,
-        letterSpacing: theme.typography.h5.letterSpacing,
-      }),
-      h4: ({ theme }) => ({
-        fontWeight: theme.typography.h4.fontWeight,
-        fontSize: theme.typography.h4.fontSize,
-        fontFamily: theme.typography.h4.fontFamily,
-        lineHeight: theme.typography.h4.lineHeight,
-        letterSpacing: theme.typography.h4.letterSpacing,
-      }),
-      h3: ({ theme }) => ({
-        fontWeight: theme.typography.h3.fontWeight,
-        fontSize: theme.typography.h3.fontSize,
-        fontFamily: theme.typography.h3.fontFamily,
-        lineHeight: theme.typography.h3.lineHeight,
-      }),
-      h2: ({ theme }) => ({
-        fontWeight: theme.typography.h2.fontWeight,
-        fontSize: theme.typography.h2.fontSize,
-        fontFamily: theme.typography.h2.fontFamily,
-        lineHeight: theme.typography.h2.lineHeight,
-      }),
-      h1: ({ theme }) => ({
-        fontWeight: theme.typography.h1.fontWeight,
-        fontSize: theme.typography.h1.fontSize,
-        fontFamily: theme.typography.h1.fontFamily,
-        lineHeight: theme.typography.h1.lineHeight,
-      }),
     },
   },
 };

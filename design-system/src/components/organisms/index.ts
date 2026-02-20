@@ -6,21 +6,49 @@ export { Modal } from './Modal';
 export type { ModalProps } from './Modal';
 
 export { SideNav, TopNav, CollapsibleSideNav, Header } from './Navigation';
-export type { SideNavProps, SideNavItem, TopNavProps, CollapsibleSideNavProps, CollapsibleSideNavItem, HeaderProps, EnvironmentOption, Notification } from './Navigation';
+export type { SideNavProps, SideNavItem, TopNavProps, CollapsibleSideNavProps, CollapsibleSideNavItem, HeaderProps } from './Navigation';
 
 export { Pagination } from './Pagination';
 export type { PaginationProps } from './Pagination';
 
-export { Table } from './Table';
-export type { TableProps, TableColumn } from './Table';
+export { FilterControls } from './FilterControls';
+export type { FilterControlsProps, FilterOption, ActiveFilter } from './FilterControls';
 
-export { FilterControls } from './FilterControls/FilterControls';
-export type { FilterControlsProps, FilterOption, ActiveFilter } from './FilterControls/FilterControls';
+export { ViewControls } from './ViewControls';
+export type { ViewControlsProps } from './ViewControls';
 
-export { ViewControls } from './ViewControls/ViewControls';
-export type { ViewControlsProps } from './ViewControls/ViewControls';
+export { PageHeader } from './PageHeader';
+export type { PageHeaderProps } from './PageHeader';
 
-export { PageHeader } from './PageHeader/PageHeader';
-export type { PageHeaderProps } from './PageHeader/PageHeader';
-
-
+export {
+  Table,
+  TextCell,
+  NumberCell,
+  BadgeCell,
+  TwoLineCell,
+  EmptyCell,
+  TextInputCell,
+  NumberStepperCell,
+  LabelCell,
+  TagCell,
+  TagsCell,
+  CheckboxCell,
+  ActionIconsCell,
+} from './Table';
+export type {
+  TableProps,
+  TableColumn,
+  TextCellProps,
+  NumberCellProps,
+  BadgeCellProps,
+  BadgeCellVariant,
+  TwoLineCellProps,
+  EmptyCellProps,
+  TextInputCellProps,
+  NumberStepperCellProps,
+  LabelCellProps,
+  TagCellProps,
+  TagsCellProps,
+  CheckboxCellProps,
+  ActionIconsCellProps,
+} from './Table';

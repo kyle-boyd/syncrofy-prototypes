@@ -19,6 +19,7 @@ import {
   Tag,
 } from '@kyleboyd/design-system';
 import { PageLayout } from '../components/PageLayout';
+import { CustomizeColumnsModal, ColumnConfig } from '../components/CustomizeColumnsModal';
 
 // Transfer data interface
 export interface Transfer {
@@ -202,6 +203,32 @@ const mockTransfers: Transfer[] = [
   },
 ];
 
+// All column identifiers in display order
+const ALL_COLUMN_IDS: string[] = [
+  'id',
+  'sender',
+  'receiver',
+  'direction',
+  'senderFileName',
+  'senderFileSize',
+  'status',
+  'startTime',
+  'endTime',
+];
+
+// Human-readable labels for each column
+const COLUMN_LABELS: Record<string, string> = {
+  id: 'Transfer ID',
+  sender: 'Sender',
+  receiver: 'Receiver',
+  direction: 'Direction',
+  senderFileName: 'Sender File Name',
+  senderFileSize: 'Sender File Size',
+  status: 'Status',
+  startTime: 'Start (MST)',
+  endTime: 'End (MST)',
+};
+
 function Transfers() {
   const navigate = useNavigate();
   // State management
@@ -213,6 +240,9 @@ function Transfers() {
   const [searchValue, setSearchValue] = useState('');
   const [sortField, setSortField] = useState<string>('');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+  const [customizeColumnsOpen, setCustomizeColumnsOpen] = useState(false);
+  const [customizeColumnsAnchor, setCustomizeColumnsAnchor] = useState<HTMLElement | null>(null);
+  const [visibleColumns, setVisibleColumns] = useState<string[]>(ALL_COLUMN_IDS);
   
   // Column resizing state
   const [columnWidths, setColumnWidths] = useState<Record<string, number>>({});
@@ -227,10 +257,7 @@ function Transfers() {
   const [headerHeight, setHeaderHeight] = useState<number>(48);
   
   // Column IDs in order - defined before columns to avoid dependency issues
-  const columnIds = useMemo(() => [
-    'id', 'sender', 'receiver', 'direction', 'senderFileName', 
-    'senderFileSize', 'status', 'startTime', 'endTime'
-  ], []);
+  const columnIds = useMemo(() => ALL_COLUMN_IDS, []);
 
   // Default widths for each column
   const defaultColumnWidths: Record<string, number> = {
@@ -479,6 +506,27 @@ function Transfers() {
       window.removeEventListener('resize', updatePositions);
     };
   }, [columnIds, filteredAndSortedTransfers.length, resizingColumn]); // Added resizingColumn to skip updates during resize
+
+  // Find the customize columns button when popover opens
+  useEffect(() => {
+    if (customizeColumnsOpen) {
+      // Find the button by looking for the text "Customize Columns"
+      const findButton = () => {
+        const buttons = Array.from(document.querySelectorAll('button'));
+        const customizeButton = buttons.find(
+          (btn) => btn.textContent?.includes('Customize Columns')
+        );
+        if (customizeButton) {
+          setCustomizeColumnsAnchor(customizeButton);
+        }
+      };
+      // Small delay to ensure button is rendered
+      const timeoutId = setTimeout(findButton, 10);
+      return () => clearTimeout(timeoutId);
+    } else {
+      setCustomizeColumnsAnchor(null);
+    }
+  }, [customizeColumnsOpen]);
 
   const filterOptions: FilterOption[] = [
     {
@@ -753,7 +801,12 @@ function Transfers() {
         );
       },
     },
-  ], [sortField, sortDirection, columnWidths]);
+  ].filter((column) => visibleColumns.includes(column.id as string)), [
+    sortField,
+    sortDirection,
+    columnWidths,
+    visibleColumns,
+  ]);
 
   return (
     <PageLayout selectedNavItem="transfers" backgroundColor="#FAFCFC">
@@ -788,7 +841,7 @@ function Transfers() {
           pt: 3, // Add padding top to compensate for the negative top offset
           pb: 2,
           mb: '16px',
-          mx: -3, // Negative margin to extend to container edges
+          mx: 0,
           px: 3, // Add padding back
         }}
       >
@@ -810,7 +863,9 @@ function Transfers() {
           actions={{
             secondary: {
               label: 'Customize Columns',
-              onClick: () => { },
+              onClick: () => {
+                setCustomizeColumnsOpen(true);
+              },
             }
           }}
         />
@@ -896,8 +951,8 @@ function Transfers() {
             },
           }}
           {...({
-            onRowClick: (row: Transfer) => {
-              navigate(`/transfers/${row.id}`);
+            onRowClick: (row: any) => {
+              navigate(`/transfers/${row.id as string}`);
             },
           } as any)}
         />
@@ -952,6 +1007,33 @@ function Transfers() {
           })}
         </Box>
       </Box>
+      {/* Customize Columns Popover */}
+      <CustomizeColumnsModal
+        open={customizeColumnsOpen}
+        anchorEl={customizeColumnsAnchor}
+        onClose={() => {
+          setCustomizeColumnsOpen(false);
+          setCustomizeColumnsAnchor(null);
+        }}
+        columns={columnIds.map((id): ColumnConfig => ({
+          id,
+          label: COLUMN_LABELS[id] || id,
+          visible: visibleColumns.includes(id),
+        }))}
+        allAvailableColumns={ALL_COLUMN_IDS.map((id): ColumnConfig => ({
+          id,
+          label: COLUMN_LABELS[id] || id,
+          visible: true,
+        }))}
+        onApply={(visibleIds) => {
+          setVisibleColumns(visibleIds);
+        }}
+        onReset={() => {
+          setVisibleColumns(ALL_COLUMN_IDS);
+          // Reset widths back to defaults
+          setColumnWidths({});
+        }}
+      />
     </PageLayout>
   );
 }

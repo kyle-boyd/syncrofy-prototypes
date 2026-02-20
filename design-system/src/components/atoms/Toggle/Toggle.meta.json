@@ -1,0 +1,36 @@
+{
+  "name": "Toggle",
+  "displayName": "Toggle",
+  "category": "atom",
+  "description": "Toggle component (Switch) for boolean input. Represents an on/off state. Extends MUI Switch with custom styling.",
+  "muiComponent": "Switch",
+  "muiPackage": "@mui/material",
+  "props": [
+    {"name": "checked", "type": "boolean", "required": false, "description": "If true, the toggle is on"},
+    {"name": "disabled", "type": "boolean", "required": false, "description": "If true, the toggle is disabled"},
+    {"name": "color", "type": "'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning'", "required": false, "description": "Color of the toggle"},
+    {"name": "size", "type": "'small' | 'medium'", "required": false, "description": "Size of the toggle"},
+    {"name": "onChange", "type": "(event, checked) => void", "required": false, "description": "Callback fired when the state changes"}
+  ],
+  "examples": [
+    {"title": "Basic", "description": "Simple toggle switch", "code": "import { Toggle } from '@/components';\n\n<Toggle checked={true} />"},
+    {"title": "With Label", "description": "Toggle with FormControlLabel", "code": "import { Toggle } from '@/components';\nimport FormControlLabel from '@mui/material/FormControlLabel';\n\n<FormControlLabel control={<Toggle checked={enabled} onChange={(e, v) => setEnabled(v)} />} label=\"Enable notifications\" />"}
+  ],
+  "migrationExamples": [
+    {"mui": "import { Switch } from '@mui/material';\n<Switch checked={true} />", "designSystem": "import { Toggle } from '@/components';\n<Toggle checked={true} />", "description": "Replace MUI Switch with Toggle component"}
+  ],
+  "relatedComponents": ["Checkbox", "Radio"],
+  "accessibility": {
+    "ariaAttributes": ["aria-checked", "aria-label", "role=\"switch\""],
+    "keyboardNavigation": "Space key toggles the switch",
+    "screenReaderNotes": "Switch state (on/off) is announced"
+  },
+  "usageGuidelines": {
+    "whenToUse": ["Binary on/off settings", "Feature toggles", "Enabling/disabling options"],
+    "whenNotToUse": ["For multiple choices (use Checkbox instead)", "For selecting from options (use Radio instead)"],
+    "bestPractices": ["Always pair with a label", "Use for settings that take effect immediately", "Provide clear on/off context"],
+    "commonPatterns": ["Settings toggle with label", "Feature enable/disable", "Dark mode toggle"]
+  },
+  "importPath": "@/components/atoms/Toggle",
+  "exportPath": "@/components"
+}

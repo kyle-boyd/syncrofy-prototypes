@@ -1,0 +1,38 @@
+{
+  "name": "ViewControls",
+  "displayName": "ViewControls",
+  "category": "organism",
+  "description": "ViewControls component for managing views and view options. Supports two variants: Views (with dropdown and star/favorite button) and Exceptions (with segmented control).",
+  "props": [
+    {"name": "type", "type": "'Views' | 'Exceptions'", "required": false, "defaultValue": "Views", "description": "Variant type"},
+    {"name": "viewName", "type": "string", "required": false, "defaultValue": "View name", "description": "Current view name"},
+    {"name": "onViewNameClick", "type": "function", "required": false, "description": "View name click handler"},
+    {"name": "viewOptions", "type": "DropdownOption[]", "required": false, "description": "View dropdown options"},
+    {"name": "onViewSelect", "type": "function", "required": false, "description": "View selection handler"},
+    {"name": "selectedView", "type": "string | number", "required": false, "description": "Selected view ID"},
+    {"name": "onStarClick", "type": "function", "required": false, "description": "Star/favorite click handler"},
+    {"name": "onMoreOptionsClick", "type": "function", "required": false, "description": "More options click handler"},
+    {"name": "moreOptions", "type": "DropdownOption[]", "required": false, "description": "More options menu items"},
+    {"name": "onMoreOptionsSelect", "type": "function", "required": false, "description": "More options selection handler"},
+    {"name": "segmentedControlItems", "type": "SegmentedControlItemData[]", "required": false, "description": "Exceptions variant only"},
+    {"name": "selectedSegmentId", "type": "string | number", "required": false, "description": "Selected segment ID"},
+    {"name": "onSegmentChange", "type": "function", "required": false, "description": "Segment change handler"}
+  ],
+  "examples": [
+    {"title": "Views Variant", "description": "View selector with star and options", "code": "import { ViewControls } from '@/components';\n\n<ViewControls\n  type=\"Views\"\n  viewName=\"My View\"\n  viewOptions={viewOptions}\n  onViewSelect={handleViewSelect}\n  onStarClick={handleStar}\n/>"}
+  ],
+  "relatedComponents": ["Dropdown", "SegmentedControl", "IconButton", "FilterControls"],
+  "accessibility": {
+    "ariaAttributes": [],
+    "keyboardNavigation": "",
+    "screenReaderNotes": ""
+  },
+  "usageGuidelines": {
+    "whenToUse": ["Above tables for view management", "Report view selector", "Exception type toggles"],
+    "whenNotToUse": ["For page-level navigation (use Tabs or SideNav)"],
+    "bestPractices": ["Use Views variant for saved view management", "Use Exceptions variant for exception type filtering", "Pair with FilterControls for comprehensive toolbar"],
+    "commonPatterns": ["Table view selector with star and options", "Exception type toggle with more options menu"]
+  },
+  "importPath": "@/components/organisms/ViewControls",
+  "exportPath": "@/components"
+}

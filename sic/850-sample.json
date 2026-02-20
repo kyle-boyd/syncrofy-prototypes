@@ -1,0 +1,67 @@
+{
+  "documentType": "X12_850",
+  "header": {
+    "poNumber": "4636610649",
+    "poDate": "2022-09-15",
+    "buyerId": "008883494",
+    "vendorId": "0044453762",
+    "currency": "USD"
+  },
+  "parties": {
+    "buyer": {
+      "name": "WW Grainger Inc",
+      "idQualifier": "92",
+      "idValue": "GRAINGER"
+    },
+    "vendor": {
+      "name": "Demo Company LLC",
+      "idQualifier": "92",
+      "idValue": "DEMOCO"
+    },
+    "shipTo": {
+      "name": "WW Grainger Wichita Branch",
+      "address": {
+        "line1": "1920 S. West St.",
+        "city": "Wichita",
+        "state": "KS",
+        "postalCode": "67213",
+        "country": "US"
+      }
+    }
+  },
+  "lineItems": [
+    {
+      "lineNumber": "00001",
+      "quantity": 1,
+      "uom": "EA",
+      "unitPrice": 49.41,
+      "productId": {
+        "qualifier": "VN",
+        "value": "010020095"
+      },
+      "buyerPartNumber": "88CL30",
+      "description": "Demo item description",
+      "requestedDate": "2022-09-20"
+    },
+    {
+      "lineNumber": "00002",
+      "quantity": 5,
+      "uom": "EA",
+      "unitPrice": 12.75,
+      "productId": {
+        "qualifier": "VN",
+        "value": "020030110"
+      },
+      "buyerPartNumber": "22AB10",
+      "description": "Second demo line item",
+      "requestedDate": "2022-09-22"
+    }
+  ],
+  "totals": {
+    "lineItemCount": 2
+  },
+  "metadata": {
+    "source": "sample-upload",
+    "receivedTimestamp": "2022-09-15T16:08:00Z"
+  }
+}

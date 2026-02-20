@@ -1,0 +1,41 @@
+{
+  "name": "Badge",
+  "displayName": "Badge",
+  "category": "atom",
+  "description": "Badge component for displaying status indicators or counts on other elements. Extends MUI Badge with custom styling.",
+  "muiComponent": "Badge",
+  "muiPackage": "@mui/material",
+  "props": [
+    {"name": "children", "type": "React.ReactNode", "required": true, "description": "The content wrapped by the badge"},
+    {"name": "badgeContent", "type": "React.ReactNode", "required": false, "description": "The content rendered within the badge"},
+    {"name": "color", "type": "'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning'", "required": false, "description": "The color of the badge"},
+    {"name": "max", "type": "number", "required": false, "description": "Maximum count to show"},
+    {"name": "showZero", "type": "boolean", "required": false, "description": "Controls whether the badge is hidden when badgeContent is zero"},
+    {"name": "variant", "type": "'standard' | 'dot'", "required": false, "description": "The variant to use"}
+  ],
+  "examples": [
+    {"title": "With Count", "description": "Badge with numeric content", "code": "import { Badge } from '@/components';\nimport MailIcon from '@mui/icons-material/Mail';\n\n<Badge badgeContent={4} color=\"primary\">\n  <MailIcon />\n</Badge>"},
+    {"title": "Dot Variant", "description": "Badge with dot indicator", "code": "import { Badge } from '@/components';\nimport NotificationsIcon from '@mui/icons-material/Notifications';\n\n<Badge variant=\"dot\" color=\"error\">\n  <NotificationsIcon />\n</Badge>"}
+  ],
+  "migrationExamples": [
+    {
+      "mui": "import { Badge } from '@mui/material';\n\n<Badge badgeContent={4} color=\"primary\">\n  <MailIcon />\n</Badge>",
+      "designSystem": "import { Badge } from '@/components';\n\n<Badge badgeContent={4} color=\"primary\">\n  <MailIcon />\n</Badge>",
+      "description": "Replace MUI Badge with design system Badge"
+    }
+  ],
+  "relatedComponents": ["Avatar", "IconButton"],
+  "accessibility": {
+    "ariaAttributes": ["aria-label"],
+    "keyboardNavigation": "Not interactive, follows wrapped element",
+    "screenReaderNotes": "Badge count is announced along with the wrapped element"
+  },
+  "usageGuidelines": {
+    "whenToUse": ["Notification count indicators", "Status indicators on icons", "Unread message counts", "Cart item counts"],
+    "whenNotToUse": ["For standalone labels (use Tag or Chips instead)", "For inline status text"],
+    "bestPractices": ["Use dot variant for simple status indication", "Set max to prevent large numbers from overflowing", "Use appropriate colors for semantic meaning"],
+    "commonPatterns": ["Notification bell with unread count", "Avatar with online status dot", "Cart icon with item count"]
+  },
+  "importPath": "@/components/atoms/Badge",
+  "exportPath": "@/components"
+}

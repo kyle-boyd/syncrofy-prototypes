@@ -1,0 +1,33 @@
+{
+  "name": "Tag",
+  "displayName": "Tag",
+  "category": "atom",
+  "description": "Tag component for displaying semantic status labels with matching icons. Each variant comes with a default icon (info, error, warning, success) and appropriate styling.",
+  "props": [
+    {"name": "label", "type": "string", "required": false, "description": "The text content"},
+    {"name": "variant", "type": "'info' | 'error' | 'warning' | 'success' | 'neutral' | 'primary'", "required": false, "defaultValue": "neutral", "description": "Semantic variant"},
+    {"name": "size", "type": "'small' | 'medium'", "required": false, "defaultValue": "medium", "description": "Size of the tag"},
+    {"name": "icon", "type": "React.ReactNode", "required": false, "description": "Custom icon to display"},
+    {"name": "hideIcon", "type": "boolean", "required": false, "defaultValue": false, "description": "If true, hides the icon"},
+    {"name": "hideLabel", "type": "boolean", "required": false, "defaultValue": false, "description": "If true, hides the label"}
+  ],
+  "examples": [
+    {"title": "Status Tag", "description": "Tag with semantic variant", "code": "import { Tag } from '@/components';\n\n<Tag label=\"Active\" variant=\"success\" />"},
+    {"title": "Error Tag", "description": "Error status tag", "code": "import { Tag } from '@/components';\n\n<Tag label=\"Failed\" variant=\"error\" />"},
+    {"title": "Compact Tag", "description": "Small tag without icon", "code": "import { Tag } from '@/components';\n\n<Tag label=\"Draft\" variant=\"neutral\" size=\"small\" hideIcon />"}
+  ],
+  "relatedComponents": ["Chips", "Badge"],
+  "accessibility": {
+    "ariaAttributes": ["aria-label"],
+    "keyboardNavigation": "Not interactive",
+    "screenReaderNotes": "Tag variant and label text are announced"
+  },
+  "usageGuidelines": {
+    "whenToUse": ["Status indicators (success, error, warning, info)", "Category labels with semantic meaning", "Alert-type labels"],
+    "whenNotToUse": ["For interactive chip elements (use Chips instead)", "For count badges (use Badge instead)", "For filter tags (use Chips with onDelete)"],
+    "bestPractices": ["Use appropriate variant for semantic meaning", "Keep labels concise", "Use hideIcon for compact displays"],
+    "commonPatterns": ["Table cell status indicator", "Card status tag", "List item status label"]
+  },
+  "importPath": "@/components/atoms/Tag",
+  "exportPath": "@/components"
+}

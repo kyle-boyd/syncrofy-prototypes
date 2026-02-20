@@ -1,0 +1,37 @@
+{
+  "name": "Dropdown",
+  "displayName": "Dropdown",
+  "category": "molecule",
+  "description": "Dropdown component for displaying a list of selectable options in a menu. Supports both controlled and uncontrolled modes.",
+  "muiComponent": "Menu",
+  "muiPackage": "@mui/material",
+  "props": [
+    {"name": "trigger", "type": "React.ReactElement", "required": true, "description": "The element that triggers the dropdown"},
+    {"name": "options", "type": "DropdownOption[]", "required": true, "description": "Options to display. Each has value, label, disabled, icon, secondary, action"},
+    {"name": "onSelect", "type": "(value: string | number) => void", "required": false, "description": "Callback when an option is selected"},
+    {"name": "value", "type": "string | number", "required": false, "description": "Currently selected value"},
+    {"name": "open", "type": "boolean", "required": false, "description": "Controlled open state"},
+    {"name": "onClose", "type": "() => void", "required": false, "description": "Callback when dropdown closes"},
+    {"name": "hugContents", "type": "boolean", "required": false, "defaultValue": false, "description": "If true, menu width hugs contents instead of matching trigger width"}
+  ],
+  "examples": [
+    {"title": "Basic Dropdown", "description": "Dropdown with button trigger", "code": "import { Dropdown, Button } from '@/components';\n\n<Dropdown\n  trigger={<Button>Select</Button>}\n  options={[\n    { value: 1, label: 'Option 1' },\n    { value: 2, label: 'Option 2' }\n  ]}\n  onSelect={handleSelect}\n/>"}
+  ],
+  "migrationExamples": [
+    {"mui": "import { Menu, MenuItem } from '@mui/material';\n<Menu anchorEl={anchorEl} open={open}>\n  <MenuItem>Option 1</MenuItem>\n</Menu>", "designSystem": "import { Dropdown } from '@/components';\n<Dropdown\n  trigger={<Button>Select</Button>}\n  options={[{ value: 1, label: 'Option 1' }]}\n  onSelect={handleSelect}\n/>", "description": "Replace MUI Menu with Dropdown for simplified API"}
+  ],
+  "relatedComponents": ["Button", "ListItem", "Typeahead"],
+  "accessibility": {
+    "ariaAttributes": ["aria-controls", "aria-haspopup", "aria-expanded"],
+    "keyboardNavigation": "Arrow keys navigate options, Enter selects, Escape closes",
+    "screenReaderNotes": "Menu state and selected option announced"
+  },
+  "usageGuidelines": {
+    "whenToUse": ["Select from a list of options", "Action menus", "Filter dropdowns"],
+    "whenNotToUse": ["For text input with suggestions (use Typeahead)", "For navigation (use Tabs or SideNav)"],
+    "bestPractices": ["Keep option lists manageable (< 15 items)", "Use hugContents for action menus with varying widths", "Provide clear trigger labels"],
+    "commonPatterns": ["Filter dropdown with button trigger", "Action menu", "View selector"]
+  },
+  "importPath": "@/components/molecules/Dropdown",
+  "exportPath": "@/components"
+}

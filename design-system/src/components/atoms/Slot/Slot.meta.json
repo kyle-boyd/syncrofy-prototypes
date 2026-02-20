@@ -1,0 +1,32 @@
+{
+  "name": "Slot",
+  "displayName": "Slot",
+  "category": "atom",
+  "description": "Slot component for flexible layout containers. A utility component for creating flexible CSS layouts with configurable direction, alignment, and spacing.",
+  "props": [
+    {"name": "children", "type": "React.ReactNode", "required": false, "description": "The content"},
+    {"name": "direction", "type": "'row' | 'column' | 'row-reverse' | 'column-reverse'", "required": false, "defaultValue": "row", "description": "Flex direction"},
+    {"name": "align", "type": "'flex-start' | 'flex-end' | 'center' | 'stretch' | 'baseline'", "required": false, "defaultValue": "stretch", "description": "Align items"},
+    {"name": "justify", "type": "'flex-start' | 'flex-end' | 'center' | 'space-between' | 'space-around' | 'space-evenly'", "required": false, "defaultValue": "flex-start", "description": "Justify content"},
+    {"name": "gap", "type": "number | string", "required": false, "description": "Gap between children"},
+    {"name": "padding", "type": "number | string", "required": false, "description": "Padding around the content"}
+  ],
+  "examples": [
+    {"title": "Row Layout", "description": "Horizontal layout with gap", "code": "import { Slot } from '@/components';\nimport { Button } from '@/components';\n\n<Slot direction=\"row\" gap={2}>\n  <Button>Cancel</Button>\n  <Button variant=\"contained\">Save</Button>\n</Slot>"},
+    {"title": "Space Between", "description": "Header with title and actions", "code": "import { Slot } from '@/components';\n\n<Slot direction=\"row\" justify=\"space-between\" align=\"center\">\n  <h2>Title</h2>\n  <div>Actions</div>\n</Slot>"}
+  ],
+  "relatedComponents": ["Divider"],
+  "accessibility": {
+    "ariaAttributes": [],
+    "keyboardNavigation": "",
+    "screenReaderNotes": ""
+  },
+  "usageGuidelines": {
+    "whenToUse": ["Creating flex layouts", "Arranging child components with consistent spacing", "Form layouts", "Card content layouts"],
+    "whenNotToUse": ["For complex grid layouts (use CSS Grid directly)", "When MUI Box with sx prop is sufficient"],
+    "bestPractices": ["Use gap instead of margins for consistent spacing", "Combine with theme spacing values"],
+    "commonPatterns": ["Row layout for button groups", "Column layout for form fields", "Space-between header with title and actions"]
+  },
+  "importPath": "@/components/atoms/Slot",
+  "exportPath": "@/components"
+}

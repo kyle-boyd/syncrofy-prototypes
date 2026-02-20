@@ -521,7 +521,7 @@ function TransferDetails() {
                 <Typography variant="body1">KB</Typography>
               </Avatar>
             </Grid>
-            <Grid item xs>
+            <Grid item xs sx={{ width: '100%' }}>
               <TextField
                 fullWidth
                 multiline
@@ -530,11 +530,16 @@ function TransferDetails() {
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
                 minRows={1}
+                sx={{
+                  '& .MuiInputBase-root': {
+                    width: '100%',
+                  },
+                }}
               />
             </Grid>
           </Grid>
           <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
-            <Button variant="outlined" color="secondary" type="submit" fullWidth>
+            <Button variant="outlined" color="secondary" type="submit" sx={{ width: 'fit-content' }}>
               Comment
             </Button>
           </Box>

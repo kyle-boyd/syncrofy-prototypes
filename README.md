@@ -15,6 +15,16 @@ This project uses the Syncrofy Design System published as `@syncrofy/design-syst
 
 For information on updating the design system, see [DESIGN_SYSTEM_PUBLISHING.md](./DESIGN_SYSTEM_PUBLISHING.md).
 
+### Design system source (local development)
+
+The app **loads the design system from the external syncrofy-ds repo** (not from the `design-system/` folder in this repo). In `vite.config.ts`, `@kyleboyd/design-system` is aliased to the built output of that repo.
+
+- **To edit the design system:** Add the syncrofy-ds folder to your workspace and edit files there. Your changes apply to the real design system.
+- **To see changes in this app:** Rebuild the design system, then restart or refresh the app.
+  - From syncrofy-ds: `npm run build`
+  - From this repo: `npm run build:design-system`
+- **Note:** The `design-system/` folder in this repo is **not used** by the app when the external alias is configured. It is effectively a stale copy.
+
 ## Getting Started
 
 ### Prerequisites

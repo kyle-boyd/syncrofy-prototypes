@@ -1,0 +1,37 @@
+{
+  "name": "Avatar",
+  "displayName": "Avatar",
+  "category": "atom",
+  "description": "Avatar component for displaying user profile pictures or initials. Extends MUI Avatar with custom styling and optional online status badge.",
+  "muiComponent": "Avatar",
+  "muiPackage": "@mui/material",
+  "props": [
+    {"name": "src", "type": "string", "required": false, "description": "Image source URL"},
+    {"name": "alt", "type": "string", "required": false, "description": "Alt text for the avatar image"},
+    {"name": "children", "type": "React.ReactNode", "required": false, "description": "Initials or text to display when no image is provided"},
+    {"name": "size", "type": "'40px' | '32px' | '24px' | '18px'", "required": false, "defaultValue": "40px", "description": "Size of the avatar"},
+    {"name": "badge", "type": "boolean", "required": false, "defaultValue": false, "description": "Show a status badge indicator"}
+  ],
+  "examples": [
+    {"title": "With Image", "description": "Avatar with profile image", "code": "import { Avatar } from '@/components';\n\n<Avatar src=\"/path/to/image.jpg\" alt=\"John Doe\" size=\"40px\" />"},
+    {"title": "With Initials", "description": "Avatar with text initials", "code": "import { Avatar } from '@/components';\n\n<Avatar size=\"32px\">JD</Avatar>"},
+    {"title": "With Badge", "description": "Avatar with online status badge", "code": "import { Avatar } from '@/components';\n\n<Avatar size=\"40px\" badge>JD</Avatar>"}
+  ],
+  "migrationExamples": [
+    {"mui": "import { Avatar } from '@mui/material';\n<Avatar src=\"/image.jpg\" />", "designSystem": "import { Avatar } from '@/components';\n<Avatar src=\"/image.jpg\" size=\"40px\" />", "description": "Replace MUI Avatar with design system Avatar. Note the size prop uses pixel strings instead of sx prop."}
+  ],
+  "relatedComponents": ["Badge", "Chips"],
+  "accessibility": {
+    "ariaAttributes": ["aria-label", "role=\"img\""],
+    "keyboardNavigation": "Not interactive by default",
+    "screenReaderNotes": "Alt text is announced for image avatars, initials text is read for text avatars"
+  },
+  "usageGuidelines": {
+    "whenToUse": ["User profile pictures", "User initials in compact spaces", "Team member lists", "Comment author indicators"],
+    "whenNotToUse": ["For decorative images (use img or Icon instead)", "For brand logos (use Logo instead)"],
+    "bestPractices": ["Always provide alt text or meaningful children", "Use consistent sizes within the same context", "Use badge prop to indicate online status"],
+    "commonPatterns": ["Profile picture with initials fallback", "Avatar with online status badge", "Avatar in navigation header"]
+  },
+  "importPath": "@/components/atoms/Avatar",
+  "exportPath": "@/components"
+}

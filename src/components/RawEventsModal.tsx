@@ -7,11 +7,23 @@ import {
   Alert,
   CircularProgress,
   Dialog,
+  List,
 } from '@mui/material';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
-import { Button } from '@kyleboyd/design-system';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import DescriptionIcon from '@mui/icons-material/Description';
+import { Button, ListItem } from '@kyleboyd/design-system';
+
+export interface RawFile {
+  id: string;
+  name: string;
+  data?: unknown[] | null;
+  loading?: boolean;
+  error?: string | null;
+  onLoad?: () => Promise<void>;
+}
 
 interface RawEventsModalProps {
   open: boolean;
@@ -20,6 +32,7 @@ interface RawEventsModalProps {
   loading?: boolean;
   error?: string | null;
   onRetry?: () => void;
+  files?: RawFile[];
 }
 
 interface JsonNode {
@@ -218,6 +231,8 @@ function JsonViewer({ data }: JsonViewerProps) {
   );
 }
 
+type ModalStep = 'file-selection' | 'viewing';
+
 export function RawEventsModal({
   open,
   onClose,
@@ -225,15 +240,52 @@ export function RawEventsModal({
   loading = false,
   error = null,
   onRetry,
+  files,
 }: RawEventsModalProps) {
   const [copySuccess, setCopySuccess] = useState(false);
+  const [step, setStep] = useState<ModalStep>('file-selection');
+  const [selectedFileId, setSelectedFileId] = useState<string | null>(null);
+
+  // Determine if we should show file selection (if files prop is provided with more than one file)
+  const showFileSelection = files && files.length > 1;
+  
+  // Get the currently selected file or use the legacy events prop
+  const selectedFile = files?.find(f => f.id === selectedFileId);
+  const currentEvents = selectedFile?.data ?? events;
+  const currentLoading = selectedFile?.loading ?? loading;
+  const currentError = selectedFile?.error ?? error;
+  const currentOnRetry = selectedFile?.onLoad ?? onRetry;
 
   // Reset state when modal opens/closes
   useEffect(() => {
     if (!open) {
       setCopySuccess(false);
+      setStep(showFileSelection ? 'file-selection' : 'viewing');
+      setSelectedFileId(null);
+    } else if (open && !showFileSelection) {
+      // If there's only one file or using legacy events, go directly to viewing
+      setStep('viewing');
+      if (files && files.length === 1) {
+        setSelectedFileId(files[0].id);
+      }
     }
-  }, [open]);
+  }, [open, showFileSelection, files]);
+
+  // Load file data when a file is selected (if onLoad is provided and data is not already loaded)
+  useEffect(() => {
+    if (selectedFile && selectedFile.onLoad && !selectedFile.data && !selectedFile.loading) {
+      selectedFile.onLoad();
+    }
+  }, [selectedFile]);
+
+  const handleFileSelect = (fileId: string) => {
+    setSelectedFileId(fileId);
+    setStep('viewing');
+  };
+
+  const handleBackToFileSelection = () => {
+    setStep('file-selection');
+  };
 
   // Handle Esc key
   useEffect(() => {
@@ -252,10 +304,10 @@ export function RawEventsModal({
   }, [open, onClose]);
 
   const handleCopyJson = useCallback(async () => {
-    if (!events) return;
+    if (!currentEvents) return;
 
     try {
-      const jsonString = JSON.stringify(events, null, 2);
+      const jsonString = JSON.stringify(currentEvents, null, 2);
       await navigator.clipboard.writeText(jsonString);
       setCopySuccess(true);
       setTimeout(() => {
@@ -264,7 +316,7 @@ export function RawEventsModal({
     } catch (err) {
       console.error('Failed to copy JSON:', err);
     }
-  }, [events]);
+  }, [currentEvents]);
 
   return (
     <Dialog
@@ -293,9 +345,23 @@ export function RawEventsModal({
             borderColor: 'divider',
           }}
         >
-          <Typography variant="h6" component="h6" sx={{ fontWeight: 600 }}>
-            Raw Transfer Events
-          </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            {step === 'viewing' && showFileSelection && (
+              <IconButton
+                aria-label="back to file selection"
+                onClick={handleBackToFileSelection}
+                sx={{
+                  color: 'text.secondary',
+                  mr: 1,
+                }}
+              >
+                <ArrowBackIcon />
+              </IconButton>
+            )}
+            <Typography variant="h6" component="h6" sx={{ fontWeight: 600 }}>
+              {step === 'file-selection' ? 'Select File to View' : selectedFile ? `Raw Data: ${selectedFile.name}` : 'Raw Transfer Events'}
+            </Typography>
+          </Box>
           <IconButton
             aria-label="close"
             onClick={onClose}
@@ -309,45 +375,67 @@ export function RawEventsModal({
 
         {/* Content */}
         <Box sx={{ flex: 1, overflow: 'auto', p: 2, minHeight: 0 }}>
-          {loading && (
-            <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-              <CircularProgress />
-            </Box>
-          )}
-
-          {error && (
-            <Alert
-              severity="error"
-              action={
-                onRetry && (
-                  <Button size="small" onClick={onRetry}>
-                    Retry
-                  </Button>
-                )
-              }
-              sx={{ mb: 2 }}
-            >
-              {error}
-            </Alert>
-          )}
-
-          {!loading && !error && (!events || events.length === 0) && (
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                py: 8,
-              }}
-            >
-              <Typography variant="body1" color="text.secondary">
-                No raw events are available for this transfer.
+          {step === 'file-selection' && showFileSelection ? (
+            <Box>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                Select a file to view its raw JSON data:
               </Typography>
+              <List sx={{ bgcolor: 'background.paper', borderRadius: 1 }}>
+                {files?.map((file) => (
+                  <ListItem
+                    key={file.id}
+                    button
+                    onClick={() => handleFileSelect(file.id)}
+                    primary={file.name}
+                    icon={<DescriptionIcon />}
+                    selected={selectedFileId === file.id}
+                  />
+                ))}
+              </List>
             </Box>
-          )}
+          ) : (
+            <>
+              {currentLoading && (
+                <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
+                  <CircularProgress />
+                </Box>
+              )}
 
-          {!loading && !error && events && events.length > 0 && (
-            <JsonViewer data={events} />
+              {currentError && (
+                <Alert
+                  severity="error"
+                  action={
+                    currentOnRetry && (
+                      <Button size="small" onClick={currentOnRetry}>
+                        Retry
+                      </Button>
+                    )
+                  }
+                  sx={{ mb: 2 }}
+                >
+                  {currentError}
+                </Alert>
+              )}
+
+              {!currentLoading && !currentError && (!currentEvents || (Array.isArray(currentEvents) && currentEvents.length === 0)) && (
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    py: 8,
+                  }}
+                >
+                  <Typography variant="body1" color="text.secondary">
+                    No raw events are available for this file.
+                  </Typography>
+                </Box>
+              )}
+
+              {!currentLoading && !currentError && currentEvents && !(Array.isArray(currentEvents) && currentEvents.length === 0) && (
+                <JsonViewer data={currentEvents} />
+              )}
+            </>
           )}
         </Box>
 
@@ -363,20 +451,24 @@ export function RawEventsModal({
           }}
         >
           <Stack direction="row" spacing={1} alignItems="center">
-            <Button
-              variant="outlined"
-              size="small"
-              startIcon={<ContentCopyIcon />}
-              onClick={handleCopyJson}
-              disabled={!events || events.length === 0}
-            >
-              Copy JSON
-            </Button>
-            {copySuccess && (
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, color: 'success.main' }}>
-                <CheckIcon fontSize="small" />
-                <Typography variant="body2">Copied!</Typography>
-              </Box>
+            {step === 'viewing' && (
+              <>
+                <Button
+                  variant="outlined"
+                  size="small"
+                  startIcon={<ContentCopyIcon />}
+                  onClick={handleCopyJson}
+                  disabled={!currentEvents || (Array.isArray(currentEvents) && currentEvents.length === 0)}
+                >
+                  Copy JSON
+                </Button>
+                {copySuccess && (
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, color: 'success.main' }}>
+                    <CheckIcon fontSize="small" />
+                    <Typography variant="body2">Copied!</Typography>
+                  </Box>
+                )}
+              </>
             )}
           </Stack>
           <Button

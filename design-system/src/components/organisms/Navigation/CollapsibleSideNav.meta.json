@@ -1,0 +1,30 @@
+{
+  "name": "CollapsibleSideNav",
+  "displayName": "CollapsibleSideNav",
+  "category": "organism",
+  "description": "CollapsibleSideNav component for side navigation with smooth expand/collapse animation. Shows icons-only when collapsed with tooltip labels.",
+  "props": [
+    {"name": "items", "type": "CollapsibleSideNavItem[]", "required": true, "description": "Items with id, label, icon, onClick, disabled"},
+    {"name": "selectedItemId", "type": "string", "required": false, "description": "Currently selected item ID"},
+    {"name": "onItemSelect", "type": "(itemId: string) => void", "required": false, "description": "Item selection handler"},
+    {"name": "expanded", "type": "boolean", "required": false, "defaultValue": true, "description": "If true, nav is expanded"},
+    {"name": "onExpandedChange", "type": "(expanded: boolean) => void", "required": false, "description": "Expand/collapse handler"}
+  ],
+  "examples": [
+    {"title": "Basic CollapsibleSideNav", "description": "Collapsible sidebar navigation", "code": "import { CollapsibleSideNav } from '@/components';\n\n<CollapsibleSideNav\n  items={[\n    { id: '1', label: 'Dashboard', icon: <DashboardIcon /> },\n    { id: '2', label: 'Transfers', icon: <TransferIcon /> }\n  ]}\n  selectedItemId=\"1\"\n  expanded={expanded}\n  onExpandedChange={setExpanded}\n/>"}
+  ],
+  "relatedComponents": ["SideNav", "Header", "Tooltip"],
+  "accessibility": {
+    "ariaAttributes": ["role=\"navigation\""],
+    "keyboardNavigation": "Tab navigates items, toggle button expands/collapses",
+    "screenReaderNotes": "Navigation items with labels announced, collapse state conveyed"
+  },
+  "usageGuidelines": {
+    "whenToUse": ["Desktop application sidebar", "Collapsible navigation with icon+text", "Space-efficient sidebar navigation"],
+    "whenNotToUse": ["For mobile navigation (use SideNav with temporary variant)", "For simple non-collapsible navigation"],
+    "bestPractices": ["Provide meaningful icons since they show when collapsed", "Use Tooltip labels in collapsed state (built-in)", "Persist expanded state in user preferences"],
+    "commonPatterns": ["Main application sidebar with Syncrofy branding"]
+  },
+  "importPath": "@/components/organisms/Navigation/CollapsibleSideNav",
+  "exportPath": "@/components"
+}

@@ -41,7 +41,7 @@ export const theme = createTheme({
   palette,
   typography,
   components,
-  shadows: shadows as any, // <-- inject custom Figma-elevation array here
+  shadows, // <-- inject custom Figma-elevation array here
   shape: {
     borderRadius: 8,
   },

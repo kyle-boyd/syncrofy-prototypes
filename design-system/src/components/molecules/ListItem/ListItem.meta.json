@@ -1,0 +1,39 @@
+{
+  "name": "ListItem",
+  "displayName": "ListItem",
+  "category": "molecule",
+  "description": "ListItem component for displaying items in a list with optional icon, primary/secondary text, and actions.",
+  "muiComponent": "ListItem",
+  "muiPackage": "@mui/material",
+  "props": [
+    {"name": "primary", "type": "React.ReactNode", "required": false, "description": "Primary text"},
+    {"name": "secondary", "type": "React.ReactNode", "required": false, "description": "Secondary text"},
+    {"name": "icon", "type": "React.ReactElement", "required": false, "description": "Icon to display before text"},
+    {"name": "action", "type": "React.ReactNode", "required": false, "description": "Action element after text"},
+    {"name": "button", "type": "boolean", "required": false, "defaultValue": false, "description": "If true, clickable"},
+    {"name": "selected", "type": "boolean", "required": false, "description": "If true, item appears selected"},
+    {"name": "disabled", "type": "boolean", "required": false, "description": "If true, item is disabled"},
+    {"name": "onClick", "type": "function", "required": false, "description": "Click handler"},
+    {"name": "children", "type": "React.ReactNode", "required": false, "description": "Custom content overrides primary/secondary"}
+  ],
+  "examples": [
+    {"title": "Basic List Item", "description": "ListItem with primary and secondary text", "code": "import { ListItem } from '@/components';\n\n<ListItem\n  primary=\"Item Title\"\n  secondary=\"Additional context\"\n/>"}
+  ],
+  "migrationExamples": [
+    {"mui": "import { ListItem, ListItemText } from '@mui/material';\n<ListItem><ListItemText primary=\"Item\" /></ListItem>", "designSystem": "import { ListItem } from '@/components';\n<ListItem primary=\"Item\" />", "description": "Replace MUI ListItem with design system ListItem"}
+  ],
+  "relatedComponents": ["Dropdown", "SideNav"],
+  "accessibility": {
+    "ariaAttributes": [],
+    "keyboardNavigation": "",
+    "screenReaderNotes": ""
+  },
+  "usageGuidelines": {
+    "whenToUse": ["Lists of items with text and icons", "Navigation menu items", "Dropdown menu items", "Settings lists"],
+    "whenNotToUse": ["For simple text lists (use native list elements)", "For data tables (use Table)"],
+    "bestPractices": ["Use button prop for interactive items", "Provide icon for visual hierarchy", "Use secondary text for additional context"],
+    "commonPatterns": ["Navigation drawer items", "Dropdown menu items", "Settings list"]
+  },
+  "importPath": "@/components/molecules/ListItem",
+  "exportPath": "@/components"
+}

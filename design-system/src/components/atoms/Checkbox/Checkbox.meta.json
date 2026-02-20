@@ -1,0 +1,37 @@
+{
+  "name": "Checkbox",
+  "displayName": "Checkbox",
+  "category": "atom",
+  "description": "Checkbox component for selection states. Supports checked, unchecked, and indeterminate states. Extends MUI Checkbox with custom styling.",
+  "muiComponent": "Checkbox",
+  "muiPackage": "@mui/material",
+  "props": [
+    {"name": "checked", "type": "boolean", "required": false, "description": "If true, the component is checked"},
+    {"name": "disabled", "type": "boolean", "required": false, "description": "If true, the component is disabled"},
+    {"name": "indeterminate", "type": "boolean", "required": false, "description": "If true, the checkbox is indeterminate"},
+    {"name": "color", "type": "'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning'", "required": false, "description": "The color"},
+    {"name": "size", "type": "'small' | 'medium'", "required": false, "description": "The size"},
+    {"name": "onChange", "type": "(event, checked) => void", "required": false, "description": "Callback fired when the state is changed"}
+  ],
+  "examples": [
+    {"title": "Basic", "description": "Simple checkbox", "code": "import { Checkbox } from '@/components';\nimport FormControlLabel from '@mui/material/FormControlLabel';\n\n<FormControlLabel control={<Checkbox />} label=\"Accept terms\" />"},
+    {"title": "Indeterminate", "description": "Checkbox in indeterminate state", "code": "import { Checkbox } from '@/components';\n\n<Checkbox indeterminate checked={false} />"}
+  ],
+  "migrationExamples": [
+    {"mui": "import { Checkbox } from '@mui/material';\n<Checkbox checked={true} />", "designSystem": "import { Checkbox } from '@/components';\n<Checkbox checked={true} />", "description": "Replace MUI Checkbox with design system Checkbox"}
+  ],
+  "relatedComponents": ["Toggle", "Radio"],
+  "accessibility": {
+    "ariaAttributes": ["aria-checked", "aria-label", "aria-disabled"],
+    "keyboardNavigation": "Space key toggles the checkbox",
+    "screenReaderNotes": "Checkbox state is announced, indeterminate state is announced as mixed"
+  },
+  "usageGuidelines": {
+    "whenToUse": ["Multiple selection from a list", "Binary on/off settings", "Accept terms and conditions", "Select all in table headers"],
+    "whenNotToUse": ["For single selection from options (use Radio instead)", "For on/off toggles (use Toggle instead)"],
+    "bestPractices": ["Always pair with a label", "Use indeterminate for parent checkboxes with mixed children", "Group related checkboxes together"],
+    "commonPatterns": ["Table row selection with header checkbox", "Filter checkboxes", "Form agreement checkbox"]
+  },
+  "importPath": "@/components/atoms/Checkbox",
+  "exportPath": "@/components"
+}

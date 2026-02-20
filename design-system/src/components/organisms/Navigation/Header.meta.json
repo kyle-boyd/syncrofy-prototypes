@@ -1,0 +1,47 @@
+{
+  "name": "Header",
+  "displayName": "Header",
+  "category": "organism",
+  "description": "Header component for the main application top bar. Includes global search, environment indicator chip, notification center with unread/all tabs, and user profile menu with settings/logout.",
+  "props": [
+    {"name": "searchPlaceholder", "type": "string", "required": false, "defaultValue": "Search for files", "description": "Search input placeholder"},
+    {"name": "searchValue", "type": "string", "required": false, "description": "Controlled search value"},
+    {"name": "onSearchChange", "type": "function", "required": false, "description": "Search input change handler"},
+    {"name": "onSearch", "type": "function", "required": false, "description": "Search submit handler"},
+    {"name": "environmentLabel", "type": "string", "required": false, "defaultValue": "CoEnterprise - Production", "description": "Environment label"},
+    {"name": "environments", "type": "EnvironmentOption[]", "required": false, "description": "Environment options"},
+    {"name": "selectedEnvironment", "type": "string", "required": false, "description": "Selected environment"},
+    {"name": "onEnvironmentChange", "type": "function", "required": false, "description": "Environment change handler"},
+    {"name": "userInitials", "type": "string", "required": false, "defaultValue": "KB", "description": "User avatar initials"},
+    {"name": "userName", "type": "string", "required": false, "defaultValue": "Kyle Boyd", "description": "User display name"},
+    {"name": "userOrganization", "type": "string", "required": false, "description": "User organization"},
+    {"name": "userAvatar", "type": "string", "required": false, "description": "User avatar image URL"},
+    {"name": "onNotificationsClick", "type": "function", "required": false, "description": "Notifications click handler"},
+    {"name": "onAvatarClick", "type": "function", "required": false, "description": "Avatar click handler"},
+    {"name": "onAppearanceClick", "type": "function", "required": false, "description": "Appearance menu item handler"},
+    {"name": "onAccountSettingsClick", "type": "function", "required": false, "description": "Account settings handler"},
+    {"name": "onLogoutClick", "type": "function", "required": false, "description": "Logout handler"},
+    {"name": "showNotificationBadge", "type": "boolean", "required": false, "defaultValue": true, "description": "Show unread notification badge"},
+    {"name": "notifications", "type": "Notification[]", "required": false, "description": "Notification list"},
+    {"name": "onNotificationClick", "type": "function", "required": false, "description": "Notification click handler"},
+    {"name": "onMarkAllAsRead", "type": "function", "required": false, "description": "Mark all notifications read handler"},
+    {"name": "onNotificationSettingsClick", "type": "function", "required": false, "description": "Notification settings handler"}
+  ],
+  "examples": [
+    {"title": "Basic Header", "description": "Application header with search and user menu", "code": "import { Header } from '@/components';\n\n<Header\n  searchPlaceholder=\"Search for files\"\n  userInitials=\"KB\"\n  userName=\"Kyle Boyd\"\n  onLogoutClick={handleLogout}\n/>"}
+  ],
+  "relatedComponents": ["Search", "Avatar", "Badge", "IconButton", "Dropdown"],
+  "accessibility": {
+    "ariaAttributes": ["role=\"banner\""],
+    "keyboardNavigation": "Tab navigates through search, notifications, avatar; Escape closes menus",
+    "screenReaderNotes": "Banner landmark with search, notification count, and user info announced"
+  },
+  "usageGuidelines": {
+    "whenToUse": ["Main application header", "Top-level navigation bar with user context"],
+    "whenNotToUse": ["For simple navigation bars (use TopNav instead)", "For page-level headers (use PageHeader instead)"],
+    "bestPractices": ["Show environment label for multi-environment apps", "Use notification badge for unread count", "Provide logout and settings access from avatar menu"],
+    "commonPatterns": ["Application header with search, notifications, and user menu"]
+  },
+  "importPath": "@/components/organisms/Navigation/Header",
+  "exportPath": "@/components"
+}

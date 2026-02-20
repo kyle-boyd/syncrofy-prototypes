@@ -1,0 +1,35 @@
+{
+  "name": "Stepper",
+  "displayName": "Stepper",
+  "category": "molecule",
+  "description": "Stepper component for displaying multi-step processes and wizards.",
+  "muiComponent": "Stepper",
+  "muiPackage": "@mui/material",
+  "props": [
+    {"name": "steps", "type": "Step[]", "required": true, "description": "Steps with label, description, disabled, completed, content"},
+    {"name": "activeStep", "type": "number", "required": true, "description": "Active step index zero-based"},
+    {"name": "orientation", "type": "'horizontal' | 'vertical'", "required": false, "defaultValue": "horizontal", "description": "Orientation of the stepper"},
+    {"name": "showContent", "type": "boolean", "required": false, "defaultValue": false, "description": "If true, shows step content"},
+    {"name": "showDescription", "type": "boolean", "required": false, "defaultValue": true, "description": "If true, shows step descriptions"}
+  ],
+  "examples": [
+    {"title": "Basic Stepper", "description": "Multi-step form wizard", "code": "import { Stepper } from '@/components';\n\n<Stepper\n  steps={[\n    { label: 'Step 1', content: <Step1Form /> },\n    { label: 'Step 2', content: <Step2Form /> }\n  ]}\n  activeStep={activeStep}\n/>"}
+  ],
+  "migrationExamples": [
+    {"mui": "import { Stepper, Step, StepLabel } from '@mui/material';\n<Stepper activeStep={0}>\n  <Step><StepLabel>Step 1</StepLabel></Step>\n</Stepper>", "designSystem": "import { Stepper } from '@/components';\n<Stepper steps={[{ label: 'Step 1' }]} activeStep={0} />", "description": "Replace MUI Stepper with design system Stepper"}
+  ],
+  "relatedComponents": ["Tabs"],
+  "accessibility": {
+    "ariaAttributes": ["aria-current=\"step\""],
+    "keyboardNavigation": "Not directly interactive, content is navigated normally",
+    "screenReaderNotes": "Current step, total steps, and step labels are announced"
+  },
+  "usageGuidelines": {
+    "whenToUse": ["Multi-step forms", "Wizard workflows", "Process tracking", "Onboarding flows"],
+    "whenNotToUse": ["For simple tab navigation (use Tabs instead)", "For progress bars"],
+    "bestPractices": ["Keep step labels concise", "Show progress clearly", "Allow going back to previous steps when possible"],
+    "commonPatterns": ["Registration wizard", "Checkout flow", "Setup wizard"]
+  },
+  "importPath": "@/components/molecules/Stepper",
+  "exportPath": "@/components"
+}

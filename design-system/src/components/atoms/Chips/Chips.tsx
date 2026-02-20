@@ -45,6 +45,7 @@ export const Chips: React.FC<ChipsProps> = ({
   className,
   'data-testid': testId,
   variant,
+  sx,
   ...props
 }) => {
   const isRounded = variant === 'rounded';
@@ -56,8 +57,9 @@ export const Chips: React.FC<ChipsProps> = ({
       variant={isRounded ? undefined : variant}
       sx={{
         ...(isRounded && {
-          borderRadius: '50px',
+          borderRadius: '50px !important',
         }),
+        ...sx,
       }}
       {...props}
     />

@@ -75,28 +75,24 @@ export function PageLayout({
 
   return (
     <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden', bgcolor: backgroundColor }}>
-      {/* Sidebar */}
-      <Box
+      {/* Sidebar - no wrapper; CollapsibleSideNav handles width and layout */}
+      <CollapsibleSideNav
+        items={navItems}
+        selectedItemId={selectedNavItem}
+        onItemSelect={(id) => {
+          const item = navItems.find(i => i.id === id);
+          item?.onClick?.();
+        }}
+        expanded={sidebarExpanded}
+        onExpandedChange={setSidebarExpanded}
         sx={{
           width: sidebarExpanded ? 240 : 48,
           flexShrink: 0,
           transition: 'width 0.3s ease',
-          bgcolor: 'transparent',
           height: '100%',
           overflowY: 'auto',
         }}
-      >
-        <CollapsibleSideNav
-          items={navItems}
-          selectedItemId={selectedNavItem}
-          onItemSelect={(id) => {
-            const item = navItems.find(i => i.id === id);
-            item?.onClick?.();
-          }}
-          expanded={sidebarExpanded}
-          onExpandedChange={setSidebarExpanded}
-        />
-      </Box>
+      />
 
       {/* Main Content */}
       <Box component="main" sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>

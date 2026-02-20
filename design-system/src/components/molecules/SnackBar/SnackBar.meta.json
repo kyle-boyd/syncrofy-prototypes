@@ -1,0 +1,37 @@
+{
+  "name": "SnackBar",
+  "displayName": "SnackBar",
+  "category": "molecule",
+  "description": "SnackBar component for displaying brief messages and notifications. Combines MUI Snackbar with Alert for colored severity-based messaging.",
+  "muiComponent": "Snackbar",
+  "muiPackage": "@mui/material",
+  "props": [
+    {"name": "message", "type": "React.ReactNode", "required": true, "description": "The message to display"},
+    {"name": "severity", "type": "'success' | 'info' | 'warning' | 'error'", "required": false, "description": "Severity level for styling"},
+    {"name": "open", "type": "boolean", "required": true, "description": "If true, shown"},
+    {"name": "onClose", "type": "function", "required": false, "description": "Callback when snackbar closes"},
+    {"name": "autoHideDuration", "type": "number | null", "required": false, "description": "Duration in ms before auto-hide"},
+    {"name": "anchorOrigin", "type": "{vertical, horizontal}", "required": false, "description": "Placement of the snackbar"},
+    {"name": "action", "type": "React.ReactNode", "required": false, "description": "Action button or element"}
+  ],
+  "examples": [
+    {"title": "Success SnackBar", "description": "Success notification", "code": "import { SnackBar } from '@/components';\n\n<SnackBar\n  open={open}\n  severity=\"success\"\n  message=\"Saved!\"\n  onClose={handleClose}\n/>"}
+  ],
+  "migrationExamples": [
+    {"mui": "import { Snackbar, Alert } from '@mui/material';\n<Snackbar open={open}>\n  <Alert severity=\"success\">Saved!</Alert>\n</Snackbar>", "designSystem": "import { SnackBar } from '@/components';\n<SnackBar open={open} severity=\"success\" message=\"Saved!\" />", "description": "Replace MUI Snackbar+Alert with SnackBar"}
+  ],
+  "relatedComponents": ["Modal", "Tooltip"],
+  "accessibility": {
+    "ariaAttributes": ["role=\"alert\"", "aria-live=\"polite\""],
+    "keyboardNavigation": "Escape closes the snackbar",
+    "screenReaderNotes": "Message and severity are announced as a polite live region"
+  },
+  "usageGuidelines": {
+    "whenToUse": ["Success/error notifications", "Brief informational messages", "Action confirmations"],
+    "whenNotToUse": ["For blocking dialogs (use Modal instead)", "For persistent status (use Tag instead)", "For inline messages (use Alert directly)"],
+    "bestPractices": ["Keep messages concise", "Use appropriate severity", "Set autoHideDuration for non-critical messages", "Position consistently across the app"],
+    "commonPatterns": ["Save success notification", "Error alert with retry action", "Item deleted confirmation"]
+  },
+  "importPath": "@/components/molecules/SnackBar",
+  "exportPath": "@/components"
+}

@@ -1,0 +1,206 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://syncrofy.com/schemas/component-metadata.json",
+  "title": "Syncrofy Component Metadata",
+  "description": "Schema for Syncrofy Design System component .meta.json files",
+  "type": "object",
+  "required": [
+    "name",
+    "displayName",
+    "category",
+    "description",
+    "props",
+    "examples",
+    "accessibility",
+    "usageGuidelines",
+    "importPath",
+    "exportPath"
+  ],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "PascalCase component name (e.g. 'Button', 'DatePicker')"
+    },
+    "displayName": {
+      "type": "string",
+      "description": "Human-readable display name (e.g. 'Button', 'Date Picker')"
+    },
+    "category": {
+      "type": "string",
+      "enum": ["atom", "molecule", "organism"],
+      "description": "Atomic design category"
+    },
+    "description": {
+      "type": "string",
+      "minLength": 10,
+      "description": "Brief description of the component's purpose"
+    },
+    "muiComponent": {
+      "type": "string",
+      "description": "The MUI component this replaces (if applicable)"
+    },
+    "muiPackage": {
+      "type": "string",
+      "description": "The MUI package the original component comes from (e.g. '@mui/material')"
+    },
+    "props": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/componentProp" },
+      "description": "Component prop definitions"
+    },
+    "examples": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/componentExample" },
+      "description": "Usage examples with code"
+    },
+    "migrationExamples": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/migrationExample" },
+      "description": "Before/after migration examples from MUI. Required if muiComponent is set."
+    },
+    "relatedComponents": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Names of related or alternative components"
+    },
+    "accessibility": {
+      "$ref": "#/$defs/accessibilityInfo",
+      "description": "Accessibility information"
+    },
+    "usageGuidelines": {
+      "$ref": "#/$defs/usageGuidelines",
+      "description": "When and how to use the component"
+    },
+    "importPath": {
+      "type": "string",
+      "description": "Import path for the component (e.g. '@/components/atoms/Button')"
+    },
+    "exportPath": {
+      "type": "string",
+      "description": "Barrel export path (e.g. '@/components')"
+    }
+  },
+  "if": {
+    "required": ["muiComponent"]
+  },
+  "then": {
+    "required": ["migrationExamples"],
+    "properties": {
+      "migrationExamples": {
+        "minItems": 1
+      }
+    }
+  },
+  "$defs": {
+    "componentProp": {
+      "type": "object",
+      "required": ["name", "type", "required", "description"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Prop name"
+        },
+        "type": {
+          "type": "string",
+          "description": "TypeScript type expression (e.g. 'string', \"'sm' | 'md' | 'lg'\", 'boolean')"
+        },
+        "required": {
+          "type": "boolean",
+          "description": "Whether the prop is required"
+        },
+        "defaultValue": {
+          "description": "Default value (any JSON-compatible type)"
+        },
+        "description": {
+          "type": "string",
+          "description": "What the prop does"
+        }
+      }
+    },
+    "componentExample": {
+      "type": "object",
+      "required": ["title", "description", "code"],
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Short example title"
+        },
+        "description": {
+          "type": "string",
+          "description": "What the example demonstrates"
+        },
+        "code": {
+          "type": "string",
+          "description": "TSX code snippet"
+        }
+      }
+    },
+    "migrationExample": {
+      "type": "object",
+      "required": ["mui", "designSystem", "description"],
+      "properties": {
+        "mui": {
+          "type": "string",
+          "description": "Original MUI code"
+        },
+        "designSystem": {
+          "type": "string",
+          "description": "Equivalent design system code"
+        },
+        "description": {
+          "type": "string",
+          "description": "What changed and why"
+        }
+      }
+    },
+    "accessibilityInfo": {
+      "type": "object",
+      "required": ["ariaAttributes", "keyboardNavigation", "screenReaderNotes"],
+      "properties": {
+        "ariaAttributes": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Relevant ARIA attributes"
+        },
+        "keyboardNavigation": {
+          "type": "string",
+          "description": "How to interact via keyboard"
+        },
+        "screenReaderNotes": {
+          "type": "string",
+          "description": "Notes for screen reader behavior"
+        }
+      }
+    },
+    "usageGuidelines": {
+      "type": "object",
+      "required": ["whenToUse", "whenNotToUse", "bestPractices"],
+      "properties": {
+        "whenToUse": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1,
+          "description": "Scenarios where this component is the right choice"
+        },
+        "whenNotToUse": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1,
+          "description": "Scenarios where another component is better"
+        },
+        "bestPractices": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1,
+          "description": "Implementation best practices"
+        },
+        "commonPatterns": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Frequently used patterns"
+        }
+      }
+    }
+  }
+}

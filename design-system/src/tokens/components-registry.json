@@ -1,0 +1,390 @@
+{
+  "$description": "Syncrofy Design System component registry. Lists all available components with their category, path, MUI mapping, and metadata status.",
+  "version": "1.0.4",
+  "totalComponents": 42,
+  "categories": {
+    "atoms": 23,
+    "molecules": 8,
+    "organisms": 11
+  },
+  "components": [
+    {
+      "name": "Avatar",
+      "displayName": "Avatar",
+      "category": "atom",
+      "path": "src/components/atoms/Avatar",
+      "metadataFile": "Avatar.meta.json",
+      "muiComponent": "Avatar",
+      "status": "stable"
+    },
+    {
+      "name": "Badge",
+      "displayName": "Badge",
+      "category": "atom",
+      "path": "src/components/atoms/Badge",
+      "metadataFile": "Badge.meta.json",
+      "muiComponent": "Badge",
+      "status": "stable"
+    },
+    {
+      "name": "Breadcrumbs",
+      "displayName": "Breadcrumbs",
+      "category": "atom",
+      "path": "src/components/atoms/Breadcrumbs",
+      "metadataFile": "Breadcrumbs.meta.json",
+      "muiComponent": "Breadcrumbs",
+      "status": "stable"
+    },
+    {
+      "name": "Button",
+      "displayName": "Button",
+      "category": "atom",
+      "path": "src/components/atoms/Button",
+      "metadataFile": "Button.meta.json",
+      "muiComponent": "Button",
+      "status": "stable"
+    },
+    {
+      "name": "Checkbox",
+      "displayName": "Checkbox",
+      "category": "atom",
+      "path": "src/components/atoms/Checkbox",
+      "metadataFile": "Checkbox.meta.json",
+      "muiComponent": "Checkbox",
+      "status": "stable"
+    },
+    {
+      "name": "Chips",
+      "displayName": "Chips",
+      "category": "atom",
+      "path": "src/components/atoms/Chips",
+      "metadataFile": "Chips.meta.json",
+      "muiComponent": "Chip",
+      "status": "stable"
+    },
+    {
+      "name": "DatePicker",
+      "displayName": "DatePicker",
+      "category": "atom",
+      "path": "src/components/atoms/DatePicker",
+      "metadataFile": "DatePicker.meta.json",
+      "muiComponent": "DatePicker",
+      "status": "stable"
+    },
+    {
+      "name": "Divider",
+      "displayName": "Divider",
+      "category": "atom",
+      "path": "src/components/atoms/Divider",
+      "metadataFile": "Divider.meta.json",
+      "muiComponent": "Divider",
+      "status": "stable"
+    },
+    {
+      "name": "Icon",
+      "displayName": "Icon",
+      "category": "atom",
+      "path": "src/components/atoms/Icon",
+      "metadataFile": "Icon.meta.json",
+      "muiComponent": null,
+      "status": "stable"
+    },
+    {
+      "name": "IconButton",
+      "displayName": "IconButton",
+      "category": "atom",
+      "path": "src/components/atoms/IconButton",
+      "metadataFile": "IconButton.meta.json",
+      "muiComponent": "IconButton",
+      "status": "stable"
+    },
+    {
+      "name": "Input",
+      "displayName": "Input",
+      "category": "atom",
+      "path": "src/components/atoms/Input",
+      "metadataFile": "Input.meta.json",
+      "muiComponent": "TextField",
+      "status": "stable"
+    },
+    {
+      "name": "Link",
+      "displayName": "Link",
+      "category": "atom",
+      "path": "src/components/atoms/Link",
+      "metadataFile": "Link.meta.json",
+      "muiComponent": "Link",
+      "status": "stable"
+    },
+    {
+      "name": "Logo",
+      "displayName": "Logo",
+      "category": "atom",
+      "path": "src/components/atoms/Logo",
+      "metadataFile": "Logo.meta.json",
+      "muiComponent": null,
+      "status": "stable"
+    },
+    {
+      "name": "PasswordInput",
+      "displayName": "PasswordInput",
+      "category": "atom",
+      "path": "src/components/atoms/PasswordInput",
+      "metadataFile": "PasswordInput.meta.json",
+      "muiComponent": "TextField",
+      "status": "stable"
+    },
+    {
+      "name": "Radio",
+      "displayName": "Radio",
+      "category": "atom",
+      "path": "src/components/atoms/Radio",
+      "metadataFile": "Radio.meta.json",
+      "muiComponent": "Radio",
+      "status": "stable"
+    },
+    {
+      "name": "Search",
+      "displayName": "Search",
+      "category": "atom",
+      "path": "src/components/atoms/Search",
+      "metadataFile": "Search.meta.json",
+      "muiComponent": "TextField",
+      "status": "stable"
+    },
+    {
+      "name": "SegmentedControlItem",
+      "displayName": "Segmented Control Item",
+      "category": "atom",
+      "path": "src/components/atoms/SegmentedControlItem",
+      "metadataFile": "SegmentedControlItem.meta.json",
+      "muiComponent": null,
+      "status": "stable"
+    },
+    {
+      "name": "Slot",
+      "displayName": "Slot",
+      "category": "atom",
+      "path": "src/components/atoms/Slot",
+      "metadataFile": "Slot.meta.json",
+      "muiComponent": null,
+      "status": "stable"
+    },
+    {
+      "name": "Spinner",
+      "displayName": "Spinner",
+      "category": "atom",
+      "path": "src/components/atoms/Spinner",
+      "metadataFile": "Spinner.meta.json",
+      "muiComponent": "CircularProgress",
+      "status": "stable"
+    },
+    {
+      "name": "Tag",
+      "displayName": "Tag",
+      "category": "atom",
+      "path": "src/components/atoms/Tag",
+      "metadataFile": "Tag.meta.json",
+      "muiComponent": null,
+      "status": "stable"
+    },
+    {
+      "name": "Toggle",
+      "displayName": "Toggle",
+      "category": "atom",
+      "path": "src/components/atoms/Toggle",
+      "metadataFile": "Toggle.meta.json",
+      "muiComponent": "Switch",
+      "status": "stable"
+    },
+    {
+      "name": "ToggleButton",
+      "displayName": "ToggleButton",
+      "category": "atom",
+      "path": "src/components/atoms/ToggleButton",
+      "metadataFile": "ToggleButton.meta.json",
+      "muiComponent": "ToggleButton",
+      "status": "stable"
+    },
+    {
+      "name": "Tooltip",
+      "displayName": "Tooltip",
+      "category": "atom",
+      "path": "src/components/atoms/Tooltip",
+      "metadataFile": "Tooltip.meta.json",
+      "muiComponent": "Tooltip",
+      "status": "stable"
+    },
+    {
+      "name": "ButtonGroup",
+      "displayName": "ButtonGroup",
+      "category": "molecule",
+      "path": "src/components/molecules/ButtonGroup",
+      "metadataFile": "ButtonGroup.meta.json",
+      "muiComponent": "ButtonGroup",
+      "status": "stable"
+    },
+    {
+      "name": "Dropdown",
+      "displayName": "Dropdown",
+      "category": "molecule",
+      "path": "src/components/molecules/Dropdown",
+      "metadataFile": "Dropdown.meta.json",
+      "muiComponent": "Menu",
+      "status": "stable"
+    },
+    {
+      "name": "ListItem",
+      "displayName": "ListItem",
+      "category": "molecule",
+      "path": "src/components/molecules/ListItem",
+      "metadataFile": "ListItem.meta.json",
+      "muiComponent": "ListItem",
+      "status": "stable"
+    },
+    {
+      "name": "SegmentedControl",
+      "displayName": "Segmented Control",
+      "category": "molecule",
+      "path": "src/components/molecules/SegmentedControl",
+      "metadataFile": "SegmentedControl.meta.json",
+      "muiComponent": null,
+      "status": "stable"
+    },
+    {
+      "name": "SnackBar",
+      "displayName": "SnackBar",
+      "category": "molecule",
+      "path": "src/components/molecules/SnackBar",
+      "metadataFile": "SnackBar.meta.json",
+      "muiComponent": "Snackbar",
+      "status": "stable"
+    },
+    {
+      "name": "Stepper",
+      "displayName": "Stepper",
+      "category": "molecule",
+      "path": "src/components/molecules/Stepper",
+      "metadataFile": "Stepper.meta.json",
+      "muiComponent": "Stepper",
+      "status": "stable"
+    },
+    {
+      "name": "Tabs",
+      "displayName": "Tabs",
+      "category": "molecule",
+      "path": "src/components/molecules/Tabs",
+      "metadataFile": "Tabs.meta.json",
+      "muiComponent": "Tabs",
+      "status": "stable"
+    },
+    {
+      "name": "Typeahead",
+      "displayName": "Typeahead",
+      "category": "molecule",
+      "path": "src/components/molecules/Typeahead",
+      "metadataFile": "Typeahead.meta.json",
+      "muiComponent": "Autocomplete",
+      "status": "stable"
+    },
+    {
+      "name": "Accordion",
+      "displayName": "Accordion",
+      "category": "organism",
+      "path": "src/components/organisms/Accordion",
+      "metadataFile": "Accordion.meta.json",
+      "muiComponent": "Accordion",
+      "status": "stable"
+    },
+    {
+      "name": "FilterControls",
+      "displayName": "Filter Controls",
+      "category": "organism",
+      "path": "src/components/organisms/FilterControls",
+      "metadataFile": "FilterControls.meta.json",
+      "muiComponent": null,
+      "status": "stable"
+    },
+    {
+      "name": "Modal",
+      "displayName": "Modal",
+      "category": "organism",
+      "path": "src/components/organisms/Modal",
+      "metadataFile": "Modal.meta.json",
+      "muiComponent": "Dialog",
+      "status": "stable"
+    },
+    {
+      "name": "CollapsibleSideNav",
+      "displayName": "Collapsible Side Nav",
+      "category": "organism",
+      "path": "src/components/organisms/Navigation",
+      "metadataFile": "CollapsibleSideNav.meta.json",
+      "muiComponent": null,
+      "status": "stable"
+    },
+    {
+      "name": "Header",
+      "displayName": "Header",
+      "category": "organism",
+      "path": "src/components/organisms/Navigation",
+      "metadataFile": "Header.meta.json",
+      "muiComponent": null,
+      "status": "stable"
+    },
+    {
+      "name": "SideNav",
+      "displayName": "Side Nav",
+      "category": "organism",
+      "path": "src/components/organisms/Navigation",
+      "metadataFile": "SideNav.meta.json",
+      "muiComponent": "Drawer",
+      "status": "stable"
+    },
+    {
+      "name": "TopNav",
+      "displayName": "Top Nav",
+      "category": "organism",
+      "path": "src/components/organisms/Navigation",
+      "metadataFile": "TopNav.meta.json",
+      "muiComponent": "AppBar",
+      "status": "stable"
+    },
+    {
+      "name": "PageHeader",
+      "displayName": "Page Header",
+      "category": "organism",
+      "path": "src/components/organisms/PageHeader",
+      "metadataFile": "PageHeader.meta.json",
+      "muiComponent": null,
+      "status": "stable"
+    },
+    {
+      "name": "Pagination",
+      "displayName": "Pagination",
+      "category": "organism",
+      "path": "src/components/organisms/Pagination",
+      "metadataFile": "Pagination.meta.json",
+      "muiComponent": "Pagination",
+      "status": "stable"
+    },
+    {
+      "name": "Table",
+      "displayName": "Table",
+      "category": "organism",
+      "path": "src/components/organisms/Table",
+      "metadataFile": "Table.meta.json",
+      "muiComponent": "Table",
+      "status": "stable"
+    },
+    {
+      "name": "ViewControls",
+      "displayName": "View Controls",
+      "category": "organism",
+      "path": "src/components/organisms/ViewControls",
+      "metadataFile": "ViewControls.meta.json",
+      "muiComponent": null,
+      "status": "stable"
+    }
+  ]
+}

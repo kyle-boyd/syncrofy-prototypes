@@ -1,0 +1,36 @@
+{
+  "name": "Tabs",
+  "displayName": "Tabs",
+  "category": "molecule",
+  "description": "Tabs component for displaying tabbed content. Wraps tab definitions in a simple data-driven API.",
+  "muiComponent": "Tabs",
+  "muiPackage": "@mui/material",
+  "props": [
+    {"name": "tabs", "type": "Tab[]", "required": true, "description": "Tabs with label, value, disabled, icon, content"},
+    {"name": "value", "type": "string | number", "required": true, "description": "Currently selected tab"},
+    {"name": "onChange", "type": "(event, newValue) => void", "required": false, "description": "Callback when tab changes"},
+    {"name": "variant", "type": "'standard' | 'scrollable' | 'fullWidth'", "required": false, "description": "Tab variant"},
+    {"name": "scrollButtons", "type": "'auto' | true | false", "required": false, "description": "Scroll button visibility"},
+    {"name": "showPanels", "type": "boolean", "required": false, "defaultValue": false, "description": "If true, shows tab panels"}
+  ],
+  "examples": [
+    {"title": "Basic Tabs", "description": "Tabbed content sections", "code": "import { Tabs } from '@/components';\n\n<Tabs\n  value={value}\n  tabs={[\n    { label: 'Tab 1', value: 0 },\n    { label: 'Tab 2', value: 1 }\n  ]}\n  onChange={handleChange}\n/>"}
+  ],
+  "migrationExamples": [
+    {"mui": "import { Tabs, Tab } from '@mui/material';\n<Tabs value={0}>\n  <Tab label=\"One\" />\n  <Tab label=\"Two\" />\n</Tabs>", "designSystem": "import { Tabs } from '@/components';\n<Tabs\n  value={0}\n  tabs={[{ label: 'One', value: 0 }, { label: 'Two', value: 1 }]}\n/>", "description": "Replace MUI Tabs+Tab with data-driven Tabs component"}
+  ],
+  "relatedComponents": ["SegmentedControl", "Stepper"],
+  "accessibility": {
+    "ariaAttributes": ["role=\"tablist\"", "role=\"tab\"", "role=\"tabpanel\"", "aria-selected"],
+    "keyboardNavigation": "Arrow Left/Right navigates tabs, Tab moves to panel content",
+    "screenReaderNotes": "Tab label and selected state announced, panel content associated via aria"
+  },
+  "usageGuidelines": {
+    "whenToUse": ["Content sections within a page", "Settings categories", "Related content grouping"],
+    "whenNotToUse": ["For option selection (use SegmentedControl instead)", "For step-by-step flows (use Stepper instead)"],
+    "bestPractices": ["Keep tab labels short", "Use showPanels for self-contained tab content", "Ensure tab content is accessible without JavaScript"],
+    "commonPatterns": ["Settings page tabs", "Dashboard content sections", "Detail view with tabs"]
+  },
+  "importPath": "@/components/molecules/Tabs",
+  "exportPath": "@/components"
+}

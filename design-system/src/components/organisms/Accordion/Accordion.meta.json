@@ -1,0 +1,35 @@
+{
+  "name": "Accordion",
+  "displayName": "Accordion",
+  "category": "organism",
+  "description": "Accordion component for collapsible content sections. Supports both exclusive (single-open) and multi-open modes.",
+  "muiComponent": "Accordion",
+  "muiPackage": "@mui/material",
+  "props": [
+    {"name": "items", "type": "AccordionItem[]", "required": true, "description": "Items with id, title, content, disabled"},
+    {"name": "exclusive", "type": "boolean", "required": false, "defaultValue": false, "description": "If true, only one expanded at a time"},
+    {"name": "expanded", "type": "string | string[]", "required": false, "description": "Controlled expanded IDs"},
+    {"name": "onChange", "type": "function", "required": false, "description": "Callback when expansion changes"},
+    {"name": "variant", "type": "'default' | 'outlined' | 'elevation'", "required": false, "defaultValue": "default", "description": "Visual variant"}
+  ],
+  "examples": [
+    {"title": "Basic Accordion", "description": "FAQ-style collapsible sections", "code": "import { Accordion } from '@/components';\n\n<Accordion\n  items={[\n    { id: '1', title: 'Section 1', content: 'Content here' },\n    { id: '2', title: 'Section 2', content: 'More content' }\n  ]}\n  exclusive\n/>"}
+  ],
+  "migrationExamples": [
+    {"mui": "import { Accordion, AccordionSummary, AccordionDetails } from '@mui/material';\n<Accordion>\n  <AccordionSummary>Title</AccordionSummary>\n  <AccordionDetails>Content</AccordionDetails>\n</Accordion>", "designSystem": "import { Accordion } from '@/components';\n<Accordion items={[{ id: '1', title: 'Title', content: 'Content' }]} />", "description": "Replace MUI Accordion+Summary+Details with data-driven Accordion"}
+  ],
+  "relatedComponents": ["Modal", "Tabs"],
+  "accessibility": {
+    "ariaAttributes": ["aria-expanded", "aria-controls"],
+    "keyboardNavigation": "Enter/Space toggles sections, Tab navigates between headers",
+    "screenReaderNotes": "Expanded/collapsed state and section title announced"
+  },
+  "usageGuidelines": {
+    "whenToUse": ["FAQ sections", "Settings groups", "Collapsible content panels", "Progressive disclosure"],
+    "whenNotToUse": ["For tabs with equal content (use Tabs instead)", "For navigation menus"],
+    "bestPractices": ["Use exclusive mode for FAQ-style content", "Keep titles descriptive", "Don't nest accordions"],
+    "commonPatterns": ["FAQ page", "Settings page with grouped options", "Sidebar filter groups"]
+  },
+  "importPath": "@/components/organisms/Accordion",
+  "exportPath": "@/components"
+}

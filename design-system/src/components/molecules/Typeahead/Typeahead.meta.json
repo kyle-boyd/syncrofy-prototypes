@@ -1,0 +1,43 @@
+{
+  "name": "Typeahead",
+  "displayName": "Typeahead",
+  "category": "molecule",
+  "description": "Typeahead component (Autocomplete) for text input with filtered suggestions. Users can type to filter and select from available options.",
+  "muiComponent": "Autocomplete",
+  "muiPackage": "@mui/material",
+  "props": [
+    {"name": "options", "type": "TypeaheadOption[]", "required": true, "description": "Options with label and value"},
+    {"name": "value", "type": "TypeaheadOption | null", "required": false, "description": "Selected value"},
+    {"name": "onChange", "type": "function", "required": false, "description": "Callback when value changes"},
+    {"name": "inputValue", "type": "string", "required": false, "description": "Controlled input value"},
+    {"name": "onInputChange", "type": "function", "required": false, "description": "Callback when input changes"},
+    {"name": "label", "type": "string", "required": false, "description": "Input label"},
+    {"name": "placeholder", "type": "string", "required": false, "description": "Input placeholder"},
+    {"name": "disabled", "type": "boolean", "required": false, "description": "If true, input is disabled"},
+    {"name": "multiple", "type": "boolean", "required": false, "description": "Allow multiple selection"},
+    {"name": "required", "type": "boolean", "required": false, "description": "If true, field is required"},
+    {"name": "error", "type": "boolean", "required": false, "description": "If true, shows error state"},
+    {"name": "helperText", "type": "string", "required": false, "description": "Helper or error text"},
+    {"name": "loading", "type": "boolean", "required": false, "description": "If true, shows loading state"}
+  ],
+  "examples": [
+    {"title": "Basic Typeahead", "description": "Search with suggestions", "code": "import { Typeahead } from '@/components';\n\n<Typeahead\n  options={[{ label: 'Option 1', value: 1 }]}\n  label=\"Search\"\n  onChange={handleChange}\n/>"}
+  ],
+  "migrationExamples": [
+    {"mui": "import { Autocomplete, TextField } from '@mui/material';\n<Autocomplete options={options} renderInput={(params) => <TextField {...params} />} />", "designSystem": "import { Typeahead } from '@/components';\n<Typeahead options={options} />", "description": "Replace MUI Autocomplete with Typeahead"}
+  ],
+  "relatedComponents": ["Input", "Search", "Dropdown"],
+  "accessibility": {
+    "ariaAttributes": ["aria-autocomplete", "aria-expanded", "aria-activedescendant", "role=\"combobox\""],
+    "keyboardNavigation": "Type to filter, Arrow keys navigate suggestions, Enter selects, Escape closes",
+    "screenReaderNotes": "Available options count and selected option announced as user types"
+  },
+  "usageGuidelines": {
+    "whenToUse": ["Large option lists that need filtering", "Search with suggestions", "Tag/label entry with autocomplete"],
+    "whenNotToUse": ["For short option lists (use Dropdown instead)", "For free-text search without suggestions (use Search instead)"],
+    "bestPractices": ["Provide loading state for async options", "Use error/helperText for validation", "Consider debouncing for API-backed suggestions"],
+    "commonPatterns": ["User search with suggestions", "Tag input with autocomplete", "Location picker"]
+  },
+  "importPath": "@/components/molecules/Typeahead",
+  "exportPath": "@/components"
+}

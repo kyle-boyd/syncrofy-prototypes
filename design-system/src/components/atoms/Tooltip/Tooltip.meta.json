@@ -1,0 +1,39 @@
+{
+  "name": "Tooltip",
+  "displayName": "Tooltip",
+  "category": "atom",
+  "description": "Tooltip component for displaying additional information on hover. Provides contextual help or labels for UI elements.",
+  "muiComponent": "Tooltip",
+  "muiPackage": "@mui/material",
+  "props": [
+    {"name": "title", "type": "React.ReactNode", "required": true, "description": "Tooltip title"},
+    {"name": "children", "type": "React.ReactElement", "required": true, "description": "The element that triggers the tooltip"},
+    {"name": "placement", "type": "'bottom-end' | 'bottom-start' | 'bottom' | 'left-end' | 'left-start' | 'left' | 'right-end' | 'right-start' | 'right' | 'top-end' | 'top-start' | 'top'", "required": false, "description": "Placement of the tooltip"},
+    {"name": "open", "type": "boolean", "required": false, "description": "If true, the tooltip is shown"},
+    {"name": "disabled", "type": "boolean", "required": false, "description": "If true, the tooltip is disabled"},
+    {"name": "enterDelay", "type": "number", "required": false, "description": "Milliseconds before showing"},
+    {"name": "leaveDelay", "type": "number", "required": false, "description": "Milliseconds before hiding"}
+  ],
+  "examples": [
+    {"title": "IconButton with Tooltip", "description": "Tooltip on icon button for accessibility", "code": "import { Tooltip, IconButton } from '@/components';\nimport DeleteIcon from '@mui/icons-material/Delete';\n\n<Tooltip title=\"Delete\">\n  <IconButton aria-label=\"Delete\">\n    <DeleteIcon />\n  </IconButton>\n</Tooltip>"},
+    {"title": "Placement", "description": "Tooltip with custom placement", "code": "import { Tooltip, Button } from '@/components';\n\n<Tooltip title=\"Additional info\" placement=\"right\">\n  <Button>Hover me</Button>\n</Tooltip>"},
+    {"title": "Truncated Text", "description": "Tooltip showing full content for truncated text", "code": "import { Tooltip, Typography } from '@mui/material';\n\n<Tooltip title=\"Full text content here\">\n  <Typography noWrap sx={{ maxWidth: 100 }}>\n    Truncated text...\n  </Typography>\n</Tooltip>"}
+  ],
+  "migrationExamples": [
+    {"mui": "import { Tooltip } from '@mui/material';\n<Tooltip title=\"Delete\"><IconButton><DeleteIcon /></IconButton></Tooltip>", "designSystem": "import { Tooltip, IconButton } from '@/components';\n<Tooltip title=\"Delete\"><IconButton aria-label=\"Delete\"><DeleteIcon /></IconButton></Tooltip>", "description": "Replace MUI Tooltip with design system Tooltip. Add aria-label to IconButton for accessibility."}
+  ],
+  "relatedComponents": ["IconButton", "Button"],
+  "accessibility": {
+    "ariaAttributes": ["aria-describedby", "role=\"tooltip\""],
+    "keyboardNavigation": "Escape dismisses tooltip, focus triggers tooltip display",
+    "screenReaderNotes": "Tooltip content is announced when the trigger element receives focus"
+  },
+  "usageGuidelines": {
+    "whenToUse": ["Providing context for icon buttons", "Explaining truncated text", "Showing additional information on hover"],
+    "whenNotToUse": ["For error messages (use form validation instead)", "For critical information (it may not be discoverable)", "For interactive content (use Popover instead)"],
+    "bestPractices": ["Keep tooltip text concise", "Use enterDelay to prevent flickering on quick mouse moves", "Always add tooltips to IconButtons"],
+    "commonPatterns": ["IconButton with tooltip label", "Truncated text with full content tooltip"]
+  },
+  "importPath": "@/components/atoms/Tooltip",
+  "exportPath": "@/components"
+}

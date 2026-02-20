@@ -1,0 +1,39 @@
+{
+  "name": "ToggleButton",
+  "displayName": "ToggleButton",
+  "category": "atom",
+  "description": "ToggleButton component for selectable buttons. Used in groups for exclusive or multi-select options. Extends MUI ToggleButton with custom styling.",
+  "muiComponent": "ToggleButton",
+  "muiPackage": "@mui/material",
+  "props": [
+    {"name": "children", "type": "React.ReactNode", "required": true, "description": "The content of the button"},
+    {"name": "selected", "type": "boolean", "required": false, "description": "If true, the button is selected"},
+    {"name": "color", "type": "'standard' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning'", "required": false, "description": "Color of the button"},
+    {"name": "size", "type": "'small' | 'medium' | 'large'", "required": false, "description": "Size of the button"},
+    {"name": "disabled", "type": "boolean", "required": false, "description": "If true, the button is disabled"},
+    {"name": "fullWidth", "type": "boolean", "required": false, "description": "If true, the button takes full width"},
+    {"name": "onChange", "type": "(event, value) => void", "required": false, "description": "Callback fired when selection changes"},
+    {"name": "value", "type": "any", "required": true, "description": "The value to associate with the button when selected"}
+  ],
+  "examples": [
+    {"title": "View Toggle", "description": "List and grid view toggle", "code": "import { ToggleButton, ToggleButtonGroup } from '@/components';\nimport ViewListIcon from '@mui/icons-material/ViewList';\nimport ViewModuleIcon from '@mui/icons-material/ViewModule';\n\n<ToggleButtonGroup value={view} exclusive onChange={(e, v) => setView(v)}>\n  <ToggleButton value=\"list\" aria-label=\"List view\"><ViewListIcon /></ToggleButton>\n  <ToggleButton value=\"grid\" aria-label=\"Grid view\"><ViewModuleIcon /></ToggleButton>\n</ToggleButtonGroup>"},
+    {"title": "Text Formatting", "description": "Bold and italic toggle buttons", "code": "import { ToggleButton, ToggleButtonGroup } from '@/components';\n\n<ToggleButtonGroup value={formats}>\n  <ToggleButton value=\"bold\">Bold</ToggleButton>\n  <ToggleButton value=\"italic\">Italic</ToggleButton>\n</ToggleButtonGroup>"}
+  ],
+  "migrationExamples": [
+    {"mui": "import { ToggleButton } from '@mui/material';\n<ToggleButton value=\"list\"><ViewListIcon /></ToggleButton>", "designSystem": "import { ToggleButton } from '@/components';\n<ToggleButton value=\"list\"><ViewListIcon /></ToggleButton>", "description": "Replace MUI ToggleButton with design system ToggleButton"}
+  ],
+  "relatedComponents": ["ButtonGroup", "SegmentedControl", "Button"],
+  "accessibility": {
+    "ariaAttributes": ["aria-pressed", "aria-label"],
+    "keyboardNavigation": "Enter or Space toggles selection",
+    "screenReaderNotes": "Selected/deselected state is announced"
+  },
+  "usageGuidelines": {
+    "whenToUse": ["View mode toggles (list/grid)", "Text formatting options (bold/italic)", "Single or multi-select button groups"],
+    "whenNotToUse": ["For navigation tabs (use Tabs instead)", "For simple actions (use Button instead)"],
+    "bestPractices": ["Use within ToggleButtonGroup for exclusive selection", "Provide aria-label for icon-only toggle buttons", "Use value prop for tracking selection state"],
+    "commonPatterns": ["List/grid view toggle", "Text formatting toolbar"]
+  },
+  "importPath": "@/components/atoms/ToggleButton",
+  "exportPath": "@/components"
+}

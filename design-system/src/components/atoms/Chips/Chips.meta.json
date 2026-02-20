@@ -1,0 +1,40 @@
+{
+  "name": "Chips",
+  "displayName": "Chips",
+  "category": "atom",
+  "description": "Chip component for compact elements that can represent tags, filters, or selections. Extends MUI Chip with a custom 'rounded' variant for pill-shaped chips.",
+  "muiComponent": "Chip",
+  "muiPackage": "@mui/material",
+  "props": [
+    {"name": "label", "type": "React.ReactNode", "required": true, "description": "The content of the chip"},
+    {"name": "variant", "type": "'filled' | 'outlined' | 'rounded'", "required": false, "description": "The variant to use"},
+    {"name": "color", "type": "'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning'", "required": false, "description": "The color"},
+    {"name": "size", "type": "'small' | 'medium'", "required": false, "description": "The size"},
+    {"name": "disabled", "type": "boolean", "required": false, "description": "If true, the chip is disabled"},
+    {"name": "onDelete", "type": "() => void", "required": false, "description": "If provided, enables delete behavior"},
+    {"name": "icon", "type": "React.ReactElement", "required": false, "description": "Icon element"},
+    {"name": "avatar", "type": "React.ReactElement", "required": false, "description": "Avatar element"}
+  ],
+  "examples": [
+    {"title": "Basic", "description": "Simple chip", "code": "import { Chips } from '@/components';\n\n<Chips label=\"Category\" />"},
+    {"title": "Deletable", "description": "Chip with delete action", "code": "import { Chips } from '@/components';\n\n<Chips label=\"Filter\" variant=\"rounded\" onDelete={() => {}} />"},
+    {"title": "With Icon", "description": "Chip with icon", "code": "import { Chips } from '@/components';\nimport FaceIcon from '@mui/icons-material/Face';\n\n<Chips icon={<FaceIcon />} label=\"With Icon\" />"}
+  ],
+  "migrationExamples": [
+    {"mui": "import { Chip } from '@mui/material';\n<Chip label=\"Tag\" />", "designSystem": "import { Chips } from '@/components';\n<Chips label=\"Tag\" />", "description": "Replace MUI Chip with Chips. Note the name is 'Chips' not 'Chip'. Custom 'rounded' variant available."}
+  ],
+  "relatedComponents": ["Tag", "Badge", "Button"],
+  "accessibility": {
+    "ariaAttributes": ["aria-label", "role=\"button\""],
+    "keyboardNavigation": "Enter or Space activates/deletes chip, Backspace deletes",
+    "screenReaderNotes": "Chip label and deletable state are announced"
+  },
+  "usageGuidelines": {
+    "whenToUse": ["Active filter tags", "Category labels", "Multi-select values", "Status indicators"],
+    "whenNotToUse": ["For primary actions (use Button instead)", "For status badges on elements (use Badge instead)", "For semantic status labels (use Tag instead)"],
+    "bestPractices": ["Use onDelete to make chips removable", "Use rounded variant for filter pills", "Keep labels concise"],
+    "commonPatterns": ["Active filter chips with delete", "Category tag display", "Multi-select input values"]
+  },
+  "importPath": "@/components/atoms/Chips",
+  "exportPath": "@/components"
+}
