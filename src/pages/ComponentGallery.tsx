@@ -50,7 +50,7 @@ import { Typeahead } from '@kyleboyd/design-system';
 import { Accordion } from '@kyleboyd/design-system';
 import { Modal } from '@kyleboyd/design-system';
 import { PageHeader } from '@kyleboyd/design-system';
-import { Table, TextCell } from '@kyleboyd/design-system';
+import { Table } from '@kyleboyd/design-system';
 import type { TableColumn } from '@kyleboyd/design-system';
 import MuiLink from '@mui/material/Link';
 
@@ -202,8 +202,8 @@ export default function ComponentGallery() {
   );
 
   const tableColumns: TableColumn<{ name: string; status: string }>[] = [
-    { id: 'name', label: 'Name', render: (row) => <TextCell value={row.name} /> },
-    { id: 'status', label: 'Status', render: (row) => <TextCell value={row.status} /> },
+    { id: 'name', label: 'Name', render: (row) => row.name },
+    { id: 'status', label: 'Status', render: (row) => row.status },
   ];
   const tableRows = [
     { name: 'Item One', status: 'Active' },
