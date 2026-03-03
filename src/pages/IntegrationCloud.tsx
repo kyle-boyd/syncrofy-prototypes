@@ -22,8 +22,8 @@ import {
   Table,
   TableColumn,
   Input,
-} from '@kyleboyd/design-system';
-import type { Step } from '@kyleboyd/design-system';
+} from '@design-system';
+import type { Step } from '@design-system';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
 import WarningIcon from '@mui/icons-material/Warning';

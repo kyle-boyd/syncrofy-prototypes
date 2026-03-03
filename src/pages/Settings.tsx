@@ -39,7 +39,7 @@ import {
   Dropdown,
   Tag,
   type SegmentedControlItemData,
-} from '@kyleboyd/design-system';
+} from '@design-system';
 import { PageLayout } from '../components/PageLayout';
 import { mockPartners } from './Partners';
 

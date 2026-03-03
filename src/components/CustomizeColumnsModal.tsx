@@ -9,7 +9,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import ViewColumnIcon from '@mui/icons-material/ViewColumn';
-import { Button } from '@kyleboyd/design-system';
+import { Button } from '@design-system';
 
 export interface ColumnConfig {
   id: string;

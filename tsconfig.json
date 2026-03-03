@@ -23,10 +23,13 @@
     /* Path aliases */
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@design-system": ["./design-system"],
+      "@design-system/*": ["./design-system/*"]
     }
   },
-  "include": ["src"],
+  "include": ["src", "design-system"],
+  "exclude": ["node_modules", "design-system/**/*.stories.tsx", "design-system/**/*.stories.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
 

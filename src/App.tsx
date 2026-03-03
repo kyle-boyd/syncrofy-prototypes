@@ -1,7 +1,7 @@
 import React from 'react';
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { theme } from '@kyleboyd/design-system';
+import { theme } from '@design-system';
 import Home from './pages/Home';
 import ComponentGallery from './pages/ComponentGallery';
 import TransferDetails from './pages/TransferDetails';
@@ -10,6 +10,8 @@ import Partners from './pages/Partners';
 import PartnerDetail from './pages/PartnerDetail';
 import IntegrationCloud from './pages/IntegrationCloud';
 import Settings from './pages/Settings';
+import Exceptions from './pages/Exceptions';
+import ExceptionRuleConfig from './pages/ExceptionRuleConfig';
 
 function App() {
   return (
@@ -25,6 +27,8 @@ function App() {
           <Route path="/partners/:id" element={<PartnerDetail />} />
           <Route path="/integration-cloud" element={<IntegrationCloud />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/exceptions" element={<Exceptions />} />
+          <Route path="/exceptions/rules" element={<ExceptionRuleConfig />} />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>

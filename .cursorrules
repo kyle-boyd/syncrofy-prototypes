@@ -1,0 +1,10 @@
+# Syncrofy Prototypes — Cursor Rules
+
+1. **Single source of truth** — The `design-system/` folder is the single source of truth for all UI components, tokens, and theme. Always use components from `design-system/` rather than creating new one-off components.
+
+2. **Prototype scope** — When working on a prototype, only edit files inside `src/pages/` and `src/components/`. Never edit files inside `design-system/` unless explicitly asked to.
+
+3. **Import alias** — Import design-system components using the `@design-system` alias.
+   - Example: `import { Button } from '@design-system/components/atoms'`
+
+4. **No external UI libraries** — Do not install or reference any external component libraries. Use the design-system components instead.

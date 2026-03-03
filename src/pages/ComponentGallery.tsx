@@ -36,22 +36,22 @@ import {
   Toggle,
   ToggleButton,
   Tooltip,
-} from '@kyleboyd/design-system';
+} from '@design-system';
 import AddIcon from '@mui/icons-material/Add';
 import WhatshotIcon from '@mui/icons-material/Whatshot';
-import { ButtonGroup } from '@kyleboyd/design-system';
-import { Dropdown } from '@kyleboyd/design-system';
-import { ListItem } from '@kyleboyd/design-system';
-import { SegmentedControl } from '@kyleboyd/design-system';
-import { SnackBar } from '@kyleboyd/design-system';
-import { Stepper } from '@kyleboyd/design-system';
-import { Tabs } from '@kyleboyd/design-system';
-import { Typeahead } from '@kyleboyd/design-system';
-import { Accordion } from '@kyleboyd/design-system';
-import { Modal } from '@kyleboyd/design-system';
-import { PageHeader } from '@kyleboyd/design-system';
-import { Table, TextCell } from '@kyleboyd/design-system';
-import type { TableColumn } from '@kyleboyd/design-system';
+import { ButtonGroup } from '@design-system';
+import { Dropdown } from '@design-system';
+import { ListItem } from '@design-system';
+import { SegmentedControl } from '@design-system';
+import { SnackBar } from '@design-system';
+import { Stepper } from '@design-system';
+import { Tabs } from '@design-system';
+import { Typeahead } from '@design-system';
+import { Accordion } from '@design-system';
+import { Modal } from '@design-system';
+import { PageHeader } from '@design-system';
+import { Table, TextCell } from '@design-system';
+import type { TableColumn } from '@design-system';
 import MuiLink from '@mui/material/Link';
 
 const DRAWER_WIDTH = 280;

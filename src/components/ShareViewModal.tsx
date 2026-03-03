@@ -5,7 +5,7 @@ import {
   Stack,
   List,
 } from '@mui/material';
-import { Modal, Button, Input, Avatar, Divider, Chips, ListItem } from '@kyleboyd/design-system';
+import { Modal, Button, Input, Avatar, Divider, Chips, ListItem } from '@design-system';
 
 export interface User {
   id: string;

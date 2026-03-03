@@ -1,14 +1,9 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
-import { existsSync } from 'fs';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-const externalDsPath = path.resolve('/Users/coe-kboyd/Documents/GitHub/syncrofy-ds/dist/index.js');
-const embeddedDsPath = path.resolve(__dirname, './design-system/dist/index.js');
-const designSystemPath = existsSync(externalDsPath) ? externalDsPath : existsSync(embeddedDsPath) ? embeddedDsPath : null;
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -22,8 +17,8 @@ export default defineConfig({
     alias: {
       // Our project's src alias
       '@': path.resolve(__dirname, './src'),
-      // Pull design system: external syncrofy-ds (local dev) > embedded design-system (Vercel) > npm package
-      ...(designSystemPath ? { '@kyleboyd/design-system': designSystemPath } : {}),
+      // In-repo design system source
+      '@design-system': path.resolve(__dirname, './design-system'),
       // Force single React instance to prevent "Invalid hook call" errors
       'react': path.resolve(__dirname, './node_modules/react'),
       'react-dom': path.resolve(__dirname, './node_modules/react-dom'),
@@ -34,8 +29,6 @@ export default defineConfig({
     dedupe: ['react', 'react-dom'],
   },
   optimizeDeps: {
-    // Don't pre-bundle the design system so we always load the latest build from syncrofy-ds/dist
-    exclude: ['@kyleboyd/design-system'],
     include: [
       'react',
       'react-dom',

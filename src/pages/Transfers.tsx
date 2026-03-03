@@ -17,7 +17,7 @@ import {
   Table,
   TableColumn,
   Tag,
-} from '@kyleboyd/design-system';
+} from '@design-system';
 import { PageLayout } from '../components/PageLayout';
 import { CustomizeColumnsModal, ColumnConfig } from '../components/CustomizeColumnsModal';
 

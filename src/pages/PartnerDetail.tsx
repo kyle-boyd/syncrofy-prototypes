@@ -18,7 +18,7 @@ import {
   Tabs,
   Chips,
   Tag,
-} from '@kyleboyd/design-system';
+} from '@design-system';
 import { PageLayout } from '../components/PageLayout';
 
 export interface Endpoint {

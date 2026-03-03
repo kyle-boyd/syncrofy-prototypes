@@ -9,6 +9,17 @@ This repository contains prototype web applications built using the Syncrofy Des
 > - Deploying prototypes to Vercel
 > - Common workflows and troubleshooting
 
+## Repository Rules
+
+1. **Single source of truth** — The `design-system/` folder is the single source of truth for all UI components, tokens, and theme. Always use components from `design-system/` rather than creating new one-off components.
+
+2. **Prototype scope** — When working on a prototype, only edit files inside `src/pages/` and `src/components/`. Never edit files inside `design-system/` unless explicitly asked to.
+
+3. **Import alias** — Import design-system components using the `@design-system` alias.  
+   Example: `import { Button } from '@design-system/components/atoms'`
+
+4. **No external UI libraries** — Do not install or reference any external component libraries. Use the design-system components instead.
+
 ## Overview
 
 This project uses the Syncrofy Design System published as `@syncrofy/design-system` on npm. The design system provides a comprehensive set of React components built on Material UI with custom theming.
@@ -79,10 +90,11 @@ syncrofy-protoypes/
 
 ## Using Design System Components
 
-Components from the design system can be imported from the npm package:
+Import design-system components using the `@design-system` alias:
 
 ```tsx
-import { Button, Input, Modal, theme } from '@syncrofy/design-system';
+import { Button } from '@design-system/components/atoms';
+import { Modal } from '@design-system/components/organisms';
 ```
 
 The design system is organized using atomic design principles:
@@ -134,15 +146,14 @@ Example:
 
 ```tsx
 import React from 'react';
-import { Container, Typography } from '@mui/material';
-import { Button } from '@syncrofy/design-system';
+import { Button } from '@design-system/components/atoms';
 
 function MyPrototype() {
   return (
-    <Container>
-      <Typography variant="h1">My Prototype</Typography>
+    <div>
+      <h1>My Prototype</h1>
       <Button variant="contained">Click me</Button>
-    </Container>
+    </div>
   );
 }
 

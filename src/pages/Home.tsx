@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Container, Box, Typography, Stack, Paper } from '@mui/material';
-import { Button } from '@kyleboyd/design-system';
+import { Button } from '@design-system';
 import { ShareViewModal, User } from '../components/ShareViewModal';
 import { RawEventsModal, RawFile } from '../components/RawEventsModal';
 

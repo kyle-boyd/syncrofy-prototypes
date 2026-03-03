@@ -17,7 +17,7 @@ import {
   Table,
   TableColumn,
   SegmentedControl,
-} from '@kyleboyd/design-system';
+} from '@design-system';
 import { PageLayout } from '../components/PageLayout';
 
 export interface Partner {

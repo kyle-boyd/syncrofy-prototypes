@@ -14,7 +14,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import DescriptionIcon from '@mui/icons-material/Description';
-import { Button, ListItem } from '@kyleboyd/design-system';
+import { Button, ListItem } from '@design-system';
 
 export interface RawFile {
   id: string;
