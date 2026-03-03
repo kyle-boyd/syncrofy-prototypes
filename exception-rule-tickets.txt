@@ -1,0 +1,432 @@
+EXCEPTION RULES — ENGINEERING TICKETS
+======================================
+Generated from prototype: src/pages/ExceptionRuleConfig.tsx
+Category: Scheduled = cron-based evaluation | Event = real-time transfer event hook
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SHARED / FOUNDATION TICKETS (required before any rule type works)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[SHARED-BE-1] Exception Rule data model
+  - Design DB schema for exception_rules table with columns:
+      id, org_id, name, description, rule_category (scheduled|event),
+      rule_type (enum), config (jsonb — rule-type-specific params),
+      severity (critical|high|medium|low), assigned_to_user_id,
+      watcher_user_ids (array), enabled (bool),
+      created_by, created_at, updated_by, updated_at
+  - Add migration
+
+[SHARED-BE-2] Exception Rule CRUD API
+  - POST   /api/exception-rules          — create rule
+  - GET    /api/exception-rules          — list rules (with filters: category, type, assignedTo, severity, enabled)
+  - GET    /api/exception-rules/:id      — get single rule
+  - PATCH  /api/exception-rules/:id      — update rule (including enable/disable)
+  - DELETE /api/exception-rules/:id      — delete one or many (bulk delete)
+  - Return standardized error codes for validation failures
+
+[SHARED-BE-3] Exception (alert instance) data model
+  - exception_alerts table: id, rule_id, org_id, status (open|in_progress|resolved),
+    triggered_at, resolved_at, partner_system_id, transfer_id (nullable),
+    details (jsonb), assigned_to_user_id, watcher_user_ids
+  - Link alerts to the rule that generated them
+
+[SHARED-BE-4] Partners/Systems lookup endpoint
+  - GET /api/partners — return id, name, type for use in rule config dropdowns
+  - GET /api/systems  — return id, name for internal systems
+  - Or a combined GET /api/partners-and-systems endpoint
+
+[SHARED-BE-5] Users lookup endpoint
+  - GET /api/users?org=... — return id, name, initials for Assigned To and Watchers fields
+
+[SHARED-FE-1] Exception Rules list page — API integration
+  - Replace mock data in ExceptionRuleConfig.tsx with real GET /api/exception-rules
+  - Support query params for filter bar (category, type, assignedTo, severity, active)
+  - Handle loading and empty states
+
+[SHARED-FE-2] Create Rule modal — API integration
+  - Wire Create button to POST /api/exception-rules
+  - Show inline validation errors returned from API
+  - On success: close modal, refresh rule list, show success snackbar
+
+[SHARED-FE-3] Rule list actions — API integration
+  - Enable/disable toggle → PATCH /api/exception-rules/:id { enabled }
+  - Delete (single row menu + bulk action bar) → DELETE /api/exception-rules/:id
+  - Bulk delete → DELETE /api/exception-rules with array of IDs
+
+[SHARED-FE-4] Partners/Systems dropdown — dynamic data
+  - Fetch from GET /api/partners-and-systems on modal open
+  - Replace hardcoded PARTNER_OPTIONS with API results
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RULE TYPE 1: MISSING FILE  (Category: Scheduled)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Description:
+  Raises an exception when an expected file from a specific partner or system
+  does not arrive by its scheduled deadline.
+
+Rule config fields:
+  - partner_system_id       (required)  The partner/system expected to send the file
+  - frequency               (required)  Cron-style schedule or named preset
+      Preset values:
+        every_hour     → every hour, every day
+        every_10_min   → every 10 minutes, every day
+        8am_weekday    → 08:00 AM, every weekday
+        5pm_friday     → 05:00 PM, only on Friday
+        last_day       → last day of the month at a configurable time
+  - file_name_pattern       (optional)  Glob/wildcard string, e.g. "*.txt", "report_*.csv"
+
+Trigger logic:
+  - A scheduler runs at the defined frequency (or at end of the cron window)
+  - Query: did a transfer arrive from partner_system_id (matching file_name_pattern if set)
+    within the current expected window?
+  - If NO → create an exception alert
+  - Window calculation: the scheduler must determine the expected arrival window
+    correctly for each preset (e.g. for every_hour, check the last 60 minutes)
+
+[MISSING-BE-1] Scheduler job for Missing File rules
+  - On rule creation, register a recurring job (cron) using the rule's frequency
+  - Job execution: query transfers for partner/system within the window, check file name if pattern set
+  - If file not found → call exception alert creation service
+  - On rule delete/disable → cancel the scheduled job
+  - Handle timezone correctly for named presets (org timezone setting)
+
+[MISSING-BE-2] Frequency preset → cron mapping
+  - Maintain a mapping of preset values to cron expressions
+  - Support for "last day of month" requires special cron handling
+  - Document how window edges are handled (e.g. if a file arrives 1 second late)
+
+[MISSING-BE-3] Validate Missing File rule config on POST/PATCH
+  - Required: partner_system_id, frequency
+  - Optional: file_name_pattern (validate glob syntax if provided)
+  - Frequency must be one of the allowed preset values (or valid cron if custom crons are supported)
+
+[MISSING-FE-1] Missing File rule form (already prototyped)
+  - Partner or System dropdown (required) → populated from API
+  - Expected Frequency dropdown (required) → preset options
+  - File Name Pattern text input (optional)
+  - Serialize as: { rule_type: "missing", partner_system_id, frequency, file_name_pattern }
+
+[MISSING-FE-2] Auto-generated rule name for Missing File
+  - Pattern: "[Partner] was supposed to send a file [named <pattern>] by [frequency label]"
+  - Update live as user fills in fields (shown as preview or used as default name)
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RULE TYPE 2: FREQUENT TRANSFER FAILURES  (Category: Event)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Description:
+  Raises an exception when the number of failed transfers to/from a partner
+  or system exceeds a configurable threshold within a rolling time window.
+
+Rule config fields:
+  - partner_system_id       (required)  Partner/system to monitor
+  - failure_count           (required)  Integer ≥ 1 — number of failures to trigger
+  - duration                (required)  Rolling time window
+      Allowed values: 5m, 15m, 30m
+  - direction               (optional, future) incoming | outgoing | both (default both)
+
+Trigger logic:
+  - On every transfer failure event for partner_system_id:
+    query count of failures for that partner in the last <duration>
+  - If count >= failure_count → create exception alert (deduplicated per window)
+  - Consider cooldown: do not re-fire the alert until the window resets or alert is resolved
+
+[FREQ-FAIL-BE-1] Event hook for transfer failures
+  - Subscribe to transfer failure events (from transfer processing pipeline)
+  - For each failure event: look up all active Frequent Transfer Failures rules
+    matching the partner_system_id
+  - Evaluate threshold within rolling window using a counter (Redis or DB query)
+
+[FREQ-FAIL-BE-2] Rolling window counter
+  - Use a sliding window approach (Redis sorted set keyed by rule_id+partner)
+  - Increment on each failure, expire entries older than the window duration
+  - Trigger alert when count reaches the threshold
+
+[FREQ-FAIL-BE-3] Alert deduplication
+  - Once an alert is triggered for a rule+partner+window, suppress additional alerts
+    until the existing alert is resolved or a new window begins
+
+[FREQ-FAIL-BE-4] Validate Frequent Transfer Failures rule config
+  - Required: partner_system_id, failure_count (int ≥ 1), duration (enum: 5m|15m|30m)
+
+[FREQ-FAIL-FE-1] Frequent Transfer Failures rule form (already prototyped)
+  - Partner or System dropdown (required)
+  - Failed Transfers number input (required, min 1)
+  - Duration/Period dropdown (required): 5 minutes, 15 minutes, 30 minutes
+  - Serialize as: { rule_type: "frequent_failures", partner_system_id, failure_count, duration }
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RULE TYPE 3: SINGLE TRANSFER FAILURE  (Category: Event)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Description:
+  Raises an exception for every individual transfer failure from a specific
+  partner or system. Optionally scoped to files matching a name pattern.
+
+Rule config fields:
+  - partner_system_id       (required)  Partner/system to monitor
+  - file_name_pattern       (optional)  Glob/wildcard to scope to specific file names
+
+Trigger logic:
+  - On every transfer failure event for partner_system_id:
+    if file_name_pattern is set, check if the file name matches
+  - If matched (or no pattern set) → create exception alert immediately (1:1 with failure)
+  - Each failure = one alert; no deduplication or windowing
+
+[SINGLE-FAIL-BE-1] Event hook for single transfer failure
+  - Subscribe to transfer failure events
+  - For each failure: look up active Single Transfer Failure rules for the partner
+  - If file_name_pattern is set, evaluate glob match against the transfer's file name
+  - On match → create alert with transfer_id reference
+
+[SINGLE-FAIL-BE-2] Validate Single Transfer Failure rule config
+  - Required: partner_system_id
+  - Optional: file_name_pattern (validate glob syntax if provided)
+
+[SINGLE-FAIL-FE-1] Single Transfer Failure rule form (already prototyped)
+  - Partner or System dropdown (required)
+  - File Name Pattern text input (optional)
+  - Serialize as: { rule_type: "single_failure", partner_system_id, file_name_pattern }
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RULE TYPE 4: TRANSFER RETRIED  (Category: Event)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Description:
+  Raises an exception when a transfer to/from a partner or system has been
+  retried at least a configurable number of times. Optionally scoped by file name.
+
+Rule config fields:
+  - partner_system_id       (required)  Partner/system to monitor
+  - retry_count             (required)  Integer ≥ 1 — minimum number of retries to trigger
+  - file_name_pattern       (optional)  Glob/wildcard string
+
+Trigger logic:
+  - On each retry event for a transfer:
+    check the current retry count for that transfer against retry_count threshold
+  - If retry count >= threshold and partner matches (and file name matches if pattern set):
+    → create exception alert
+  - One alert per transfer (do not fire on every subsequent retry after threshold is reached)
+
+[RETRIED-BE-1] Event hook for transfer retries
+  - Subscribe to transfer retry events (or derive from transfer status change events)
+  - For each retry: look up active Transfer Retried rules for the partner
+  - Evaluate retry_count threshold; evaluate file_name_pattern if set
+  - On match → create alert, linked to transfer_id; mark transfer as "alerted" to prevent duplicates
+
+[RETRIED-BE-2] Retry count tracking
+  - Ensure the transfer record tracks current retry_attempt count
+  - The event payload must include this count for efficient evaluation
+
+[RETRIED-BE-3] Validate Transfer Retried rule config
+  - Required: partner_system_id, retry_count (int ≥ 1)
+  - Optional: file_name_pattern
+
+[RETRIED-FE-1] Transfer Retried rule form (already prototyped)
+  - Partner or System dropdown (required)
+  - Minimum Retry Count number input (required, min 1)
+  - File Name Pattern text input (optional)
+  - Serialize as: { rule_type: "transfer_retried", partner_system_id, retry_count, file_name_pattern }
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RULE TYPE 5: ZERO BYTE FILE  (Category: Event)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Description:
+  Raises an exception when a zero-byte file is received from (or sent to)
+  a partner or system. Optionally scoped to files matching a name pattern.
+
+Rule config fields:
+  - partner_system_id       (required)  Partner/system to monitor
+  - file_name_pattern       (optional)  Glob/wildcard string
+
+Trigger logic:
+  - On transfer completion event: check if file_size == 0
+  - If zero bytes and partner matches (and file name matches if pattern set):
+    → create exception alert, linked to transfer_id
+  - One alert per transfer
+
+[ZERO-BYTE-BE-1] Event hook for zero byte file detection
+  - Subscribe to transfer receipt/completion events
+  - Check file_size field on the transfer payload
+  - Look up active Zero Byte File rules for the partner
+  - Evaluate file_name_pattern if set
+  - On match → create alert
+
+[ZERO-BYTE-BE-2] Ensure file_size is available on transfer events
+  - Confirm that the transfer event payload includes file_size in bytes
+  - If not currently present, add it to the event schema
+
+[ZERO-BYTE-BE-3] Validate Zero Byte File rule config
+  - Required: partner_system_id
+  - Optional: file_name_pattern
+
+[ZERO-BYTE-FE-1] Zero Byte File rule form (already prototyped)
+  - Partner or System dropdown (required)
+  - File Name Pattern text input (optional)
+  - Serialize as: { rule_type: "zero_byte", partner_system_id, file_name_pattern }
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RULE TYPE 6: STAGED BUT NOT PICKED UP  (Category: Event)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Description:
+  Raises an exception when a file has been staged (ready for pickup) but
+  has not been retrieved by the partner or system within a configurable duration.
+
+Rule config fields:
+  - partner_system_id       (required)  Partner/system expected to pick up the file
+  - staged_duration         (required)  How long a file may sit staged before alerting
+      Allowed values: 30m, 1h, 2h, 4h, 8h
+  - file_name_pattern       (optional)  Glob/wildcard string
+
+Trigger logic:
+  - When a file is staged for partner_system_id: record the staged_at timestamp
+  - A background job (or delay queue) checks after staged_duration:
+    has the file been picked up yet?
+  - If NOT picked up → create exception alert
+  - If file_name_pattern is set, only trigger for matching file names
+
+[STAGED-BE-1] Staged file tracking
+  - Ensure the transfer/file record captures:
+      staged_at timestamp
+      picked_up_at timestamp (null until retrieved)
+      partner_system_id
+      file_name
+
+[STAGED-BE-2] Delayed evaluation job for staged files
+  - On "file staged" event: for each active Staged but Not Picked Up rule matching
+    the partner, schedule a delayed check for staged_duration in the future
+  - At check time: query the file's picked_up_at — if still null → create alert
+  - If file_name_pattern set, evaluate before scheduling the check
+
+[STAGED-BE-3] Staged duration values → delay mapping
+  - 30m → 30 minutes
+  - 1h  → 60 minutes
+  - 2h  → 120 minutes
+  - 4h  → 240 minutes
+  - 8h  → 480 minutes
+
+[STAGED-BE-4] Validate Staged but Not Picked Up rule config
+  - Required: partner_system_id, staged_duration (enum: 30m|1h|2h|4h|8h)
+  - Optional: file_name_pattern
+
+[STAGED-FE-1] Staged but Not Picked Up rule form (already prototyped)
+  - Partner or System dropdown (required)
+  - Staged Duration dropdown (required): 30 min, 1 hour, 2 hours, 4 hours, 8 hours
+  - File Name Pattern text input (optional)
+  - Serialize as: { rule_type: "staged_not_picked_up", partner_system_id, staged_duration, file_name_pattern }
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RULE TYPE 7: EXPECTED FILE RECEIVED  (Category: Event)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Description:
+  Raises an exception (notification) when a file matching a specific name
+  pattern is received from a partner or system. Useful for alerting on
+  arrival of files that require immediate attention (e.g. invoices, reports).
+  Unlike Missing File, this rule fires ON receipt — not on absence.
+
+Rule config fields:
+  - partner_system_id       (required)  Partner/system to monitor for incoming transfers
+  - file_name_pattern       (required)  Glob/wildcard string to match against received file name
+                                        e.g. "invoice_*.xml", "EOD_report_*.csv"
+
+Trigger logic:
+  - On transfer receipt event from partner_system_id:
+    evaluate file_name_pattern against the received file name
+  - If match → create exception alert, linked to transfer_id
+  - One alert per matched file/transfer
+
+[FILE-MATCH-BE-1] Event hook for expected file received
+  - Subscribe to transfer receipt/completion events
+  - For each receipt from a partner: look up active Expected File Received rules
+    for that partner_system_id
+  - Evaluate glob match of file_name_pattern against the file name
+  - On match → create alert
+
+[FILE-MATCH-BE-2] Glob pattern matching utility
+  - Implement or reuse a server-side glob/wildcard matching function
+    (consistent with any client-side validation of the pattern field)
+  - Support: * (any chars), ? (single char), character sets (optional)
+
+[FILE-MATCH-BE-3] Validate Expected File Received rule config
+  - Required: partner_system_id, file_name_pattern
+  - Validate that file_name_pattern is a non-empty string
+  - Optionally validate glob syntax and reject obviously invalid patterns
+
+[FILE-MATCH-FE-1] Expected File Received rule form (already prototyped)
+  - Partner or System dropdown (required)
+  - File Name Pattern text input (required) — placeholder: "e.g. invoice_*.xml"
+  - Serialize as: { rule_type: "file_match", partner_system_id, file_name_pattern }
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+COMMON RULE FIELDS (applied to all rule types)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Every rule shares these configuration fields regardless of type:
+
+  Field           Type        Notes
+  ─────────────── ─────────── ────────────────────────────────────────────
+  enabled         boolean     Default: true. Inactive rules are not evaluated.
+  severity        enum        critical | high | medium | low
+                              Propagated to generated exception alerts.
+  assigned_to     user_id     User responsible for reviewing alerts from this rule.
+  watchers        user_id[]   Additional users notified when an alert fires.
+  custom_name     string      Optional override; if blank, a name is auto-generated.
+  description     string      Optional free-text context for the rule.
+
+[COMMON-BE-1] Validate common fields on all rule POST/PATCH
+  - severity must be one of: critical, high, medium, low
+  - assigned_to must be a valid user_id in the org
+  - watchers must all be valid user_ids
+
+[COMMON-BE-2] Auto-generate rule name on the server
+  - If custom_name is blank, generate a human-readable name based on rule_type + config
+  - Missing File:                "[Partner] was supposed to send [file pattern] by [frequency]"
+  - Frequent Transfer Failures: "[Partner] — [N] failures within [duration]"
+  - Single Transfer Failure:    "[Partner] — single transfer failure[, file: pattern]"
+  - Transfer Retried:           "[Partner] — retried [N]+ times[, file: pattern]"
+  - Zero Byte File:             "[Partner] — zero byte file received[, file: pattern]"
+  - Staged but Not Picked Up:   "[Partner] — file staged for >[duration][, file: pattern]"
+  - Expected File Received:     "[Partner] — file matching [pattern] received"
+
+[COMMON-BE-3] Alert notification on exception trigger
+  - When an alert is created: notify assigned_to and watchers
+  - Notification channels: in-app, email (configurable per user)
+  - Notification payload: rule name, partner, severity, link to exception detail
+
+[COMMON-FE-1] Common fields section in Create Rule modal (already prototyped)
+  - Assigned To dropdown (users from API)
+  - Severity dropdown: Critical, High, Medium, Low
+  - Watchers multi-select or comma-separated text input
+  - Custom Name text field (optional)
+  - Description textarea (optional)
+  - Enabled/Disabled toggle (default on)
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+TICKET SUMMARY — COUNTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Shared/Foundation   BE: 5    FE: 4
+  Missing File        BE: 3    FE: 2
+  Frequent Failures   BE: 4    FE: 1
+  Single Failure      BE: 2    FE: 1
+  Transfer Retried    BE: 3    FE: 1
+  Zero Byte File      BE: 3    FE: 1
+  Staged Not Picked   BE: 4    FE: 1
+  Expected File Recv  BE: 3    FE: 1
+  Common Fields       BE: 3    FE: 1
+  ─────────────────────────────────
+  TOTAL               BE: 30   FE: 13  (43 tickets)

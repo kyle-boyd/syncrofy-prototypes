@@ -63,10 +63,9 @@ interface CreateRuleForm {
   failurePartnerSystem: string;
   failureCount: string;
   failureDuration: string;
-  // Mailbox Too Long fields
-  mailboxPartnerSystem: string;
-  mailboxDuration: string;
-  mailboxFilePattern: string;
+  // Expected File Received fields
+  fileMatchPartnerSystem: string;
+  fileMatchPattern: string;
   // Single Transfer Failure fields
   singlePartnerSystem: string;
   singleFilePattern: string;
@@ -122,7 +121,7 @@ const getSeverityConfig = (severity: ExceptionRule['severity']) => {
 
 const defaultForm: CreateRuleForm = {
   enabled: true,
-  ruleCategory: 'scheduled',
+  ruleCategory: 'all',
   ruleType: 'missing',
   partnerSystem: '',
   frequency: '',
@@ -130,9 +129,8 @@ const defaultForm: CreateRuleForm = {
   failurePartnerSystem: '',
   failureCount: '',
   failureDuration: '',
-  mailboxPartnerSystem: '',
-  mailboxDuration: '',
-  mailboxFilePattern: '',
+  fileMatchPartnerSystem: '',
+  fileMatchPattern: '',
   singlePartnerSystem: '',
   singleFilePattern: '',
   retriedPartnerSystem: '',
@@ -263,11 +261,11 @@ function ExceptionRuleConfig() {
         { value: '', label: 'All' },
         { value: 'missing', label: 'Missing File' },
         { value: 'frequent_failures', label: 'Frequent Transfer Failures' },
-        { value: 'mailbox_too_long', label: 'File in Mailbox for Too Long' },
         { value: 'single_failure', label: 'Single Transfer Failure' },
         { value: 'transfer_retried', label: 'Transfer Retried' },
         { value: 'zero_byte', label: 'Zero Byte File' },
         { value: 'staged_not_picked_up', label: 'Staged but Not Picked Up' },
+        { value: 'file_match', label: 'Expected File Received' },
       ],
     },
     {
@@ -417,11 +415,11 @@ function ExceptionRuleConfig() {
   const canCreate = (() => {
     switch (form.ruleType) {
       case 'frequent_failures':    return form.failurePartnerSystem !== '' && form.failureCount !== '' && form.failureDuration !== '';
-      case 'mailbox_too_long':     return form.mailboxPartnerSystem !== '' && form.mailboxDuration !== '';
       case 'single_failure':       return form.singlePartnerSystem !== '';
       case 'transfer_retried':     return form.retriedPartnerSystem !== '' && form.retriedCount !== '';
       case 'zero_byte':            return form.zeroBytePartnerSystem !== '';
       case 'staged_not_picked_up': return form.stagedPartnerSystem !== '' && form.stagedDuration !== '';
+      case 'file_match':           return form.fileMatchPartnerSystem !== '' && form.fileMatchPattern !== '';
       default:                     return form.partnerSystem !== '' && form.frequency !== '';
     }
   })();
@@ -685,8 +683,19 @@ function ExceptionRuleConfig() {
               <Select
                 label="Rule Category"
                 value={form.ruleCategory}
-                onChange={(e) => setForm((f) => ({ ...f, ruleCategory: e.target.value }))}
+                onChange={(e) => {
+                  const cat = e.target.value;
+                  setForm((f) => ({
+                    ...f,
+                    ruleCategory: cat,
+                    // Reset ruleType when switching categories to keep it valid
+                    ruleType: cat === 'scheduled' ? 'missing'
+                      : (cat === 'event' && f.ruleType === 'missing') ? 'frequent_failures'
+                      : f.ruleType,
+                  }));
+                }}
               >
+                <MuiMenuItem value="all">All Rules</MuiMenuItem>
                 <MuiMenuItem value="scheduled">Scheduled Rules</MuiMenuItem>
                 <MuiMenuItem value="event">Event Rules</MuiMenuItem>
               </Select>
@@ -699,13 +708,17 @@ function ExceptionRuleConfig() {
                 value={form.ruleType}
                 onChange={(e) => setForm((f) => ({ ...f, ruleType: e.target.value }))}
               >
-                <MuiMenuItem value="missing">Missing File</MuiMenuItem>
-                <MuiMenuItem value="frequent_failures">Frequent Transfer Failures</MuiMenuItem>
-                <MuiMenuItem value="mailbox_too_long">File in Mailbox for Too Long</MuiMenuItem>
-                <MuiMenuItem value="single_failure">Single Transfer Failure</MuiMenuItem>
-                <MuiMenuItem value="transfer_retried">Transfer Retried</MuiMenuItem>
-                <MuiMenuItem value="zero_byte">Zero Byte File</MuiMenuItem>
-                <MuiMenuItem value="staged_not_picked_up">Staged but Not Picked Up</MuiMenuItem>
+                {(form.ruleCategory === 'all' || form.ruleCategory === 'scheduled') && (
+                  <MuiMenuItem value="missing">Missing File</MuiMenuItem>
+                )}
+                {(form.ruleCategory === 'all' || form.ruleCategory === 'event') && [
+                  <MuiMenuItem key="frequent_failures" value="frequent_failures">Frequent Transfer Failures</MuiMenuItem>,
+                  <MuiMenuItem key="single_failure" value="single_failure">Single Transfer Failure</MuiMenuItem>,
+                  <MuiMenuItem key="transfer_retried" value="transfer_retried">Transfer Retried</MuiMenuItem>,
+                  <MuiMenuItem key="zero_byte" value="zero_byte">Zero Byte File</MuiMenuItem>,
+                  <MuiMenuItem key="staged_not_picked_up" value="staged_not_picked_up">Staged but Not Picked Up</MuiMenuItem>,
+                  <MuiMenuItem key="file_match" value="file_match">Expected File Received</MuiMenuItem>,
+                ]}
               </Select>
             </FormControl>
           </Box>
@@ -772,33 +785,20 @@ function ExceptionRuleConfig() {
             </>
           )}
 
-          {/* Mailbox Too Long */}
-          {form.ruleType === 'mailbox_too_long' && (
+          {/* Expected File Received */}
+          {form.ruleType === 'file_match' && (
             <>
-              <RuleFieldRow filled={!!form.mailboxPartnerSystem} label="Partner or System" tooltip="Select the partner or system whose mailbox should be monitored for files sitting idle too long.">
+              <RuleFieldRow filled={!!form.fileMatchPartnerSystem} label="Partner or System" tooltip="Select the partner or system whose incoming transfers should be monitored for matching files.">
                 <FormControl size="small" sx={{ flex: 1 }}>
                   <InputLabel>Select Partner or System</InputLabel>
-                  <Select label="Select Partner or System" value={form.mailboxPartnerSystem} onChange={(e) => setForm((f) => ({ ...f, mailboxPartnerSystem: e.target.value }))}>
+                  <Select label="Select Partner or System" value={form.fileMatchPartnerSystem} onChange={(e) => setForm((f) => ({ ...f, fileMatchPartnerSystem: e.target.value }))}>
                     {PARTNER_OPTIONS.map((o) => <MuiMenuItem key={o.value} value={o.value}>{o.label}</MuiMenuItem>)}
                   </Select>
                 </FormControl>
               </RuleFieldRow>
 
-              <RuleFieldRow filled={!!form.mailboxDuration} label="Time Threshold" tooltip="How long a file can sit in the mailbox before an exception is triggered.">
-                <FormControl size="small" sx={{ flex: 1 }}>
-                  <InputLabel>Select threshold</InputLabel>
-                  <Select label="Select threshold" value={form.mailboxDuration} onChange={(e) => setForm((f) => ({ ...f, mailboxDuration: e.target.value }))}>
-                    <MuiMenuItem value="1h">1 hour</MuiMenuItem>
-                    <MuiMenuItem value="2h">2 hours</MuiMenuItem>
-                    <MuiMenuItem value="4h">4 hours</MuiMenuItem>
-                    <MuiMenuItem value="8h">8 hours</MuiMenuItem>
-                    <MuiMenuItem value="24h">24 hours</MuiMenuItem>
-                  </Select>
-                </FormControl>
-              </RuleFieldRow>
-
-              <RuleFieldRow filled={!!form.mailboxFilePattern} required={false} label="File Name Pattern" tooltip="Optionally match only files whose name matches this pattern, e.g. *.txt.">
-                <TextField size="small" placeholder="e.g. file*.txt" value={form.mailboxFilePattern} onChange={(e) => setForm((f) => ({ ...f, mailboxFilePattern: e.target.value }))} sx={{ flex: 1 }} />
+              <RuleFieldRow filled={!!form.fileMatchPattern} label="File Name Pattern" tooltip="Enter the file name pattern to watch for. An exception is triggered when a file matching this pattern is received, e.g. invoice_*.xml.">
+                <TextField size="small" placeholder="e.g. invoice_*.xml" value={form.fileMatchPattern} onChange={(e) => setForm((f) => ({ ...f, fileMatchPattern: e.target.value }))} sx={{ flex: 1 }} />
               </RuleFieldRow>
             </>
           )}
