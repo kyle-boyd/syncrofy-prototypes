@@ -150,6 +150,60 @@ const defaultForm: CreateRuleForm = {
   description: '',
 };
 
+// ─── Module-level constants and helpers (must NOT be defined inside the component) ──
+
+const PARTNER_OPTIONS = [
+  { value: 'sap',       label: 'SAP Krishna' },
+  { value: 'aws',       label: 'AWS S3' },
+  { value: 'jd',        label: 'John Deere' },
+  { value: '1234',      label: '1234' },
+  { value: 'anderson',  label: 'Anderson & Sons' },
+  { value: 'summit',    label: 'Summit Energy Partners' },
+  { value: 'mainframe', label: 'Mainframe' },
+];
+
+interface RuleFieldRowProps {
+  filled: boolean;
+  required?: boolean;
+  label: string;
+  tooltip?: string;
+  children: React.ReactNode;
+}
+
+const RuleFieldRow: React.FC<RuleFieldRowProps> = ({ filled, required = true, label, tooltip, children }) => (
+  <Box
+    sx={{
+      display: 'flex',
+      alignItems: 'center',
+      gap: 2,
+      border: '1px solid',
+      borderColor: 'divider',
+      borderRadius: '8px',
+      px: 2,
+      py: 1.5,
+      bgcolor: 'background.paper',
+    }}
+  >
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, minWidth: 200 }}>
+      {filled ? (
+        <CheckCircleIcon sx={{ fontSize: 20, color: 'success.main', flexShrink: 0 }} />
+      ) : (
+        <RadioButtonUncheckedIcon
+          sx={{ fontSize: 20, color: required ? 'error.main' : 'text.disabled', flexShrink: 0 }}
+        />
+      )}
+      <Typography variant="body2" sx={{ fontWeight: 600 }}>{label}</Typography>
+      {tooltip && (
+        <InfoOutlinedIcon
+          sx={{ fontSize: 14, color: 'text.secondary', cursor: 'default' }}
+          titleAccess={tooltip}
+        />
+      )}
+    </Box>
+    {children}
+  </Box>
+);
+
 // ─── Component ────────────────────────────────────────────────────────────────
 
 function ExceptionRuleConfig() {
@@ -357,67 +411,6 @@ function ExceptionRuleConfig() {
       ),
     },
   ];
-
-  // ── Reusable field-row card ─────────────────────────────────────────────────
-
-  const RuleFieldRow = ({
-    filled,
-    required = true,
-    label,
-    tooltip,
-    children,
-  }: {
-    filled: boolean;
-    required?: boolean;
-    label: string;
-    tooltip?: string;
-    children: React.ReactNode;
-  }) => (
-    <Box
-      sx={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 2,
-        border: '1px solid',
-        borderColor: 'divider',
-        borderRadius: '8px',
-        px: 2,
-        py: 1.5,
-        bgcolor: 'background.paper',
-      }}
-    >
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, minWidth: 200 }}>
-        {filled ? (
-          <CheckCircleIcon sx={{ fontSize: 20, color: 'success.main', flexShrink: 0 }} />
-        ) : (
-          <RadioButtonUncheckedIcon
-            sx={{ fontSize: 20, color: required ? 'error.main' : 'text.disabled', flexShrink: 0 }}
-          />
-        )}
-        <Typography variant="body2" sx={{ fontWeight: 600 }}>{label}</Typography>
-        {tooltip && (
-          <InfoOutlinedIcon
-            sx={{ fontSize: 14, color: 'text.secondary', cursor: 'default' }}
-            titleAccess={tooltip}
-          />
-        )}
-      </Box>
-      {children}
-    </Box>
-  );
-
-  // Shared partner/system menu items
-  const partnerItems = (
-    <>
-      <MuiMenuItem value="sap">SAP Krishna</MuiMenuItem>
-      <MuiMenuItem value="aws">AWS S3</MuiMenuItem>
-      <MuiMenuItem value="jd">John Deere</MuiMenuItem>
-      <MuiMenuItem value="1234">1234</MuiMenuItem>
-      <MuiMenuItem value="anderson">Anderson &amp; Sons</MuiMenuItem>
-      <MuiMenuItem value="summit">Summit Energy Partners</MuiMenuItem>
-      <MuiMenuItem value="mainframe">Mainframe</MuiMenuItem>
-    </>
-  );
 
   // ── Derived values ─────────────────────────────────────────────────────────
 
@@ -726,7 +719,7 @@ function ExceptionRuleConfig() {
                 <FormControl size="small" sx={{ flex: 1 }}>
                   <InputLabel>Select Partner or System</InputLabel>
                   <Select label="Select Partner or System" value={form.partnerSystem} onChange={(e) => setForm((f) => ({ ...f, partnerSystem: e.target.value }))}>
-                    {partnerItems}
+                    {PARTNER_OPTIONS.map((o) => <MuiMenuItem key={o.value} value={o.value}>{o.label}</MuiMenuItem>)}
                   </Select>
                 </FormControl>
               </RuleFieldRow>
@@ -757,7 +750,7 @@ function ExceptionRuleConfig() {
                 <FormControl size="small" sx={{ flex: 1 }}>
                   <InputLabel>Select Partner or System</InputLabel>
                   <Select label="Select Partner or System" value={form.failurePartnerSystem} onChange={(e) => setForm((f) => ({ ...f, failurePartnerSystem: e.target.value }))}>
-                    {partnerItems}
+                    {PARTNER_OPTIONS.map((o) => <MuiMenuItem key={o.value} value={o.value}>{o.label}</MuiMenuItem>)}
                   </Select>
                 </FormControl>
               </RuleFieldRow>
@@ -786,7 +779,7 @@ function ExceptionRuleConfig() {
                 <FormControl size="small" sx={{ flex: 1 }}>
                   <InputLabel>Select Partner or System</InputLabel>
                   <Select label="Select Partner or System" value={form.mailboxPartnerSystem} onChange={(e) => setForm((f) => ({ ...f, mailboxPartnerSystem: e.target.value }))}>
-                    {partnerItems}
+                    {PARTNER_OPTIONS.map((o) => <MuiMenuItem key={o.value} value={o.value}>{o.label}</MuiMenuItem>)}
                   </Select>
                 </FormControl>
               </RuleFieldRow>
@@ -817,7 +810,7 @@ function ExceptionRuleConfig() {
                 <FormControl size="small" sx={{ flex: 1 }}>
                   <InputLabel>Select Partner or System</InputLabel>
                   <Select label="Select Partner or System" value={form.singlePartnerSystem} onChange={(e) => setForm((f) => ({ ...f, singlePartnerSystem: e.target.value }))}>
-                    {partnerItems}
+                    {PARTNER_OPTIONS.map((o) => <MuiMenuItem key={o.value} value={o.value}>{o.label}</MuiMenuItem>)}
                   </Select>
                 </FormControl>
               </RuleFieldRow>
@@ -835,7 +828,7 @@ function ExceptionRuleConfig() {
                 <FormControl size="small" sx={{ flex: 1 }}>
                   <InputLabel>Select Partner or System</InputLabel>
                   <Select label="Select Partner or System" value={form.retriedPartnerSystem} onChange={(e) => setForm((f) => ({ ...f, retriedPartnerSystem: e.target.value }))}>
-                    {partnerItems}
+                    {PARTNER_OPTIONS.map((o) => <MuiMenuItem key={o.value} value={o.value}>{o.label}</MuiMenuItem>)}
                   </Select>
                 </FormControl>
               </RuleFieldRow>
@@ -857,7 +850,7 @@ function ExceptionRuleConfig() {
                 <FormControl size="small" sx={{ flex: 1 }}>
                   <InputLabel>Select Partner or System</InputLabel>
                   <Select label="Select Partner or System" value={form.zeroBytePartnerSystem} onChange={(e) => setForm((f) => ({ ...f, zeroBytePartnerSystem: e.target.value }))}>
-                    {partnerItems}
+                    {PARTNER_OPTIONS.map((o) => <MuiMenuItem key={o.value} value={o.value}>{o.label}</MuiMenuItem>)}
                   </Select>
                 </FormControl>
               </RuleFieldRow>
@@ -875,7 +868,7 @@ function ExceptionRuleConfig() {
                 <FormControl size="small" sx={{ flex: 1 }}>
                   <InputLabel>Select Partner or System</InputLabel>
                   <Select label="Select Partner or System" value={form.stagedPartnerSystem} onChange={(e) => setForm((f) => ({ ...f, stagedPartnerSystem: e.target.value }))}>
-                    {partnerItems}
+                    {PARTNER_OPTIONS.map((o) => <MuiMenuItem key={o.value} value={o.value}>{o.label}</MuiMenuItem>)}
                   </Select>
                 </FormControl>
               </RuleFieldRow>
