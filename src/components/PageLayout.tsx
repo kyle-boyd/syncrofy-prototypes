@@ -21,6 +21,7 @@ interface PageLayoutProps {
   refreshTime?: string;
   backgroundColor?: string;
   hideHeaderBorder?: boolean;
+  contentPadding?: number | string;
 }
 
 export function PageLayout({
@@ -30,6 +31,7 @@ export function PageLayout({
   refreshTime,
   backgroundColor = '#FAFCFC',
   hideHeaderBorder = true,
+  contentPadding = 3,
 }: PageLayoutProps) {
   const navigate = useNavigate();
   const [sidebarExpanded, setSidebarExpanded] = useState(true);
@@ -118,7 +120,7 @@ export function PageLayout({
         )}
 
         {/* Page Content */}
-        <Box sx={{ p: 3, flex: 1, overflowY: 'auto' }}>
+        <Box sx={{ p: contentPadding, flex: 1, overflowY: 'auto' }}>
           {children}
         </Box>
       </Box>

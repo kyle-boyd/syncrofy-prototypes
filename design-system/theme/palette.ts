@@ -31,9 +31,9 @@ export const palette: PaletteOptions = {
     contrastText: '#ffffff',
   },
   info: {
-    main: '#3B82F6',
-    light: '#60A5FA',
-    dark: '#2563EB',
+    main: '#0091EA',
+    light: '#33A7EF',
+    dark: '#0066A4',
     contrastText: '#ffffff',
   },
   success: {

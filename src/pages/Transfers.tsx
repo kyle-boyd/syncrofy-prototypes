@@ -201,6 +201,25 @@ const mockTransfers: Transfer[] = [
     startTime: '10:52 PM, Dec 17 2025',
     endTime: '10:52 PM, Dec 17 2025',
   },
+  { id: 'S11223344556677889900', sender: 'Apex Logistics', receiver: 'Regional Distribution Hub', direction: 'Outbound', senderFileName: 'shipment_manifest_0012.xml', senderFileSize: '2.14 MB', status: 'Success', startTime: '08:15 AM, Dec 18 2025', endTime: '08:15 AM, Dec 18 2025' },
+  { id: 'S22334455667788990011', sender: 'Heritage Family Enterprises', receiver: 'Partner Payroll Engine', direction: 'Inbound', senderFileName: 'payroll_hfe_dec_8821.pgp', senderFileSize: '5.67 MB', status: 'Failed', startTime: '09:30 AM, Dec 18 2025', endTime: '09:31 AM, Dec 18 2025' },
+  { id: 'S33445566778899001122', sender: 'Wealth Compliance Engine', receiver: 'Crestline Wealth & Capital', direction: 'Outbound', senderFileName: 'compliance_report_4490.pdf', senderFileSize: '1.02 MB', status: 'Success', startTime: '10:00 AM, Dec 18 2025', endTime: '10:00 AM, Dec 18 2025' },
+  { id: 'S44556677889900112233', sender: 'John Deere', receiver: 'Loan Management System', direction: 'Inbound', senderFileName: 'equipment_invoice_3341.zip', senderFileSize: '7.88 MB', status: 'Success', startTime: '11:20 AM, Dec 18 2025', endTime: '11:21 AM, Dec 18 2025' },
+  { id: 'S55667788990011223344', sender: 'Branch Cash Operations System', receiver: 'Commercial Banking New York', direction: 'Outbound', senderFileName: 'daily_cash_summary_6612.dat', senderFileSize: '512 KB', status: 'Failed', startTime: '12:00 PM, Dec 18 2025', endTime: '-' },
+  { id: 'S66778899001122334455', sender: 'Stonebridge Capital Management', receiver: 'Securities Trade Engine', direction: 'Inbound', senderFileName: 'portfolio_rebalance_2290.zip', senderFileSize: '11.43 MB', status: 'Success', startTime: '01:05 PM, Dec 18 2025', endTime: '01:06 PM, Dec 18 2025' },
+  { id: 'S77889900112233445566', sender: 'MBS Allocation Hub', receiver: 'Anderson & Sons', direction: 'Outbound', senderFileName: 'mbs_settlement_0077.zip', senderFileSize: '3.75 MB', status: 'Success', startTime: '02:30 PM, Dec 18 2025', endTime: '02:30 PM, Dec 18 2025' },
+  { id: 'S88990011223344556677', sender: 'Mainframe Batch Processor', receiver: 'Sunrise Builders', direction: 'Outbound', senderFileName: 'batch_output_1198.dat', senderFileSize: '22.10 MB', status: 'Failed', startTime: '03:45 PM, Dec 18 2025', endTime: '-' },
+  { id: 'S99001122334455667788', sender: 'AWS S3', receiver: 'Wealth Compliance Engine', direction: 'Inbound', senderFileName: 'audit_trail_s3_5539.gz', senderFileSize: '6.22 MB', status: 'Success', startTime: '04:10 PM, Dec 18 2025', endTime: '04:11 PM, Dec 18 2025' },
+  { id: 'S00112233445566778899', sender: 'SAP Krishna', receiver: 'Loan Management System', direction: 'Outbound', senderFileName: 'gl_extract_sap_8874.xml', senderFileSize: '9.56 MB', status: 'Success', startTime: '05:00 PM, Dec 18 2025', endTime: '05:01 PM, Dec 18 2025' },
+  { id: 'S10203040506070809010', sender: "Joe's Burgers", receiver: 'Branch Cash Operations System', direction: 'Inbound', senderFileName: 'pos_reconcile_1144.csv', senderFileSize: '344 KB', status: 'Success', startTime: '06:22 PM, Dec 18 2025', endTime: '06:22 PM, Dec 18 2025' },
+  { id: 'S20304050607080901020', sender: 'Private Bank Billing Engine', receiver: 'Stonebridge Capital Management', direction: 'Outbound', senderFileName: 'statement_q4_2025_3301.pdf', senderFileSize: '780 KB', status: 'Failed', startTime: '07:00 PM, Dec 18 2025', endTime: '07:00 PM, Dec 18 2025' },
+  { id: 'S30405060708090102030', sender: 'Commercial Banking New York', receiver: 'MBS Allocation Hub', direction: 'Outbound', senderFileName: 'wire_batch_cbny_7720.dat', senderFileSize: '4.33 MB', status: 'Success', startTime: '08:15 PM, Dec 18 2025', endTime: '08:15 PM, Dec 18 2025' },
+  { id: 'S40506070809010203040', sender: 'Silverhair Builders', receiver: 'Partner Payroll Engine', direction: 'Inbound', senderFileName: 'timesheet_silverhair_9934.zip', senderFileSize: '1.89 MB', status: 'Success', startTime: '09:40 PM, Dec 18 2025', endTime: '09:40 PM, Dec 18 2025' },
+  { id: 'S50607080901020304050', sender: 'Anderson & Sons', receiver: 'AWS S3', direction: 'Outbound', senderFileName: 'archive_andersons_2241.tar.gz', senderFileSize: '18.77 MB', status: 'Failed', startTime: '10:55 PM, Dec 18 2025', endTime: '-' },
+  { id: 'S60708090102030405060', sender: 'Regional Distribution Hub', receiver: 'Apex Logistics', direction: 'Inbound', senderFileName: 'delivery_confirm_rdh_5513.xml', senderFileSize: '657 KB', status: 'Success', startTime: '11:30 PM, Dec 18 2025', endTime: '11:30 PM, Dec 18 2025' },
+  { id: 'S70809010203040506070', sender: 'Loan Management System', receiver: 'SAP Krishna', direction: 'Outbound', senderFileName: 'loan_feed_sap_6601.xml', senderFileSize: '3.12 MB', status: 'Success', startTime: '12:05 AM, Dec 19 2025', endTime: '12:05 AM, Dec 19 2025' },
+  { id: 'S80901020304050607080', sender: 'John Deere', receiver: 'Mainframe Batch Processor', direction: 'Inbound', senderFileName: 'telemetry_jd_fleet_0029.zip', senderFileSize: '14.90 MB', status: 'Success', startTime: '01:15 AM, Dec 19 2025', endTime: '01:16 AM, Dec 19 2025' },
+  { id: 'S90102030405060708090', sender: 'Partner Payroll Engine', receiver: 'Heritage Family Enterprises', direction: 'Outbound', senderFileName: 'payroll_hfe_final_4477.pgp', senderFileSize: '5.01 MB', status: 'Failed', startTime: '02:00 AM, Dec 19 2025', endTime: '02:00 AM, Dec 19 2025' },
 ];
 
 // All column identifiers in display order
@@ -255,7 +274,9 @@ function Transfers() {
   // Measure header cell positions for accurate resize handle placement
   const [headerPositions, setHeaderPositions] = useState<Record<string, { left: number; width: number }>>({});
   const [headerHeight, setHeaderHeight] = useState<number>(48);
-  
+  const filterControlsRef = useRef<HTMLDivElement>(null);
+  const [filterControlsHeight, setFilterControlsHeight] = useState<number>(0);
+
   // Column IDs in order - defined before columns to avoid dependency issues
   const columnIds = useMemo(() => ALL_COLUMN_IDS, []);
 
@@ -506,6 +527,16 @@ function Transfers() {
       window.removeEventListener('resize', updatePositions);
     };
   }, [columnIds, filteredAndSortedTransfers.length, resizingColumn]); // Added resizingColumn to skip updates during resize
+
+  // Track filter controls height so sticky table header knows how far down to offset
+  useEffect(() => {
+    const el = filterControlsRef.current;
+    if (!el) return;
+    const observer = new ResizeObserver(() => setFilterControlsHeight(el.offsetHeight));
+    observer.observe(el);
+    setFilterControlsHeight(el.offsetHeight);
+    return () => observer.disconnect();
+  }, []);
 
   // Find the customize columns button when popover opens
   useEffect(() => {
@@ -809,9 +840,9 @@ function Transfers() {
   ]);
 
   return (
-    <PageLayout selectedNavItem="transfers" backgroundColor="#FAFCFC">
-      {/* Scrollable Header Section */}
-      <Stack spacing={2} sx={{ mb: '16px' }}>
+    <PageLayout selectedNavItem="transfers" backgroundColor="#FAFCFC" contentPadding={0}>
+      {/* Page header — scrolls away */}
+      <Stack spacing={2} sx={{ mb: '16px', px: 3, pt: 3 }}>
         <PageHeader
           title="Transfers"
           showBreadcrumb={false}
@@ -831,18 +862,17 @@ function Transfers() {
         />
       </Stack>
 
-      {/* Sticky FilterControls */}
+      {/* FilterControls — sticks to top once the page header scrolls away */}
       <Box
+        ref={filterControlsRef}
         sx={{
           position: 'sticky',
-          top: -24, // Negative offset to account for parent padding (p: 3 = 24px)
+          top: 0,
           zIndex: 20,
           backgroundColor: '#FAFCFC',
-          pt: 3, // Add padding top to compensate for the negative top offset
+          px: 3,
           pb: 2,
           mb: '16px',
-          mx: 0,
-          px: 3, // Add padding back
         }}
       >
         <FilterControls
@@ -871,15 +901,52 @@ function Transfers() {
         />
       </Box>
 
-      {/* Table */}
+      {/* Table — overflow:visible on wrapper + TableContainer lets <th> sticky resolve
+           to the page-level scroll container. Corner radius applied per-cell instead
+           of via overflow:hidden (which would clip the sticky header). */}
       <Box
         ref={tableRef}
         sx={{
+          mx: 3,
+          mb: 3,
           borderRadius: '8px',
-          overflow: 'hidden',
+          overflow: 'visible',
           border: '1px solid',
           borderColor: 'divider',
           position: 'relative',
+          // Override MUI's overflow-x:auto on TableContainer.
+          // CSS spec converts any axis that is 'visible' to 'auto' when the other axis is non-visible,
+          // which would silently create a scroll container that intercepts sticky lookup.
+          // Setting BOTH axes to visible !important prevents that conversion and lets the
+          // th sticky cells resolve to the page scroll container instead.
+          '& .MuiTableContainer-root': {
+            overflowX: 'visible !important' as 'visible',
+            overflowY: 'visible !important' as 'visible',
+          },
+          // thead must be static so only the individual th cells carry sticky positioning.
+          // !important beats the design system's stickyHeader sx on TableContainer.
+          '& .MuiTableHead-root': {
+            position: 'static !important' as 'static',
+          },
+          // th cells are made sticky by MUI's stickyHeader prop; offset them below the sticky FilterControls.
+          '& .MuiTableCell-stickyHeader': {
+            top: `${filterControlsHeight}px`,
+            backgroundColor: 'background.paper',
+            zIndex: 5,
+          },
+          // Apply border-radius to corner cells (since overflow:visible can't clip them)
+          '& .MuiTableHead-root .MuiTableRow-root .MuiTableCell-root:first-of-type': {
+            borderTopLeftRadius: '7px',
+          },
+          '& .MuiTableHead-root .MuiTableRow-root .MuiTableCell-root:last-of-type': {
+            borderTopRightRadius: '7px',
+          },
+          '& .MuiTableBody-root .MuiTableRow-root:last-of-type .MuiTableCell-root:first-of-type': {
+            borderBottomLeftRadius: '7px',
+          },
+          '& .MuiTableBody-root .MuiTableRow-root:last-of-type .MuiTableCell-root:last-of-type': {
+            borderBottomRightRadius: '7px',
+          },
           // Remove vertical grid lines for all cells
           '& .MuiTableCell-root': {
             borderLeft: 'none !important',
@@ -893,6 +960,7 @@ function Transfers() {
             borderTop: 'none !important',
             borderBottom: '1px solid',
             borderBottomColor: 'divider',
+            backgroundColor: 'background.paper',
             borderLeft: 'none !important',
             borderRight: 'none !important',
             position: 'relative',
@@ -956,14 +1024,15 @@ function Transfers() {
             },
           } as any)}
         />
-        {/* Resize handles overlay - positioned using measured header cell positions */}
+        {/* Resize handles overlay — sticky at same offset as sticky table header */}
         <Box
           sx={{
-            position: 'absolute',
-            top: 0,
+            position: 'sticky',
+            top: `${filterControlsHeight}px`,
             left: 0,
             right: 0,
-            height: `${headerHeight}px`, // Match header row height exactly
+            height: `${headerHeight}px`,
+            marginBottom: `-${headerHeight}px`,
             pointerEvents: 'none',
             zIndex: 10,
           }}

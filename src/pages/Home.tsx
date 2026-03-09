@@ -369,6 +369,40 @@ function Home() {
           </Button>
         </Paper>
 
+        {/* Scroll Test Prototypes */}
+        <Paper elevation={1} sx={{ p: 3 }}>
+          <Typography variant="h5" gutterBottom>
+            Scroll / Filter UX Prototypes
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+            Three approaches to filter bar behaviour while scrolling a long transfers table.
+          </Typography>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => navigate('/scroll-test')}
+          >
+            View Scroll Test
+          </Button>
+        </Paper>
+
+        {/* Company / Environment Mismatch Prototypes */}
+        <Paper elevation={1} sx={{ p: 3 }}>
+          <Typography variant="h5" gutterBottom>
+            Company / Environment Mismatch Error
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+            Three approaches to gracefully handling a URL that references a different company or environment than the one the user is logged into.
+          </Typography>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => navigate('/company-mismatch')}
+          >
+            View Mismatch Prototypes
+          </Button>
+        </Paper>
+
         {/* Integration Cloud (SIC) Demo */}
         <Paper elevation={1} sx={{ p: 3 }}>
           <Typography variant="h5" gutterBottom>

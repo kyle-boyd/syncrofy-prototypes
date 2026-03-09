@@ -12,6 +12,14 @@ import IntegrationCloud from './pages/IntegrationCloud';
 import Settings from './pages/Settings';
 import Exceptions from './pages/Exceptions';
 import ExceptionRuleConfig from './pages/ExceptionRuleConfig';
+import ScheduledReports from './pages/ScheduledReports';
+import ScrollTestIndex from './pages/ScrollTestIndex';
+import ScrollTest2 from './pages/ScrollTest2';
+import ScrollTest3 from './pages/ScrollTest3';
+import CompanyMismatchIndex from './pages/CompanyMismatchIndex';
+import CompanyMismatch1 from './pages/CompanyMismatch1';
+import CompanyMismatch2 from './pages/CompanyMismatch2';
+import CompanyMismatch3 from './pages/CompanyMismatch3';
 
 function App() {
   return (
@@ -29,6 +37,14 @@ function App() {
           <Route path="/settings" element={<Settings />} />
           <Route path="/exceptions" element={<Exceptions />} />
           <Route path="/exceptions/rules" element={<ExceptionRuleConfig />} />
+          <Route path="/reports" element={<ScheduledReports />} />
+          <Route path="/scroll-test" element={<ScrollTestIndex />} />
+          <Route path="/scroll-test/2" element={<ScrollTest2 />} />
+          <Route path="/scroll-test/3" element={<ScrollTest3 />} />
+          <Route path="/company-mismatch" element={<CompanyMismatchIndex />} />
+          <Route path="/company-mismatch/1" element={<CompanyMismatch1 />} />
+          <Route path="/company-mismatch/2" element={<CompanyMismatch2 />} />
+          <Route path="/company-mismatch/3" element={<CompanyMismatch3 />} />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>
