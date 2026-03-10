@@ -1,15 +1,19 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Box, Stack, Typography, Paper } from '@mui/material';
-import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
+import { Box, Stack, Typography, Paper, Tooltip } from '@mui/material';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { Button, Modal } from '@design-system';
+import { Button, Modal, Toggle } from '@design-system';
 import { PageLayout } from '../components/PageLayout';
+
+// Toggle this to simulate the "no access" scenario
+const NO_ACCESS = false;
 
 export default function CompanyMismatch3() {
   const navigate = useNavigate();
   const [modalOpen, setModalOpen] = useState(true);
+  const [noAccess, setNoAccess] = useState(NO_ACCESS);
 
   return (
     <PageLayout selectedNavItem="dashboard" backgroundColor="#FAFCFC">
@@ -75,21 +79,27 @@ export default function CompanyMismatch3() {
         title="Link not available in your current company"
         maxWidth="sm"
         actions={
-          <Stack direction="row" spacing={1.5} justifyContent="flex-end" sx={{ width: '100%', px: 1, pb: 0.5 }}>
+          <Stack direction="row" spacing={1.5} justifyContent="space-between" alignItems="center" sx={{ width: '100%', px: 1, pb: 0.5 }}>
+            {/* Prototype toggle — left side */}
+            <Stack direction="row" spacing={1} alignItems="center">
+              <Typography variant="caption" sx={{ color: 'text.secondary' }}>Simulate no access</Typography>
+              <Toggle
+                checked={noAccess}
+                onChange={(e) => setNoAccess(e.target.checked)}
+                size="small"
+              />
+            </Stack>
             <Button variant="outlined" color="secondary" onClick={() => setModalOpen(false)}>
               Dismiss
-            </Button>
-            <Button variant="contained" color="primary" startIcon={<SwapHorizIcon />}>
-              Switch Company / Environment
             </Button>
           </Stack>
         }
       >
         <Stack spacing={2.5}>
           {/* Icon + summary */}
-          <Stack direction="row" spacing={1.5} alignItems="flex-start">
-            <WarningAmberRoundedIcon sx={{ color: 'warning.main', fontSize: 22, mt: 0.25, flexShrink: 0 }} />
-            <Typography variant="body2" sx={{ lineHeight: 1.6, color: 'text.secondary' }}>
+          <Stack direction="row" spacing={1.5} alignItems="center">
+            <ErrorOutlineIcon sx={{ color: 'error.main', fontSize: 22, flexShrink: 0 }} />
+            <Typography variant="body2" sx={{ lineHeight: 1.6, color: 'error.main' }}>
               You tried to navigate to a link that is not available in your current company and environment. If this
               link is correct, try switching to that company/environment and follow the link again.
             </Typography>
@@ -104,12 +114,14 @@ export default function CompanyMismatch3() {
               overflow: 'hidden',
             }}
           >
+            {/* Logged-in row */}
             <Box
               sx={{
                 px: 2,
                 py: 1.25,
                 display: 'flex',
                 justifyContent: 'space-between',
+                alignItems: 'center',
                 borderBottom: '1px solid',
                 borderColor: 'divider',
                 bgcolor: 'grey.50',
@@ -118,9 +130,43 @@ export default function CompanyMismatch3() {
               <Typography variant="body2" sx={{ color: 'text.secondary' }}>You are logged into</Typography>
               <Typography variant="body2" sx={{ fontWeight: 600 }}>CoEnterprise — Production</Typography>
             </Box>
-            <Box sx={{ px: 2, py: 1.25, display: 'flex', justifyContent: 'space-between' }}>
-              <Typography variant="body2" sx={{ color: 'text.secondary' }}>Link belongs to</Typography>
-              <Typography variant="body2" sx={{ fontWeight: 600, color: 'warning.dark' }}>Acme Corp — Staging</Typography>
+
+            {/* Link belongs to row — includes Switch button */}
+            <Box
+              sx={{
+                px: 2,
+                py: 1.25,
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                gap: 2,
+              }}
+            >
+              <Typography variant="body2" sx={{ color: 'text.secondary', flexShrink: 0 }}>Link belongs to</Typography>
+              <Stack direction="row" spacing={1.5} alignItems="center">
+                {noAccess ? (
+                  <Typography variant="body2" sx={{ fontWeight: 500, color: 'text.disabled', fontStyle: 'italic' }}>
+                    Hidden for security purposes
+                  </Typography>
+                ) : (
+                  <Typography variant="body2" sx={{ fontWeight: 600, color: 'error.dark' }}>
+                    Acme Corp — Staging
+                  </Typography>
+                )}
+                <Tooltip title={noAccess ? "You don't have access to this company" : ''} placement="top">
+                  <span>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      size="small"
+                      startIcon={<SwapHorizIcon />}
+                      disabled={noAccess}
+                    >
+                      Switch here
+                    </Button>
+                  </span>
+                </Tooltip>
+              </Stack>
             </Box>
           </Box>
         </Stack>
