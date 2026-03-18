@@ -41,7 +41,7 @@ export function PageLayout({
       id: 'dashboard',
       label: 'Dashboard',
       icon: <DashboardRoundedIcon />,
-      onClick: () => navigate('/'),
+      onClick: () => navigate('/dashboards'),
     },
     {
       id: 'transfers',
