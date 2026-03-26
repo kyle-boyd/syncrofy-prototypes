@@ -278,7 +278,7 @@ export function CustomizeColumnsModal({
               pt: 1,
             }}
           >
-            <Button variant="text" size="small" onClick={handleCancel}>
+            <Button variant="text" color="secondary" size="small" onClick={handleCancel}>
               Cancel
             </Button>
             <Button
