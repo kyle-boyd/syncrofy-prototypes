@@ -17,15 +17,30 @@
  *    PageHeader has no dedicated slot for a primary action next to refresh.
  */
 import { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Stack,
   Typography,
   Checkbox,
+  TextField,
+  InputAdornment,
+  Alert,
+  Snackbar,
+  IconButton as MuiIconButton,
+  Select,
+  MenuItem,
+  Divider,
 } from '@mui/material';
+import MuiAvatar from '@mui/material/Avatar';
 import AddIcon from '@mui/icons-material/Add';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import EditIcon from '@mui/icons-material/Edit';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import {
   PageHeader,
   FilterControls,
@@ -44,7 +59,7 @@ import { PageLayout } from '../components/PageLayout';
 import { mockPartners } from './Partners';
 
 // Settings sub-navigation sections (matches screenshot)
-const SETTINGS_SECTIONS = [
+export const SETTINGS_SECTIONS = [
   {
     heading: 'My Account',
     items: [
@@ -90,8 +105,8 @@ export interface UserRow {
 
 const getPartnerName = (id: string) => mockPartners.find((p) => p.id === id)?.partnerName ?? '';
 
-const mockUsers: UserRow[] = [
-  { id: '1', name: 'Abhi Arora', email: 'abhi.arora@coenterprise.com', groups: 'Administrators, All Users, Group 102 + 2 more', lastActivity: 'February 11, 2026', partnerId: '3', partnerName: getPartnerName('3') || 'Acme Corporation' },
+export const mockUsers: UserRow[] = [
+  { id: '1', name: 'Current User', email: 'current.user@coenterprise.com', groups: 'Administrators, All Users, Group 102 + 2 more', lastActivity: 'February 11, 2026', partnerId: '3', partnerName: getPartnerName('3') || 'Acme Corporation' },
   { id: '2', name: 'Jane Smith', email: 'jane.smith@coenterprise.com', groups: 'All Users, Finance', lastActivity: 'February 10, 2026', partnerId: '2', partnerName: getPartnerName('2') || 'A & M Investment' },
   { id: '3', name: 'John Doe', email: 'john.doe@coenterprise.com', groups: 'All Users, Administrators', lastActivity: 'February 9, 2026' },
   { id: '4', name: 'Maria Garcia', email: 'maria.garcia@coenterprise.com', groups: 'All Users, Group 102', lastActivity: 'February 8, 2026', partnerId: '7', partnerName: getPartnerName('7') || 'Commercial Banking New York' },
@@ -124,7 +139,418 @@ const USER_STATUS_TABS: SegmentedControlItemData[] = [
   { id: 'deactivated', text: 'Deactivated (2)' },
 ];
 
+const PASSWORD_REQUIREMENTS = [
+  'at least 12 characters',
+  'include at least one letter',
+  'include at least one number',
+  'include at least one special character (! @ # $ % ^ & *)',
+];
+
+interface PasswordErrors {
+  currentPassword?: string;
+  newPassword?: string;
+  reenterPassword?: string;
+}
+
+function ChangePasswordSection({ isSuperAdmin = false }: { isSuperAdmin?: boolean }) {
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [reenterPassword, setReenterPassword] = useState('');
+  const [showCurrent, setShowCurrent] = useState(false);
+  const [showNew, setShowNew] = useState(false);
+  const [showReenter, setShowReenter] = useState(false);
+  const [errors, setErrors] = useState<PasswordErrors>({});
+  const [hasSubmitted, setHasSubmitted] = useState(false);
+  const [success, setSuccess] = useState(false);
+
+  const validate = (): PasswordErrors => {
+    const errs: PasswordErrors = {};
+    if (!isSuperAdmin && !currentPassword) {
+      errs.currentPassword = 'Current Password is required';
+    }
+    if (!newPassword) {
+      errs.newPassword = 'New Password is required';
+    } else if (
+      newPassword.length < 12 ||
+      !/[a-zA-Z]/.test(newPassword) ||
+      !/[0-9]/.test(newPassword) ||
+      !/[!@#$%^&*]/.test(newPassword)
+    ) {
+      errs.newPassword = 'New Password does not meet complexity requirements';
+    }
+    if (!reenterPassword) {
+      errs.reenterPassword = 'Reenter New Password is required';
+    } else if (reenterPassword !== newPassword) {
+      errs.reenterPassword = 'Reenter New Password text must match the New Password entered';
+    }
+    return errs;
+  };
+
+  const handleSubmit = () => {
+    const errs = validate();
+    setHasSubmitted(true);
+    setErrors(errs);
+    if (Object.keys(errs).length === 0) {
+      setSuccess(true);
+      setCurrentPassword('');
+      setNewPassword('');
+      setReenterPassword('');
+      setHasSubmitted(false);
+      setErrors({});
+    }
+  };
+
+  const handleCancel = () => {
+    setCurrentPassword('');
+    setNewPassword('');
+    setReenterPassword('');
+    setErrors({});
+    setHasSubmitted(false);
+  };
+
+  const hasErrors = hasSubmitted && Object.keys(errors).length > 0;
+
+  const FieldLabel = ({ text }: { text: string }) => (
+    <Box sx={{ display: 'flex', alignItems: 'center', mb: 0.5 }}>
+      <Typography variant="body2" sx={{ fontWeight: 500 }}>{text}</Typography>
+      <Typography component="span" variant="body2" color="error.main" sx={{ ml: 0.25 }}>*</Typography>
+    </Box>
+  );
+
+  const eyeAdornment = (show: boolean, toggle: () => void) => ({
+    endAdornment: (
+      <InputAdornment position="end">
+        <MuiIconButton size="small" onClick={toggle} edge="end" tabIndex={-1}>
+          {show ? <VisibilityOffIcon sx={{ fontSize: 18 }} /> : <VisibilityIcon sx={{ fontSize: 18 }} />}
+        </MuiIconButton>
+      </InputAdornment>
+    ),
+  });
+
+  return (
+    <Box sx={{ maxWidth: 520 }}>
+      <Box
+        sx={{
+          bgcolor: 'background.paper',
+          border: '1px solid',
+          borderColor: 'divider',
+          borderRadius: 2,
+          p: 3,
+        }}
+      >
+        <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1.5 }}>
+          Change Password
+        </Typography>
+
+        {hasErrors && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.25 }}>Error(s) Identified</Typography>
+            <Typography variant="body2">
+              The error(s) identified below must be fixed before you can change the password.
+            </Typography>
+          </Alert>
+        )}
+
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
+          Passwords must be:
+        </Typography>
+        <Box component="ul" sx={{ m: 0, mb: 2.5, pl: 2.5, listStyleType: 'disc' }}>
+          {PASSWORD_REQUIREMENTS.map((req) => (
+            <Typography key={req} component="li" variant="body2" color="text.secondary">
+              {req}
+            </Typography>
+          ))}
+        </Box>
+
+        {!isSuperAdmin && (
+          <Box sx={{ mb: 2 }}>
+            <FieldLabel text="Current Password (required)" />
+            <TextField
+              fullWidth
+              size="small"
+              type={showCurrent ? 'text' : 'password'}
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+              error={!!errors.currentPassword}
+              helperText={errors.currentPassword}
+              InputProps={eyeAdornment(showCurrent, () => setShowCurrent((v) => !v))}
+            />
+          </Box>
+        )}
+
+        <Box sx={{ display: 'flex', gap: 2, mb: 2.5 }}>
+          <Box sx={{ flex: 1 }}>
+            <FieldLabel text="New Password (required)" />
+            <TextField
+              fullWidth
+              size="small"
+              type={showNew ? 'text' : 'password'}
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              error={!!errors.newPassword}
+              helperText={errors.newPassword}
+              InputProps={eyeAdornment(showNew, () => setShowNew((v) => !v))}
+            />
+          </Box>
+          <Box sx={{ flex: 1 }}>
+            <FieldLabel text="Reenter New Password (required)" />
+            <TextField
+              fullWidth
+              size="small"
+              type={showReenter ? 'text' : 'password'}
+              value={reenterPassword}
+              onChange={(e) => setReenterPassword(e.target.value)}
+              error={!!errors.reenterPassword}
+              helperText={errors.reenterPassword}
+              InputProps={eyeAdornment(showReenter, () => setShowReenter((v) => !v))}
+            />
+          </Box>
+        </Box>
+
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
+          <Button variant="text" color="secondary" size="small" onClick={handleCancel}>
+            Cancel
+          </Button>
+          <Button variant="contained" size="small" onClick={handleSubmit}>
+            Change Password
+          </Button>
+        </Box>
+      </Box>
+
+      <Snackbar
+        open={success}
+        autoHideDuration={4000}
+        onClose={() => setSuccess(false)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+      >
+        <Alert severity="success" onClose={() => setSuccess(false)} sx={{ width: '100%' }}>
+          <Typography variant="body2" sx={{ fontWeight: 600 }}>Password Changed</Typography>
+          <Typography variant="body2">Your Password has been successfully changed.</Typography>
+        </Alert>
+      </Snackbar>
+    </Box>
+  );
+}
+
+const CURRENT_USER_GROUPS = [
+  { id: 'test-permission', name: 'test permission', description: 'Custom permission group for testing access controls.', isFixed: false },
+  { id: 'administrators', name: 'Administrators', description: 'Reserved for CoEnterprise users who have full access within the company. This group cannot be edited or deleted.', isFixed: true },
+  { id: 'all-users', name: 'All Users', description: 'This group includes all users in the company. All active company users are automatically added to this group.', isFixed: true },
+  { id: 'group-102', name: 'Group 102', description: 'Standard access group with limited permissions.', isFixed: false },
+  { id: 'group-test-101', name: 'Group test 101', description: 'Test group for development and QA purposes.', isFixed: false },
+];
+
+function AccountSection() {
+  const user = mockUsers[0]; // current user = Current User (id='1')
+  const [landingPage, setLandingPage] = useState('dashboard');
+  const [showChangePassword, setShowChangePassword] = useState(false);
+  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
+
+  const initials = user.name
+    .split(' ')
+    .map((n) => n[0])
+    .join('')
+    .slice(0, 2)
+    .toUpperCase();
+
+  const toggleGroup = (groupId: string) => {
+    setExpandedGroups((prev) => {
+      const next = new Set(prev);
+      if (next.has(groupId)) next.delete(groupId);
+      else next.add(groupId);
+      return next;
+    });
+  };
+
+  return (
+    <Box>
+      {/* Profile card — no three dot menu */}
+      <Box sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 1, p: 2.5, mb: 2 }}>
+        <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
+          <MuiAvatar
+            sx={{
+              width: 80,
+              height: 80,
+              fontSize: '28px',
+              bgcolor: 'rgba(33,33,33,0.05)',
+              color: 'rgba(33,33,33,0.65)',
+              border: '1px solid rgba(33,33,33,0.1)',
+              flexShrink: 0,
+            }}
+          >
+            {initials}
+          </MuiAvatar>
+          <Box sx={{ flex: 1, minWidth: 0 }}>
+            <Typography variant="h6" sx={{ fontWeight: 700, mb: 0.25 }}>{user.name}</Typography>
+            <Link
+              href={`mailto:${user.email}`}
+              color="primary"
+              underline="hover"
+              sx={{ fontSize: '0.875rem', display: 'block', mb: 0.5 }}
+            >
+              {user.email}
+            </Link>
+            <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.875rem' }}>Mobile: 7009395983</Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.875rem' }}>Office: 7009395983</Typography>
+          </Box>
+          <Box sx={{ flex: 1, minWidth: 0 }}>
+            <Typography variant="body2" sx={{ fontWeight: 700, fontSize: '0.875rem' }}>sa</Typography>
+            <Typography variant="body2" sx={{ fontSize: '0.875rem' }}>Accounts Receivable</Typography>
+          </Box>
+          <Box sx={{ flexShrink: 0 }}>
+            <Button variant="outlined" size="small" startIcon={<EditIcon sx={{ fontSize: 16 }} />} onClick={() => {}}>
+              Edit Profile
+            </Button>
+          </Box>
+        </Box>
+      </Box>
+
+      {/* Default Landing Page + Security */}
+      <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
+        <Box
+          sx={{
+            flex: 1,
+            border: '1px solid',
+            borderColor: 'divider',
+            borderRadius: 1,
+            p: 2,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 2,
+          }}
+        >
+          <Typography variant="body2" sx={{ fontWeight: 500, whiteSpace: 'nowrap', minWidth: 140 }}>
+            Default Landing Page
+          </Typography>
+          <Select
+            value={landingPage}
+            onChange={(e) => setLandingPage(e.target.value)}
+            size="small"
+            sx={{ minWidth: 160, fontSize: '0.875rem' }}
+          >
+            <MenuItem value="dashboard">Dashboard</MenuItem>
+            <MenuItem value="transfers">Transfers</MenuItem>
+            <MenuItem value="partners">Partners</MenuItem>
+            <MenuItem value="exceptions">Exceptions</MenuItem>
+          </Select>
+        </Box>
+        <Box
+          sx={{
+            flex: 1,
+            border: '1px solid',
+            borderColor: 'divider',
+            borderRadius: 1,
+            p: 2,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
+          <Typography variant="body2" sx={{ fontWeight: 500 }}>Security</Typography>
+          <Button
+            variant="outlined"
+            color="primary"
+            size="small"
+            onClick={() => setShowChangePassword((v) => !v)}
+          >
+            Change Password
+          </Button>
+        </Box>
+      </Box>
+
+      {/* Change Password section (toggled) */}
+      {showChangePassword && (
+        <Box sx={{ mb: 2 }}>
+          <ChangePasswordSection />
+        </Box>
+      )}
+
+      {/* Groups section */}
+      <Box sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 1, overflow: 'hidden' }}>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            px: 2.5,
+            pt: 2,
+            pb: 1,
+          }}
+        >
+          <Box>
+            <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>Groups</Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.8125rem' }}>
+              {user.name.split(' ')[0]} belongs to the following groups. Their access is based on the most permissive permissions across them.
+            </Typography>
+          </Box>
+          <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={() => {}}>
+            Add Group
+          </Button>
+        </Box>
+        <Divider />
+        {CURRENT_USER_GROUPS.map((group, index) => {
+          const isExpanded = expandedGroups.has(group.id);
+          return (
+            <Box key={group.id}>
+              <Box sx={{ display: 'flex', alignItems: 'flex-start', px: 2.5, py: 1.5, gap: 1 }}>
+                <Box sx={{ flex: 1, minWidth: 0 }}>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      fontWeight: 500,
+                      color: 'primary.main',
+                      fontSize: '0.875rem',
+                      cursor: 'pointer',
+                      '&:hover': { textDecoration: 'underline' },
+                    }}
+                    onClick={() => toggleGroup(group.id)}
+                  >
+                    {group.name}
+                  </Typography>
+                  {isExpanded && (
+                    <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.8125rem', mt: 0.5 }}>
+                      {group.description}
+                    </Typography>
+                  )}
+                </Box>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, flexShrink: 0 }}>
+                  <IconButton
+                    size="small"
+                    onClick={() => toggleGroup(group.id)}
+                    aria-label={isExpanded ? 'Collapse' : 'Expand'}
+                    sx={{ width: 28, height: 28, border: '1px solid', borderColor: 'divider', borderRadius: '6px' }}
+                  >
+                    {isExpanded ? (
+                      <KeyboardArrowUpIcon sx={{ fontSize: 16 }} />
+                    ) : (
+                      <KeyboardArrowDownIcon sx={{ fontSize: 16 }} />
+                    )}
+                  </IconButton>
+                  {!group.isFixed && (
+                    <Dropdown
+                      trigger={
+                        <Button variant="outlined" size="small" aria-label="Group actions" sx={{ minWidth: 0, px: 1 }}>
+                          <MoreVertIcon sx={{ fontSize: 16 }} />
+                        </Button>
+                      }
+                      options={[{ value: 'remove', label: 'Remove from group' }]}
+                      onSelect={(value) => console.log('Group action:', value, group.id)}
+                      hugContents
+                    />
+                  )}
+                </Box>
+              </Box>
+              {index < CURRENT_USER_GROUPS.length - 1 && <Divider />}
+            </Box>
+          );
+        })}
+      </Box>
+    </Box>
+  );
+}
+
 function Settings() {
+  const navigate = useNavigate();
   const [settingsSection, setSettingsSection] = useState<string>('users');
   const [userStatusTab, setUserStatusTab] = useState<string | number>('active');
   const [searchValue, setSearchValue] = useState('');
@@ -230,7 +656,8 @@ function Settings() {
               href="#"
               color="primary"
               underline="hover"
-              sx={{ fontWeight: 500, fontSize: '0.875rem' }}
+              sx={{ fontWeight: 500, fontSize: '0.875rem', cursor: 'pointer' }}
+              onClick={(e) => { e.preventDefault(); navigate(`/settings/users/${row.id}`); }}
             >
               {row.name}
             </Link>
@@ -385,7 +812,9 @@ function Settings() {
 
         {/* Main content: User Management (when Users is selected) */}
         <Box sx={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', overflowY: 'auto', p: 3 }}>
-          {settingsSection === 'users' ? (
+          {settingsSection === 'account' ? (
+            <AccountSection />
+          ) : settingsSection === 'users' ? (
             <>
               <Stack spacing={2} sx={{ mb: 2 }}>
                 <PageHeader
@@ -530,7 +959,7 @@ function Settings() {
           ) : (
             <Box sx={{ py: 4 }}>
               <Typography variant="h6" color="text.secondary">
-                {SETTINGS_SECTIONS.flatMap((s) => s.items).find((i) => i.id === settingsSection)?.label ?? settingsSection}
+                {(SETTINGS_SECTIONS as unknown as Array<{ heading: string; items: Array<{ id: string; label: string }> }>).flatMap((s) => s.items).find((i) => i.id === settingsSection)?.label ?? settingsSection}
               </Typography>
               <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
                 Select a settings section from the menu.

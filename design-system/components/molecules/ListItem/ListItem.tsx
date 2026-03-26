@@ -62,7 +62,7 @@ export const ListItem: React.FC<ListItemProps> = ({
 }) => {
   const content = children || (
     <>
-      {icon && <MuiListItemIcon>{icon}</MuiListItemIcon>}
+      {icon && <MuiListItemIcon sx={{ minWidth: 0, mr: '12px' }}>{icon}</MuiListItemIcon>}
       <MuiListItemText primary={primary} secondary={secondary} />
       {action}
     </>
@@ -76,7 +76,7 @@ export const ListItem: React.FC<ListItemProps> = ({
         disablePadding
         {...props}
       >
-        <MuiListItemButton onClick={props.onClick as any} disabled={disabled}>
+        <MuiListItemButton onClick={props.onClick as any} disabled={disabled} sx={{ mx: 1, borderRadius: '6px' }}>
           {content}
         </MuiListItemButton>
       </MuiListItem>

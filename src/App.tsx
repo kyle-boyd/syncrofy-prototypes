@@ -10,6 +10,7 @@ import Partners from './pages/Partners';
 import PartnerDetail from './pages/PartnerDetail';
 import IntegrationCloud from './pages/IntegrationCloud';
 import Settings from './pages/Settings';
+import UserDetail from './pages/UserDetail';
 import Exceptions from './pages/Exceptions';
 import ExceptionRuleConfig from './pages/ExceptionRuleConfig';
 import ScheduledReports from './pages/ScheduledReports';
@@ -37,6 +38,7 @@ function App() {
           <Route path="/partners/:id" element={<PartnerDetail />} />
           <Route path="/integration-cloud" element={<IntegrationCloud />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/settings/users/:id" element={<UserDetail />} />
           <Route path="/exceptions" element={<Exceptions />} />
           <Route path="/exceptions/rules" element={<ExceptionRuleConfig />} />
           <Route path="/reports" element={<ScheduledReports />} />

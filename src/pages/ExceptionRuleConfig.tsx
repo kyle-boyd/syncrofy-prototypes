@@ -66,13 +66,11 @@ interface CreateRuleForm {
   // Expected File Received fields
   fileMatchPartnerSystem: string;
   fileMatchPattern: string;
-  // Single Transfer Failure fields
+  // Transfer Failure fields
   singlePartnerSystem: string;
   singleFilePattern: string;
-  // Transfer Retried fields
-  retriedPartnerSystem: string;
-  retriedCount: string;
-  retriedFilePattern: string;
+  retryMode: 'first_failure' | 'after_retries';
+  retryCount: string;
   // Zero Byte File fields
   zeroBytePartnerSystem: string;
   zeroByteFilePattern: string;
@@ -139,9 +137,8 @@ const defaultForm: CreateRuleForm = {
   fileMatchPattern: '',
   singlePartnerSystem: '',
   singleFilePattern: '',
-  retriedPartnerSystem: '',
-  retriedCount: '',
-  retriedFilePattern: '',
+  retryMode: 'first_failure',
+  retryCount: '',
   zeroBytePartnerSystem: '',
   zeroByteFilePattern: '',
   stagedPartnerSystem: '',
@@ -272,8 +269,7 @@ function ExceptionRuleConfig() {
         { value: '', label: 'All' },
         { value: 'missing', label: 'Missing File' },
         { value: 'frequent_failures', label: 'Frequent Transfer Failures' },
-        { value: 'single_failure', label: 'Single Transfer Failure' },
-        { value: 'transfer_retried', label: 'Transfer Retried' },
+        { value: 'single_failure', label: 'Transfer Failure' },
         { value: 'zero_byte', label: 'Zero Byte File' },
         { value: 'staged_not_picked_up', label: 'Staged but Not Picked Up' },
         { value: 'file_match', label: 'Expected File Received' },
@@ -429,7 +425,6 @@ function ExceptionRuleConfig() {
     switch (form.ruleType) {
       case 'frequent_failures':    return form.failurePartnerSystem !== '' && form.failureCount !== '' && form.failureDuration !== '';
       case 'single_failure':       return form.singlePartnerSystem !== '';
-      case 'transfer_retried':     return form.retriedPartnerSystem !== '' && form.retriedCount !== '';
       case 'zero_byte':            return form.zeroBytePartnerSystem !== '';
       case 'staged_not_picked_up': return form.stagedPartnerSystem !== '' && form.stagedDuration !== '';
       case 'file_match':           return form.fileMatchPartnerSystem !== '' && form.fileMatchPattern !== '';
@@ -728,8 +723,7 @@ function ExceptionRuleConfig() {
                 )}
                 {(form.ruleCategory === 'all' || form.ruleCategory === 'event') && [
                   <MuiMenuItem key="frequent_failures" value="frequent_failures">Frequent Transfer Failures</MuiMenuItem>,
-                  <MuiMenuItem key="single_failure" value="single_failure">Single Transfer Failure</MuiMenuItem>,
-                  <MuiMenuItem key="transfer_retried" value="transfer_retried">Transfer Retried</MuiMenuItem>,
+                  <MuiMenuItem key="single_failure" value="single_failure">Transfer Failure</MuiMenuItem>,
                   <MuiMenuItem key="zero_byte" value="zero_byte">Zero Byte File</MuiMenuItem>,
                   <MuiMenuItem key="staged_not_picked_up" value="staged_not_picked_up">Staged but Not Picked Up</MuiMenuItem>,
                   <MuiMenuItem key="file_match" value="file_match">Expected File Received</MuiMenuItem>,
@@ -820,10 +814,10 @@ function ExceptionRuleConfig() {
             </>
           )}
 
-          {/* Single Transfer Failure */}
+          {/* Transfer Failure */}
           {form.ruleType === 'single_failure' && (
             <>
-              <RuleFieldRow filled={!!form.singlePartnerSystem} label="Partner or System" tooltip="Select the partner or system to monitor. An exception will be created for every individual transfer failure.">
+              <RuleFieldRow filled={!!form.singlePartnerSystem} label="Partner or System" tooltip="Select the partner or system to monitor. An exception will be created when a transfer failure is detected.">
                 <FormControl size="small" sx={{ width: 240 }}>
                   <InputLabel>Select Partner or System</InputLabel>
                   <Select label="Select Partner or System" value={form.singlePartnerSystem} onChange={(e) => setForm((f) => ({ ...f, singlePartnerSystem: e.target.value }))}>
@@ -832,30 +826,37 @@ function ExceptionRuleConfig() {
                 </FormControl>
               </RuleFieldRow>
 
+              <RuleFieldRow filled={true} required={false} label="Trigger Condition" tooltip="Choose when to trigger the exception: immediately on the first failure, or only after a specified number of retries.">
+                <Box sx={{ display: 'flex', gap: 1, width: 240 }}>
+                  <FormControl size="small" sx={{ flex: 1 }}>
+                    <Select
+                      value={form.retryMode}
+                      onChange={(e) => setForm((f) => ({
+                        ...f,
+                        retryMode: e.target.value as 'first_failure' | 'after_retries',
+                        retryCount: e.target.value === 'first_failure' ? '' : f.retryCount,
+                      }))}
+                    >
+                      <MuiMenuItem value="first_failure">On first failure</MuiMenuItem>
+                      <MuiMenuItem value="after_retries">After retries</MuiMenuItem>
+                    </Select>
+                  </FormControl>
+                  {form.retryMode === 'after_retries' && (
+                    <TextField
+                      size="small"
+                      type="number"
+                      placeholder="e.g. 3"
+                      value={form.retryCount}
+                      onChange={(e) => setForm((f) => ({ ...f, retryCount: e.target.value }))}
+                      inputProps={{ min: 1 }}
+                      sx={{ width: 110 }}
+                    />
+                  )}
+                </Box>
+              </RuleFieldRow>
+
               <RuleFieldRow filled={!!form.singleFilePattern} required={false} label="File Name Pattern" tooltip="Optionally match only files whose name matches this pattern, e.g. *.txt.">
                 <TextField size="small" placeholder="e.g. file*.txt" value={form.singleFilePattern} onChange={(e) => setForm((f) => ({ ...f, singleFilePattern: e.target.value }))} sx={{ width: 240 }} />
-              </RuleFieldRow>
-            </>
-          )}
-
-          {/* Transfer Retried */}
-          {form.ruleType === 'transfer_retried' && (
-            <>
-              <RuleFieldRow filled={!!form.retriedPartnerSystem} label="Partner or System" tooltip="Select the partner or system whose transfer retries should be monitored.">
-                <FormControl size="small" sx={{ width: 240 }}>
-                  <InputLabel>Select Partner or System</InputLabel>
-                  <Select label="Select Partner or System" value={form.retriedPartnerSystem} onChange={(e) => setForm((f) => ({ ...f, retriedPartnerSystem: e.target.value }))}>
-                    {PARTNER_OPTIONS.map((o) => <MuiMenuItem key={o.value} value={o.value}>{o.label}</MuiMenuItem>)}
-                  </Select>
-                </FormControl>
-              </RuleFieldRow>
-
-              <RuleFieldRow filled={!!form.retriedCount} label="Minimum Retry Count" tooltip="Enter the number of retry attempts that must occur before an exception is triggered.">
-                <TextField size="small" sx={{ width: 240 }} type="number" placeholder="e.g. 3" value={form.retriedCount} onChange={(e) => setForm((f) => ({ ...f, retriedCount: e.target.value }))} inputProps={{ min: 1 }} />
-              </RuleFieldRow>
-
-              <RuleFieldRow filled={!!form.retriedFilePattern} required={false} label="File Name Pattern" tooltip="Optionally match only files whose name matches this pattern, e.g. *.txt.">
-                <TextField size="small" placeholder="e.g. file*.txt" value={form.retriedFilePattern} onChange={(e) => setForm((f) => ({ ...f, retriedFilePattern: e.target.value }))} sx={{ width: 240 }} />
               </RuleFieldRow>
             </>
           )}

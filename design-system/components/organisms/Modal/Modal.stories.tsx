@@ -81,7 +81,7 @@ export const WithActions: Story = {
     ),
     actions: (
       <>
-        <Button>Cancel</Button>
+        <Button variant="text" color="secondary">Cancel</Button>
         <Button variant="contained">Confirm</Button>
       </>
     ),
@@ -97,7 +97,7 @@ export const WithActions: Story = {
           onClose={() => setOpen(false)}
           actions={
             <>
-              <Button onClick={() => setOpen(false)}>Cancel</Button>
+              <Button variant="text" color="secondary" onClick={() => setOpen(false)}>Cancel</Button>
               <Button variant="contained" onClick={() => setOpen(false)}>Confirm</Button>
             </>
           }

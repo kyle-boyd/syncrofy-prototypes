@@ -21,6 +21,10 @@ export interface DropdownOption {
    * Action element to display after the text
    */
   action?: React.ReactNode;
+  /**
+   * Color variant for the option text and icon
+   */
+  color?: 'error' | 'warning' | 'success';
 }
 
 export interface DropdownProps extends Omit<MuiMenuProps, 'open' | 'onClose' | 'anchorEl' | 'onSelect'>, BaseComponentProps {
@@ -53,6 +57,10 @@ export interface DropdownProps extends Omit<MuiMenuProps, 'open' | 'onClose' | '
    * @default false
    */
   hugContents?: boolean;
+  /**
+   * Minimum width of the dropdown menu in pixels
+   */
+  minWidth?: number;
 }
 
 /**
@@ -68,6 +76,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
   open: controlledOpen,
   onClose: controlledOnClose,
   hugContents = false,
+  minWidth,
   ...props
 }) => {
   const [internalOpen, setInternalOpen] = useState(false);
@@ -137,7 +146,8 @@ export const Dropdown: React.FC<DropdownProps> = ({
             background: '#FFF',
             boxShadow: '0 8px 8px -4px rgba(0, 0, 0, 0.04), 0 20px 24px -4px rgba(0, 0, 0, 0.08)',
             ...(menuWidth !== undefined && !hugContents && { width: menuWidth }),
-            ...(hugContents && { width: 'auto', minWidth: 'auto' }),
+            ...(hugContents && { width: 'auto', minWidth: minWidth ?? 'auto' }),
+            ...(minWidth !== undefined && { minWidth }),
           },
         }}
         {...props}
@@ -147,9 +157,9 @@ export const Dropdown: React.FC<DropdownProps> = ({
             <ListItem
               key={option.value}
               button
-              primary={<Typography variant="body2">{option.label}</Typography>}
+              primary={<Typography variant="body2" color={option.color ? `${option.color}.main` : undefined}>{option.label}</Typography>}
               secondary={option.secondary}
-              icon={option.icon}
+              icon={option.icon && option.color ? React.cloneElement(option.icon, { sx: { ...option.icon.props.sx, color: `${option.color}.main` } }) : option.icon}
               action={option.action}
               disabled={option.disabled}
               selected={option.value === props.value}
