@@ -29,7 +29,7 @@
     }
   },
   "include": ["src", "design-system"],
-  "exclude": ["node_modules", "design-system/**/*.stories.tsx", "design-system/**/*.stories.ts"],
+  "exclude": ["node_modules", "design-system/**/*.stories.tsx", "design-system/**/*.stories.ts", "src/components/versions"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
 

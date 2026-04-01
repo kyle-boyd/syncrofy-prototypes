@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Typography,
@@ -298,6 +299,7 @@ const allItems = [...favorites, ...allDashboards];
 const initialStarred = new Set(allItems.filter(i => i.starred).map(i => i.id));
 
 export default function DashboardsHome() {
+  const navigate = useNavigate();
   const [cardVariant, setCardVariant] = useState<CardVariant>('colorDot');
   const [showMoreFavorites, setShowMoreFavorites] = useState(false);
   const [starredIds, setStarredIds] = useState<Set<number>>(initialStarred);
@@ -381,7 +383,9 @@ export default function DashboardsHome() {
             }}
           >
             {favorites.map(item => (
-              <DashboardCard key={item.id} item={item} variant={cardVariant} starred={starredIds.has(item.id)} onToggleStar={toggleStar(item.id)} />
+              <Box key={item.id} onClick={() => navigate(`/dashboards/${encodeURIComponent(item.name)}`)}>
+                <DashboardCard item={item} variant={cardVariant} starred={starredIds.has(item.id)} onToggleStar={toggleStar(item.id)} />
+              </Box>
             ))}
           </Box>
           <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
@@ -432,7 +436,9 @@ export default function DashboardsHome() {
             gap: 2,
           }}>
             {allDashboards.map(item => (
-              <DashboardCard key={item.id} item={item} variant={cardVariant} starred={starredIds.has(item.id)} onToggleStar={toggleStar(item.id)} />
+              <Box key={item.id} onClick={() => navigate(`/dashboards/${encodeURIComponent(item.name)}`)}>
+                <DashboardCard item={item} variant={cardVariant} starred={starredIds.has(item.id)} onToggleStar={toggleStar(item.id)} />
+              </Box>
             ))}
           </Box>
         </Box>

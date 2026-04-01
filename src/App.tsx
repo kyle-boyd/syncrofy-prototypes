@@ -22,6 +22,7 @@ import CompanyMismatch1 from './pages/CompanyMismatch1';
 import CompanyMismatch2 from './pages/CompanyMismatch2';
 import CompanyMismatch3 from './pages/CompanyMismatch3';
 import DashboardsHome from './pages/DashboardsHome';
+import DashboardDetail from './pages/DashboardDetail';
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/dashboards" element={<DashboardsHome />} />
+          <Route path="/dashboards/:id" element={<DashboardDetail />} />
           <Route path="/gallery" element={<ComponentGallery />} />
           <Route path="/transfers" element={<Transfers />} />
           <Route path="/transfers/:id" element={<TransferDetails />} />
