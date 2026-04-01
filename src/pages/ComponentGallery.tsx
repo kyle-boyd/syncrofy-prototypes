@@ -8,13 +8,18 @@ import {
   List,
   ListItemButton,
   ListItemText,
+  MenuItem,
   Paper,
+  Select,
   Typography,
   useTheme,
   useMediaQuery,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import SettingsIcon from '@mui/icons-material/Settings';
+import PersonIcon from '@mui/icons-material/Person';
 import {
   Avatar,
   Badge,
@@ -109,6 +114,65 @@ const SIDEBAR_SECTIONS: { id: string; label: string; items: { id: string; label:
   },
 ];
 
+type ControlDef =
+  | { type: 'select'; label: string; value: string; onChange: (v: string) => void; options: { value: string; label: string }[] }
+  | { type: 'toggle'; label: string; value: boolean; onChange: (v: boolean) => void };
+
+function ControlBar({ controls }: { controls: ControlDef[] }) {
+  return (
+    <Box
+      sx={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        gap: 2,
+        alignItems: 'center',
+        p: 2,
+        mb: 2,
+        bgcolor: 'background.paper',
+        border: 1,
+        borderColor: 'divider',
+        borderRadius: 1,
+      }}
+    >
+      <Typography variant="overline" color="text.secondary" sx={{ mr: 1, lineHeight: 1 }}>
+        Controls
+      </Typography>
+      {controls.map((ctrl, i) =>
+        ctrl.type === 'select' ? (
+          <Box key={i} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Typography variant="caption" color="text.secondary">
+              {ctrl.label}
+            </Typography>
+            <Select
+              size="small"
+              value={ctrl.value}
+              onChange={(e) => ctrl.onChange(e.target.value)}
+              sx={{ fontSize: 13, minWidth: 110 }}
+            >
+              {ctrl.options.map((opt) => (
+                <MenuItem key={opt.value} value={opt.value} sx={{ fontSize: 13 }}>
+                  {opt.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </Box>
+        ) : (
+          <Box key={i} sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+            <Typography variant="caption" color="text.secondary">
+              {ctrl.label}
+            </Typography>
+            <Toggle
+              size="small"
+              checked={ctrl.value}
+              onChange={(e) => ctrl.onChange((e.target as HTMLInputElement).checked)}
+            />
+          </Box>
+        )
+      )}
+    </Box>
+  );
+}
+
 function GalleryPreview({ children, title }: { children: React.ReactNode; title?: string }) {
   return (
     <Paper
@@ -134,11 +198,13 @@ function ComponentStory({
   id,
   title,
   description,
+  controls,
   children,
 }: {
   id: string;
   title: string;
   description: string;
+  controls?: ControlDef[];
   children: React.ReactNode;
 }) {
   return (
@@ -151,6 +217,7 @@ function ComponentStory({
           {description}
         </Typography>
       )}
+      {controls && controls.length > 0 && <ControlBar controls={controls} />}
       <GalleryPreview>{children}</GalleryPreview>
     </Box>
   );
@@ -167,10 +234,69 @@ export default function ComponentGallery() {
   const [modalOpen, setModalOpen] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [page, setPage] = useState(1);
-  const [typeaheadOption, setTypeaheadOption] = useState<{ value: string; label: string } | null>(null);
+  const [typeaheadOption, setTypeaheadOption] = useState<{ value: string | number; label: string } | null>(null);
   const [checkboxChecked, setCheckboxChecked] = useState(false);
   const [radioValue, setRadioValue] = useState('opt1');
   const [toggleChecked, setToggleChecked] = useState(false);
+
+  // Button controls
+  const [buttonVariant, setButtonVariant] = useState<'contained' | 'outlined' | 'text'>('contained');
+  const [buttonColor, setButtonColor] = useState<'primary' | 'secondary' | 'error' | 'warning' | 'info' | 'success'>('primary');
+  const [buttonSize, setButtonSize] = useState<'small' | 'medium' | 'large'>('medium');
+  const [buttonDisabled, setButtonDisabled] = useState(false);
+
+  // Toggle controls
+  const [toggleSize, setToggleSize] = useState<'small' | 'medium'>('medium');
+  const [toggleColor, setToggleColor] = useState<'primary' | 'secondary' | 'default' | 'error' | 'warning' | 'success' | 'info'>('primary');
+  const [toggleDisabled, setToggleDisabled] = useState(false);
+
+  // Dropdown controls
+  const [dropdownHugContents, setDropdownHugContents] = useState(false);
+  const [dropdownWithIcons, setDropdownWithIcons] = useState(false);
+  const [dropdownWithSecondary, setDropdownWithSecondary] = useState(false);
+  const [dropdownWithDisabled, setDropdownWithDisabled] = useState(false);
+  const [dropdownSelected, setDropdownSelected] = useState<string | number | undefined>(undefined);
+
+  // Input controls
+  const [inputDisabled, setInputDisabled] = useState(false);
+  const [inputRequired, setInputRequired] = useState(false);
+  const [inputError, setInputError] = useState(false);
+  const [inputSize, setInputSize] = useState<'small' | 'medium'>('medium');
+
+  // Avatar controls
+  const [avatarSize, setAvatarSize] = useState<'40px' | '32px' | '24px' | '18px'>('40px');
+
+  // Badge controls
+  const [badgeColor, setBadgeColor] = useState<'primary' | 'secondary' | 'error' | 'warning' | 'info' | 'success' | 'default'>('primary');
+
+  // Spinner controls
+  const [spinnerSize, setSpinnerSize] = useState<'24' | '32' | '40' | '48'>('24');
+
+  // Tag controls
+  const [tagVariant, setTagVariant] = useState<'primary' | 'success' | 'error' | 'neutral' | 'warning' | 'info'>('primary');
+
+  // Chips controls
+  const [chipsDisabled, setChipsDisabled] = useState(false);
+  const [chipsDeletable, setChipsDeletable] = useState(false);
+
+  // Icon button controls
+  const [iconButtonSize, setIconButtonSize] = useState<'small' | 'medium' | 'large'>('medium');
+  const [iconButtonDisabled, setIconButtonDisabled] = useState(false);
+
+  // Checkbox controls
+  const [checkboxDisabled, setCheckboxDisabled] = useState(false);
+
+  // Radio controls
+  const [radioDisabled, setRadioDisabled] = useState(false);
+
+  // Search controls
+  const [searchDisabled, setSearchDisabled] = useState(false);
+
+  // Toggle button controls
+  const [toggleButtonDisabled, setToggleButtonDisabled] = useState(false);
+
+  // Typeahead controls
+  const [typeaheadDisabled, setTypeaheadDisabled] = useState(false);
 
   const handleSelect = (id: string) => {
     setSelectedId(id);
@@ -216,25 +342,76 @@ export default function ComponentGallery() {
     { value: 'banana', label: 'Banana' },
   ];
 
+  const dropdownBaseOptions = [
+    { value: '1', label: 'Option 1' },
+    { value: '2', label: 'Option 2' },
+    { value: '3', label: 'Option 3' },
+  ];
+
+  const dropdownOptions = dropdownBaseOptions.map((opt, i) => ({
+    ...opt,
+    ...(dropdownWithIcons ? { icon: i === 0 ? <DashboardIcon /> : i === 1 ? <SettingsIcon /> : <PersonIcon /> } : {}),
+    ...(dropdownWithSecondary ? { secondary: `Description for ${opt.label}` } : {}),
+    ...(dropdownWithDisabled && i === 1 ? { disabled: true } : {}),
+  }));
+
   const renderStory = () => {
     switch (selectedId) {
       case 'avatar':
         return (
-          <ComponentStory id="avatar" title="Avatar" description="User or entity avatar.">
-            <Avatar alt="User" />
-            <Avatar alt="AB">AB</Avatar>
-            <Avatar alt="Icon" sx={{ bgcolor: 'primary.main' }}>
+          <ComponentStory
+            id="avatar"
+            title="Avatar"
+            description="User or entity avatar."
+            controls={[
+              {
+                type: 'select',
+                label: 'Size',
+                value: avatarSize,
+                onChange: (v) => setAvatarSize(v as typeof avatarSize),
+                options: [
+                  { value: '40px', label: '40px' },
+                  { value: '32px', label: '32px' },
+                  { value: '24px', label: '24px' },
+                  { value: '18px', label: '18px' },
+                ],
+              },
+            ]}
+          >
+            <Avatar alt="User" size={avatarSize} />
+            <Avatar alt="AB" size={avatarSize}>AB</Avatar>
+            <Avatar alt="Icon" size={avatarSize} sx={{ bgcolor: 'primary.main' }}>
               <WhatshotIcon />
             </Avatar>
           </ComponentStory>
         );
       case 'badge':
         return (
-          <ComponentStory id="badge" title="Badge" description="Badge for counts or status.">
-            <Badge badgeContent={4} color="primary">
+          <ComponentStory
+            id="badge"
+            title="Badge"
+            description="Badge for counts or status."
+            controls={[
+              {
+                type: 'select',
+                label: 'Color',
+                value: badgeColor,
+                onChange: (v) => setBadgeColor(v as typeof badgeColor),
+                options: [
+                  { value: 'primary', label: 'Primary' },
+                  { value: 'secondary', label: 'Secondary' },
+                  { value: 'error', label: 'Error' },
+                  { value: 'warning', label: 'Warning' },
+                  { value: 'info', label: 'Info' },
+                  { value: 'success', label: 'Success' },
+                ],
+              },
+            ]}
+          >
+            <Badge badgeContent={4} color={badgeColor}>
               <Button variant="contained">Notifications</Button>
             </Badge>
-            <Badge badgeContent={99} color="error">
+            <Badge badgeContent={99} color={badgeColor}>
               <Button variant="outlined">Messages</Button>
             </Badge>
           </ComponentStory>
@@ -255,26 +432,89 @@ export default function ComponentGallery() {
         );
       case 'button':
         return (
-          <ComponentStory id="button" title="Button" description="Primary actions.">
-            <Button variant="contained" color="primary">Primary</Button>
-            <Button variant="outlined" color="primary">Outlined</Button>
-            <Button variant="text" color="primary">Text</Button>
-            <Button variant="contained" disabled>Disabled</Button>
+          <ComponentStory
+            id="button"
+            title="Button"
+            description="Primary actions."
+            controls={[
+              {
+                type: 'select',
+                label: 'Variant',
+                value: buttonVariant,
+                onChange: (v) => setButtonVariant(v as typeof buttonVariant),
+                options: [
+                  { value: 'contained', label: 'Contained' },
+                  { value: 'outlined', label: 'Outlined' },
+                  { value: 'text', label: 'Text' },
+                ],
+              },
+              {
+                type: 'select',
+                label: 'Color',
+                value: buttonColor,
+                onChange: (v) => setButtonColor(v as typeof buttonColor),
+                options: [
+                  { value: 'primary', label: 'Primary' },
+                  { value: 'secondary', label: 'Secondary' },
+                  { value: 'error', label: 'Error' },
+                  { value: 'warning', label: 'Warning' },
+                  { value: 'info', label: 'Info' },
+                  { value: 'success', label: 'Success' },
+                ],
+              },
+              {
+                type: 'select',
+                label: 'Size',
+                value: buttonSize,
+                onChange: (v) => setButtonSize(v as typeof buttonSize),
+                options: [
+                  { value: 'small', label: 'Small' },
+                  { value: 'medium', label: 'Medium' },
+                  { value: 'large', label: 'Large' },
+                ],
+              },
+              { type: 'toggle', label: 'Disabled', value: buttonDisabled, onChange: setButtonDisabled },
+            ]}
+          >
+            <Button variant={buttonVariant} color={buttonColor} size={buttonSize} disabled={buttonDisabled}>
+              Button
+            </Button>
+            <Button variant={buttonVariant} color={buttonColor} size={buttonSize} disabled={buttonDisabled} startIcon={<AddIcon />}>
+              With Icon
+            </Button>
           </ComponentStory>
         );
       case 'checkbox':
         return (
-          <ComponentStory id="checkbox" title="Checkbox" description="Boolean form control.">
-            <Checkbox checked={checkboxChecked} onChange={(e) => setCheckboxChecked((e.target as HTMLInputElement).checked)} />
+          <ComponentStory
+            id="checkbox"
+            title="Checkbox"
+            description="Boolean form control."
+            controls={[
+              { type: 'toggle', label: 'Disabled', value: checkboxDisabled, onChange: setCheckboxDisabled },
+            ]}
+          >
+            <Checkbox
+              checked={checkboxChecked}
+              disabled={checkboxDisabled}
+              onChange={(e) => setCheckboxChecked((e.target as HTMLInputElement).checked)}
+            />
             <Typography component="span" sx={{ ml: 1 }}>Option</Typography>
           </ComponentStory>
         );
       case 'chips':
         return (
-          <ComponentStory id="chips" title="Chips" description="Compact labels or filters.">
-            <Chips label="Chip" />
-            <Chips label="Deletable" onDelete={() => {}} />
-            <Chips label="Primary" color="primary" />
+          <ComponentStory
+            id="chips"
+            title="Chips"
+            description="Compact labels or filters."
+            controls={[
+              { type: 'toggle', label: 'Disabled', value: chipsDisabled, onChange: setChipsDisabled },
+              { type: 'toggle', label: 'Deletable', value: chipsDeletable, onChange: setChipsDeletable },
+            ]}
+          >
+            <Chips label="Default" disabled={chipsDisabled} onDelete={chipsDeletable ? () => {} : undefined} />
+            <Chips label="Primary" color="primary" disabled={chipsDisabled} onDelete={chipsDeletable ? () => {} : undefined} />
           </ComponentStory>
         );
       case 'divider':
@@ -289,18 +529,61 @@ export default function ComponentGallery() {
         );
       case 'icon-button':
         return (
-          <ComponentStory id="icon-button" title="Icon Button" description="Icon-only button.">
-            <DSIconButton size="small" aria-label="add"><AddIcon /></DSIconButton>
-            <DSIconButton aria-label="add"><AddIcon /></DSIconButton>
-            <DSIconButton size="large" aria-label="add"><AddIcon /></DSIconButton>
+          <ComponentStory
+            id="icon-button"
+            title="Icon Button"
+            description="Icon-only button."
+            controls={[
+              {
+                type: 'select',
+                label: 'Size',
+                value: iconButtonSize,
+                onChange: (v) => setIconButtonSize(v as typeof iconButtonSize),
+                options: [
+                  { value: 'small', label: 'Small' },
+                  { value: 'medium', label: 'Medium' },
+                  { value: 'large', label: 'Large' },
+                ],
+              },
+              { type: 'toggle', label: 'Disabled', value: iconButtonDisabled, onChange: setIconButtonDisabled },
+            ]}
+          >
+            <DSIconButton size={iconButtonSize} disabled={iconButtonDisabled} aria-label="add">
+              <AddIcon />
+            </DSIconButton>
           </ComponentStory>
         );
       case 'input':
         return (
-          <ComponentStory id="input" title="Input" description="Text input field.">
-            <Input label="Label" placeholder="Placeholder" value="" onChange={() => {}} />
-            <Input label="Required" required />
-            <Input label="Disabled" disabled value="Disabled" />
+          <ComponentStory
+            id="input"
+            title="Input"
+            description="Text input field."
+            controls={[
+              {
+                type: 'select',
+                label: 'Size',
+                value: inputSize,
+                onChange: (v) => setInputSize(v as typeof inputSize),
+                options: [
+                  { value: 'small', label: 'Small' },
+                  { value: 'medium', label: 'Medium' },
+                ],
+              },
+              { type: 'toggle', label: 'Disabled', value: inputDisabled, onChange: setInputDisabled },
+              { type: 'toggle', label: 'Required', value: inputRequired, onChange: setInputRequired },
+              { type: 'toggle', label: 'Error', value: inputError, onChange: setInputError },
+            ]}
+          >
+            <Input
+              label="Label"
+              placeholder="Placeholder"
+              size={inputSize}
+              disabled={inputDisabled}
+              required={inputRequired}
+              error={inputError}
+              helperText={inputError ? 'This field has an error' : undefined}
+            />
           </ComponentStory>
         );
       case 'link':
@@ -330,44 +613,140 @@ export default function ComponentGallery() {
         );
       case 'radio':
         return (
-          <ComponentStory id="radio" title="Radio" description="Single choice from options.">
-            <Radio checked={radioValue === 'opt1'} onChange={() => setRadioValue('opt1')} value="opt1" /> Option 1
-            <Radio checked={radioValue === 'opt2'} onChange={() => setRadioValue('opt2')} value="opt2" /> Option 2
+          <ComponentStory
+            id="radio"
+            title="Radio"
+            description="Single choice from options."
+            controls={[
+              { type: 'toggle', label: 'Disabled', value: radioDisabled, onChange: setRadioDisabled },
+            ]}
+          >
+            <Radio checked={radioValue === 'opt1'} onChange={() => setRadioValue('opt1')} value="opt1" disabled={radioDisabled} /> Option 1
+            <Radio checked={radioValue === 'opt2'} onChange={() => setRadioValue('opt2')} value="opt2" disabled={radioDisabled} /> Option 2
           </ComponentStory>
         );
       case 'search':
         return (
-          <ComponentStory id="search" title="Search" description="Search input.">
-            <Search placeholder="Search..." />
+          <ComponentStory
+            id="search"
+            title="Search"
+            description="Search input."
+            controls={[
+              { type: 'toggle', label: 'Disabled', value: searchDisabled, onChange: setSearchDisabled },
+            ]}
+          >
+            <Search placeholder="Search..." disabled={searchDisabled} />
           </ComponentStory>
         );
       case 'spinner':
         return (
-          <ComponentStory id="spinner" title="Spinner" description="Loading indicator.">
-            <Spinner size={24} />
-            <Spinner size={40} />
+          <ComponentStory
+            id="spinner"
+            title="Spinner"
+            description="Loading indicator."
+            controls={[
+              {
+                type: 'select',
+                label: 'Size',
+                value: spinnerSize,
+                onChange: (v) => setSpinnerSize(v as typeof spinnerSize),
+                options: [
+                  { value: '24', label: '24px' },
+                  { value: '32', label: '32px' },
+                  { value: '40', label: '40px' },
+                  { value: '48', label: '48px' },
+                ],
+              },
+            ]}
+          >
+            <Spinner size={Number(spinnerSize)} />
           </ComponentStory>
         );
       case 'tag':
         return (
-          <ComponentStory id="tag" title="Tag" description="Status or category tag.">
-            <Tag label="Primary" variant="primary" />
-            <Tag label="Success" variant="success" />
-            <Tag label="Error" variant="error" />
-            <Tag label="Neutral" variant="neutral" />
+          <ComponentStory
+            id="tag"
+            title="Tag"
+            description="Status or category tag."
+            controls={[
+              {
+                type: 'select',
+                label: 'Variant',
+                value: tagVariant,
+                onChange: (v) => setTagVariant(v as typeof tagVariant),
+                options: [
+                  { value: 'primary', label: 'Primary' },
+                  { value: 'success', label: 'Success' },
+                  { value: 'error', label: 'Error' },
+                  { value: 'warning', label: 'Warning' },
+                  { value: 'info', label: 'Info' },
+                  { value: 'neutral', label: 'Neutral' },
+                ],
+              },
+            ]}
+          >
+            <Tag label="Tag" variant={tagVariant} />
           </ComponentStory>
         );
       case 'toggle':
         return (
-          <ComponentStory id="toggle" title="Toggle" description="Switch control.">
-            <Toggle checked={toggleChecked} onChange={(e) => setToggleChecked((e.target as HTMLInputElement).checked)} />
+          <ComponentStory
+            id="toggle"
+            title="Toggle"
+            description="Switch control."
+            controls={[
+              {
+                type: 'select',
+                label: 'Size',
+                value: toggleSize,
+                onChange: (v) => setToggleSize(v as typeof toggleSize),
+                options: [
+                  { value: 'small', label: 'Small' },
+                  { value: 'medium', label: 'Medium' },
+                ],
+              },
+              {
+                type: 'select',
+                label: 'Color',
+                value: toggleColor,
+                onChange: (v) => setToggleColor(v as typeof toggleColor),
+                options: [
+                  { value: 'primary', label: 'Primary' },
+                  { value: 'secondary', label: 'Secondary' },
+                  { value: 'default', label: 'Default' },
+                  { value: 'error', label: 'Error' },
+                  { value: 'warning', label: 'Warning' },
+                  { value: 'success', label: 'Success' },
+                  { value: 'info', label: 'Info' },
+                ],
+              },
+              { type: 'toggle', label: 'Disabled', value: toggleDisabled, onChange: setToggleDisabled },
+            ]}
+          >
+            <Toggle
+              checked={toggleChecked}
+              size={toggleSize}
+              color={toggleColor}
+              disabled={toggleDisabled}
+              onChange={(e) => setToggleChecked((e.target as HTMLInputElement).checked)}
+            />
+            <Typography variant="body2" color="text.secondary">
+              {toggleChecked ? 'On' : 'Off'}
+            </Typography>
           </ComponentStory>
         );
       case 'toggle-button':
         return (
-          <ComponentStory id="toggle-button" title="Toggle Button" description="Button that toggles state.">
-            <ToggleButton selected>Selected</ToggleButton>
-            <ToggleButton>Unselected</ToggleButton>
+          <ComponentStory
+            id="toggle-button"
+            title="Toggle Button"
+            description="Button that toggles state."
+            controls={[
+              { type: 'toggle', label: 'Disabled', value: toggleButtonDisabled, onChange: setToggleButtonDisabled },
+            ]}
+          >
+            <ToggleButton value="selected" selected disabled={toggleButtonDisabled}>Selected</ToggleButton>
+            <ToggleButton value="unselected" disabled={toggleButtonDisabled}>Unselected</ToggleButton>
           </ComponentStory>
         );
       case 'tooltip':
@@ -390,14 +769,23 @@ export default function ComponentGallery() {
         );
       case 'dropdown':
         return (
-          <ComponentStory id="dropdown" title="Dropdown" description="Menu of options.">
+          <ComponentStory
+            id="dropdown"
+            title="Dropdown"
+            description="Menu of options."
+            controls={[
+              { type: 'toggle', label: 'Hug Contents', value: dropdownHugContents, onChange: setDropdownHugContents },
+              { type: 'toggle', label: 'Icons', value: dropdownWithIcons, onChange: setDropdownWithIcons },
+              { type: 'toggle', label: 'Secondary Text', value: dropdownWithSecondary, onChange: setDropdownWithSecondary },
+              { type: 'toggle', label: 'Disabled Item', value: dropdownWithDisabled, onChange: setDropdownWithDisabled },
+            ]}
+          >
             <Dropdown
               trigger={<Button variant="outlined">Open menu</Button>}
-              options={[
-                { value: '1', label: 'Option 1' },
-                { value: '2', label: 'Option 2' },
-              ]}
-              onSelect={() => {}}
+              options={dropdownOptions}
+              value={dropdownSelected}
+              hugContents={dropdownHugContents}
+              onSelect={(v) => setDropdownSelected(v)}
             />
           </ComponentStory>
         );
@@ -463,11 +851,19 @@ export default function ComponentGallery() {
         );
       case 'typeahead':
         return (
-          <ComponentStory id="typeahead" title="Typeahead" description="Autocomplete input.">
+          <ComponentStory
+            id="typeahead"
+            title="Typeahead"
+            description="Autocomplete input."
+            controls={[
+              { type: 'toggle', label: 'Disabled', value: typeaheadDisabled, onChange: setTypeaheadDisabled },
+            ]}
+          >
             <Typeahead
               placeholder="Type to search..."
               options={typeaheadOptions}
               value={typeaheadOption}
+              disabled={typeaheadDisabled}
               onChange={(_, opt) => setTypeaheadOption(opt)}
             />
           </ComponentStory>
