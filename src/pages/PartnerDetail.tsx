@@ -20,6 +20,7 @@ import {
   Tag,
 } from '@design-system';
 import { PageLayout } from '../components/PageLayout';
+import { PartnerColorSwatch } from '../components/PartnerColorSwatch';
 
 export interface Endpoint {
   id: string;
@@ -249,9 +250,12 @@ function PartnerDetail() {
           <Typography variant="subtitle2" component="span">External Partners</Typography>
         </Box>
 
-        <Typography variant="h4" sx={{ fontWeight: 600, mb: 2 }}>
-          {partnerName}
-        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2 }}>
+          <Typography variant="h4" sx={{ fontWeight: 600 }}>
+            {partnerName}
+          </Typography>
+          <PartnerColorSwatch partnerName={partnerName} size={24} />
+        </Box>
 
         <Box sx={{ mb: 3 }}>
           <Typography variant="caption" color="text.secondary" display="block" sx={{ mb: 1 }}>
