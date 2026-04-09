@@ -23,6 +23,7 @@ import CompanyMismatch2 from './pages/CompanyMismatch2';
 import CompanyMismatch3 from './pages/CompanyMismatch3';
 import DashboardsHome from './pages/DashboardsHome';
 import DashboardDetail from './pages/DashboardDetail';
+import IconButtonTooltips from './pages/IconButtonTooltips';
 
 function App() {
   return (
@@ -51,6 +52,7 @@ function App() {
           <Route path="/company-mismatch/1" element={<CompanyMismatch1 />} />
           <Route path="/company-mismatch/2" element={<CompanyMismatch2 />} />
           <Route path="/company-mismatch/3" element={<CompanyMismatch3 />} />
+          <Route path="/icon-button-tooltips" element={<IconButtonTooltips />} />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>
