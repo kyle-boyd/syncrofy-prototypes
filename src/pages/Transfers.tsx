@@ -871,7 +871,6 @@ function Transfers() {
           zIndex: 20,
           backgroundColor: '#FAFCFC',
           px: 3,
-          pb: 2,
           mb: '16px',
         }}
       >
@@ -963,7 +962,6 @@ function Transfers() {
             backgroundColor: 'background.paper',
             borderLeft: 'none !important',
             borderRight: 'none !important',
-            position: 'relative',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',

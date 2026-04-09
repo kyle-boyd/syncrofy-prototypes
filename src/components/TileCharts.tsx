@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
+import { usePartnerColors } from '../partnerColorStore';
 import { Box, Typography, Menu, MenuItem, ListItemIcon, ListItemText } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
@@ -125,18 +126,18 @@ export type SplitSeriesKey = typeof SPLIT_SERIES_KEYS[number];
 
 export const SERIES_NAMES: Record<SplitSeriesKey, string> = {
   a: 'Acme Corporation',
-  b: 'Global Logistics Inc.',
-  c: 'Pacific Rim Trading Co.',
-  d: 'Sunrise Healthcare Systems',
-  e: 'Metro Distribution Partners',
-  f: 'Allied Manufacturing Group',
+  b: 'John Deere',
+  c: 'Stonebridge Capital Management',
+  d: 'Alpha Financial Services',
+  e: 'Sunrise Builders',
+  f: 'Commercial Banking New York',
   g: 'Coastal Supply Chain LLC',
-  h: 'Summit Retail Solutions',
+  h: 'Heritage Family Enterprises',
   i: 'Horizon Technology Partners',
   j: 'Blue Ridge Freight & Logistics',
   k: 'Cascade Systems International',
   l: 'Pinnacle Wholesale Distributors',
-  m: 'Northern Tier Fulfillment',        // thousands range
+  m: "Joe's Burgers",                    // thousands range
   n: 'Vertex Micro Components Ltd.',     // hundreds range
   o: 'Relic Legacy Systems Co.',         // near-zero (occasional activity)
   p: 'Dormant Ventures LLC',             // all zeros
@@ -386,7 +387,12 @@ function MultiLineChart({ height, xAxisInterval = 'Month', splitCount = 1, split
     ? sortKeysByParam([...SPLIT_SERIES_KEYS], data, splitSortBy)
     : [...SPLIT_SERIES_KEYS];
   const allKeys  = baseKeys.slice(0, Math.max(1, splitCount)) as SplitSeriesKey[];
-  const colorMap = Object.fromEntries(allKeys.map((k, i) => [k, colors?.[i] ?? CHART_COLORS[i]])) as Record<SplitSeriesKey, string>;
+  const partnerColors = usePartnerColors();
+  const colorMap = Object.fromEntries(allKeys.map((k, i) => {
+    const partnerName = SERIES_NAMES[k];
+    const color = partnerColors[partnerName] ?? colors?.[i] ?? CHART_COLORS[i];
+    return [k, color];
+  })) as Record<SplitSeriesKey, string>;
 
   const variant = chartVariant;
 

@@ -10,6 +10,7 @@ import {
   IconButton,
 } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { PartnerColorSwatch } from '../components/PartnerColorSwatch';
 import {
   PageHeader,
   FilterControls,
@@ -295,6 +296,13 @@ function Partners() {
           onClick={(e) => e.stopPropagation()}
         />
       ),
+    },
+    {
+      id: 'color',
+      label: '',
+      sortable: false,
+      minWidth: 40,
+      render: (row) => <PartnerColorSwatch partnerName={row.partnerName} />,
     },
     {
       id: 'partnerName',
