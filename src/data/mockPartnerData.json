@@ -1,0 +1,386 @@
+[
+  {
+    "id": "s1",
+    "hostname": "sftp.acme-corp.com",
+    "protocol": "SFTP",
+    "domainRoot": "acme-corp.com",
+    "directory": "/acme/inbound/",
+    "username": "acme_edi",
+    "suggestion": {
+      "businessName": "Acme Corp",
+      "internalExternal": null,
+      "confidence": "high",
+      "tier": "high",
+      "reasoning": "Suggested from host (sftp.acme-corp.com), directory (/acme/inbound/), and filename prefix (ACME_*). 142 transfers, all to Acme-categorized systems.",
+      "quotedTokens": [
+        { "source": "host", "value": "sftp.acme-corp.com" },
+        { "source": "directory", "value": "/acme/inbound/" },
+        { "source": "filename", "value": "ACME_*" }
+      ],
+      "signalType": "multi_signal_agreement"
+    },
+    "contextualSignals": {
+      "transferVolume": "~40 files/day",
+      "firstSeen": "2025-11-02"
+    },
+    "filenameTokens": [
+      { "token": "ACME_", "position": "prefix", "occurrences": 128, "totalTransfers": 142 },
+      { "token": "_INV", "position": "suffix", "occurrences": 58, "totalTransfers": 142 }
+    ],
+    "transferGraph": [
+      { "counterpartyId": "int-ap-01", "counterpartyLabel": "AP-Gateway-01", "counterpartyStatus": "internal", "counterpartyPartner": "Acme Corp", "direction": "to", "count": 84, "lastSeen": "2026-04-18" },
+      { "counterpartyId": "int-ar-02", "counterpartyLabel": "AR-Settlement", "counterpartyStatus": "internal", "counterpartyPartner": "Acme Corp", "direction": "from", "count": 58, "lastSeen": "2026-04-19" }
+    ],
+    "permissionPreview": {
+      "visibleTo": ["Finance-Read", "Ops-Full"],
+      "hiddenFrom": ["Partner-Portal-External"]
+    },
+    "groundTruth": { "businessName": "Acme Corp", "internalExternal": "external" }
+  },
+  {
+    "id": "s2",
+    "hostname": "edi02.acme-corp.com",
+    "protocol": "AS2",
+    "domainRoot": "acme-corp.com",
+    "directory": "/acme/as2/",
+    "username": "acme_as2",
+    "suggestion": {
+      "businessName": "Acme Corp",
+      "internalExternal": null,
+      "confidence": "high",
+      "tier": "high",
+      "reasoning": "Suggested from host (edi02.acme-corp.com) and filename prefix (ACME_*). 87 transfers, 93% to Acme-categorized systems.",
+      "quotedTokens": [
+        { "source": "host", "value": "edi02.acme-corp.com" },
+        { "source": "filename", "value": "ACME_*" }
+      ],
+      "signalType": "multi_signal_agreement"
+    },
+    "contextualSignals": { "firstSeen": "2025-11-02" },
+    "filenameTokens": [
+      { "token": "ACME_", "position": "prefix", "occurrences": 81, "totalTransfers": 87 }
+    ],
+    "transferGraph": [
+      { "counterpartyId": "int-ap-01", "counterpartyLabel": "AP-Gateway-01", "counterpartyStatus": "internal", "counterpartyPartner": "Acme Corp", "direction": "bidirectional", "count": 81, "lastSeen": "2026-04-19" },
+      { "counterpartyId": "unk-03", "counterpartyLabel": "198.51.100.22", "counterpartyStatus": "uncategorized", "direction": "to", "count": 6, "lastSeen": "2026-04-10" }
+    ],
+    "permissionPreview": {
+      "visibleTo": ["Finance-Read", "Ops-Full"],
+      "hiddenFrom": ["Partner-Portal-External"]
+    },
+    "groundTruth": { "businessName": "Acme Corp", "internalExternal": "external" }
+  },
+  {
+    "id": "s3",
+    "hostname": "ftp.edx-12.net",
+    "protocol": "SFTP",
+    "domainRoot": "edx-12.net",
+    "directory": "/inbound/",
+    "username": "gbxuser",
+    "suggestion": {
+      "businessName": "Globex",
+      "internalExternal": null,
+      "confidence": "medium",
+      "tier": "medium_corroborated",
+      "reasoning": "Suggested from filename prefix (GLBX01_*) across 47 transfers. Host and username are generic.",
+      "quotedTokens": [
+        { "source": "filename", "value": "GLBX01_*" }
+      ],
+      "signalType": "filename_pattern"
+    },
+    "contextualSignals": {
+      "transferVolume": "~6 files/week"
+    },
+    "filenameTokens": [
+      { "token": "GLBX01_", "position": "prefix", "occurrences": 44, "totalTransfers": 47 },
+      { "token": "_OUT", "position": "suffix", "occurrences": 12, "totalTransfers": 47 }
+    ],
+    "transferGraph": [
+      { "counterpartyId": "int-cx-01", "counterpartyLabel": "CX-Gateway", "counterpartyStatus": "internal", "counterpartyPartner": "Globex", "direction": "bidirectional", "count": 39, "lastSeen": "2026-04-17" },
+      { "counterpartyId": "unk-14", "counterpartyLabel": "10.4.8.12", "counterpartyStatus": "uncategorized", "direction": "to", "count": 8, "lastSeen": "2026-04-15" }
+    ],
+    "permissionPreview": {
+      "visibleTo": ["Finance-Read"],
+      "hiddenFrom": ["Partner-Portal-External"]
+    },
+    "groundTruth": { "businessName": "Globex", "internalExternal": "external" }
+  },
+  {
+    "id": "s4",
+    "hostname": "gateway.globex-services.net",
+    "protocol": "FTPS",
+    "domainRoot": "globex-services.net",
+    "directory": "/out/",
+    "username": "gbx_batch",
+    "suggestion": {
+      "businessName": "Acme Corp",
+      "internalExternal": null,
+      "confidence": "medium",
+      "tier": "medium_conflicted",
+      "reasoning": "Host suggests \"Globex\" but 94% of 128 transfers flow to Acme-categorized systems. Conflict — please review.",
+      "quotedTokens": [
+        { "source": "host", "value": "globex-services.net" }
+      ],
+      "signalType": "multi_signal_conflict"
+    },
+    "contextualSignals": {
+      "transferVolume": "~18 files/day"
+    },
+    "filenameTokens": [
+      { "token": "ACME_", "position": "prefix", "occurrences": 120, "totalTransfers": 128 }
+    ],
+    "transferGraph": [
+      { "counterpartyId": "int-ap-01", "counterpartyLabel": "AP-Gateway-01", "counterpartyStatus": "internal", "counterpartyPartner": "Acme Corp", "direction": "to", "count": 120, "lastSeen": "2026-04-19" },
+      { "counterpartyId": "int-cx-01", "counterpartyLabel": "CX-Gateway", "counterpartyStatus": "internal", "counterpartyPartner": "Globex", "direction": "to", "count": 8, "lastSeen": "2026-03-22" }
+    ],
+    "permissionPreview": {
+      "visibleTo": ["Finance-Read", "Ops-Full"],
+      "hiddenFrom": ["Partner-Portal-External"]
+    },
+    "groundTruth": { "businessName": "Acme Corp", "internalExternal": "external" }
+  },
+  {
+    "id": "s5",
+    "hostname": "sftp.northerntrust.com",
+    "protocol": "SFTP",
+    "domainRoot": "northerntrust.com",
+    "directory": "/inbound/",
+    "username": "nt_user",
+    "suggestion": {
+      "businessName": "Northern Trust",
+      "internalExternal": null,
+      "confidence": "high",
+      "tier": "high",
+      "reasoning": "Suggested from host (sftp.northerntrust.com) and filename prefix (NT_*). 63 transfers corroborate.",
+      "quotedTokens": [
+        { "source": "host", "value": "sftp.northerntrust.com" },
+        { "source": "filename", "value": "NT_*" }
+      ],
+      "signalType": "multi_signal_agreement"
+    },
+    "contextualSignals": { "transferVolume": "~10 files/day" },
+    "filenameTokens": [
+      { "token": "NT_", "position": "prefix", "occurrences": 58, "totalTransfers": 63 }
+    ],
+    "transferGraph": [
+      { "counterpartyId": "int-treasury", "counterpartyLabel": "Treasury-Ops", "counterpartyStatus": "internal", "counterpartyPartner": "Northern Trust", "direction": "bidirectional", "count": 63, "lastSeen": "2026-04-19" }
+    ],
+    "permissionPreview": {
+      "visibleTo": ["Finance-Read"],
+      "hiddenFrom": ["Partner-Portal-External"]
+    },
+    "groundTruth": { "businessName": "Northern Trust", "internalExternal": "external" }
+  },
+  {
+    "id": "s6",
+    "hostname": "payroll-core.internal.bank",
+    "protocol": "SFTP",
+    "domainRoot": "internal.bank",
+    "directory": "/payroll/",
+    "username": "pr_svc",
+    "suggestion": {
+      "businessName": null,
+      "internalExternal": null,
+      "confidence": "medium",
+      "tier": "medium_corroborated",
+      "reasoning": "No naming signal. Transfer pattern: exclusively exchanges with Acme-categorized internal systems (87 transfers). Possibly an Acme-operated endpoint.",
+      "quotedTokens": [],
+      "signalType": "graph_inference_only"
+    },
+    "contextualSignals": { "reverseDns": "payroll-core.internal.bank" },
+    "filenameTokens": [
+      { "token": "PAYROLL_", "position": "prefix", "occurrences": 41, "totalTransfers": 87 }
+    ],
+    "transferGraph": [
+      { "counterpartyId": "int-hr", "counterpartyLabel": "HR-Bridge", "counterpartyStatus": "internal", "counterpartyPartner": "Acme Corp", "direction": "from", "count": 52, "lastSeen": "2026-04-19" },
+      { "counterpartyId": "int-fin", "counterpartyLabel": "Finance-Vault", "counterpartyStatus": "internal", "counterpartyPartner": "Acme Corp", "direction": "to", "count": 35, "lastSeen": "2026-04-18" }
+    ],
+    "permissionPreview": {
+      "visibleTo": ["Ops-Full", "Internal-Systems"],
+      "hiddenFrom": ["Partner-Portal-External", "Finance-Read"]
+    },
+    "groundTruth": { "businessName": "Acme Corp", "internalExternal": "internal" }
+  },
+  {
+    "id": "s7",
+    "hostname": "ec2-54-198-23-10.compute-1.amazonaws.com",
+    "protocol": "HTTPS",
+    "domainRoot": "amazonaws.com",
+    "directory": "/u/",
+    "username": "svc_u0042",
+    "suggestion": {
+      "businessName": null,
+      "internalExternal": null,
+      "confidence": "low",
+      "tier": "low",
+      "reasoning": "Host is generic cloud infra (amazonaws.com). Filename prefix (BLOG_) appears on 4 of 12 transfers — weak. No graph corroboration.",
+      "quotedTokens": [
+        { "source": "host", "value": "amazonaws.com" },
+        { "source": "filename", "value": "BLOG_" }
+      ],
+      "signalType": "filename_pattern"
+    },
+    "contextualSignals": {
+      "reverseDns": "ec2-54-198-23-10.compute-1.amazonaws.com",
+      "transferVolume": "~12 files total"
+    },
+    "filenameTokens": [
+      { "token": "BLOG_", "position": "prefix", "occurrences": 4, "totalTransfers": 12 }
+    ],
+    "transferGraph": [
+      { "counterpartyId": "unk-21", "counterpartyLabel": "10.14.22.81", "counterpartyStatus": "uncategorized", "direction": "to", "count": 7, "lastSeen": "2026-03-30" },
+      { "counterpartyId": "unk-22", "counterpartyLabel": "unknown-5.local", "counterpartyStatus": "uncategorized", "direction": "from", "count": 5, "lastSeen": "2026-03-28" }
+    ],
+    "permissionPreview": {
+      "visibleTo": ["Ops-Full"],
+      "hiddenFrom": ["Partner-Portal-External", "Finance-Read"]
+    },
+    "groundTruth": { "businessName": "Beta Logistics Co", "internalExternal": "external" }
+  },
+  {
+    "id": "s8",
+    "hostname": "10.14.22.81",
+    "protocol": "SFTP",
+    "domainRoot": null,
+    "directory": "/data/",
+    "username": "user01",
+    "suggestion": {
+      "businessName": null,
+      "internalExternal": null,
+      "confidence": "low",
+      "tier": "none",
+      "reasoning": "No signal. 3 transfers in 90 days, all to uncategorized systems. Manual review required.",
+      "quotedTokens": [],
+      "signalType": "none"
+    },
+    "contextualSignals": {},
+    "filenameTokens": [],
+    "transferGraph": [
+      { "counterpartyId": "unk-31", "counterpartyLabel": "10.14.22.91", "counterpartyStatus": "uncategorized", "direction": "to", "count": 3, "lastSeen": "2026-03-15" }
+    ],
+    "permissionPreview": {
+      "visibleTo": ["Ops-Full"],
+      "hiddenFrom": ["Partner-Portal-External"]
+    }
+  },
+  {
+    "id": "s9",
+    "hostname": "192.168.4.55",
+    "protocol": "FTP",
+    "domainRoot": null,
+    "directory": "/upload/",
+    "username": "batch",
+    "suggestion": null,
+    "contextualSignals": {
+      "recentCounterparties": ["Heritage Family Enterprises"],
+      "transferVolume": "~2 files/week",
+      "firstSeen": "2024-09-18"
+    },
+    "filenameTokens": [],
+    "transferGraph": [],
+    "permissionPreview": {
+      "visibleTo": ["Ops-Full"],
+      "hiddenFrom": ["Partner-Portal-External"]
+    }
+  },
+  {
+    "id": "s10",
+    "hostname": "gateway.gammadata.io",
+    "protocol": "AS2",
+    "domainRoot": "gammadata.io",
+    "directory": "/gm/inbound/",
+    "username": "gamma_edi",
+    "suggestion": {
+      "businessName": "Gamma Data Systems",
+      "internalExternal": null,
+      "confidence": "high",
+      "tier": "high",
+      "reasoning": "Suggested from host (gateway.gammadata.io), directory (/gm/inbound/), and filename prefix (GAMMA_*). 212 transfers, 88% to Gamma-categorized systems.",
+      "quotedTokens": [
+        { "source": "host", "value": "gateway.gammadata.io" },
+        { "source": "directory", "value": "/gm/inbound/" },
+        { "source": "filename", "value": "GAMMA_*" }
+      ],
+      "signalType": "multi_signal_agreement"
+    },
+    "contextualSignals": {
+      "transferVolume": "~40 files/day"
+    },
+    "filenameTokens": [
+      { "token": "GAMMA_", "position": "prefix", "occurrences": 198, "totalTransfers": 212 }
+    ],
+    "transferGraph": [
+      { "counterpartyId": "int-gm-01", "counterpartyLabel": "GM-Receiver", "counterpartyStatus": "internal", "counterpartyPartner": "Gamma Data Systems", "direction": "from", "count": 187, "lastSeen": "2026-04-19" },
+      { "counterpartyId": "unk-40", "counterpartyLabel": "203.0.113.18", "counterpartyStatus": "uncategorized", "direction": "to", "count": 25, "lastSeen": "2026-04-10" }
+    ],
+    "permissionPreview": {
+      "visibleTo": ["Finance-Read", "Ops-Full"],
+      "hiddenFrom": ["Partner-Portal-External"]
+    },
+    "groundTruth": { "businessName": "Gamma Data Systems", "internalExternal": "external" }
+  },
+  {
+    "id": "s11",
+    "hostname": "host-a.partner-xchg.io",
+    "protocol": "SFTP",
+    "domainRoot": "partner-xchg.io",
+    "directory": "/u/x/",
+    "username": "svc",
+    "suggestion": {
+      "businessName": null,
+      "internalExternal": null,
+      "confidence": "low",
+      "tier": "low",
+      "reasoning": "Host and directory are generic. Filename prefix (NT_) on 5 of 31 transfers — weak single signal.",
+      "quotedTokens": [
+        { "source": "filename", "value": "NT_" }
+      ],
+      "signalType": "filename_pattern"
+    },
+    "contextualSignals": {
+      "transferVolume": "~31 files total"
+    },
+    "filenameTokens": [
+      { "token": "NT_", "position": "prefix", "occurrences": 5, "totalTransfers": 31 }
+    ],
+    "transferGraph": [
+      { "counterpartyId": "unk-50", "counterpartyLabel": "198.51.100.5", "counterpartyStatus": "uncategorized", "direction": "to", "count": 26, "lastSeen": "2026-04-01" }
+    ],
+    "permissionPreview": {
+      "visibleTo": ["Ops-Full"],
+      "hiddenFrom": ["Partner-Portal-External"]
+    }
+  },
+  {
+    "id": "s12",
+    "hostname": "sftp2.northerntrust.com",
+    "protocol": "SFTP",
+    "domainRoot": "northerntrust.com",
+    "directory": "/inbound/",
+    "username": "nt_user2",
+    "suggestion": {
+      "businessName": "Northern Trust",
+      "internalExternal": null,
+      "confidence": "high",
+      "tier": "high",
+      "reasoning": "Suggested from host (sftp2.northerntrust.com) and filename prefix (NT_*). 28 transfers corroborate.",
+      "quotedTokens": [
+        { "source": "host", "value": "sftp2.northerntrust.com" },
+        { "source": "filename", "value": "NT_*" }
+      ],
+      "signalType": "multi_signal_agreement"
+    },
+    "contextualSignals": { "transferVolume": "~4 files/day" },
+    "filenameTokens": [
+      { "token": "NT_", "position": "prefix", "occurrences": 26, "totalTransfers": 28 }
+    ],
+    "transferGraph": [
+      { "counterpartyId": "int-treasury", "counterpartyLabel": "Treasury-Ops", "counterpartyStatus": "internal", "counterpartyPartner": "Northern Trust", "direction": "bidirectional", "count": 28, "lastSeen": "2026-04-19" }
+    ],
+    "permissionPreview": {
+      "visibleTo": ["Finance-Read"],
+      "hiddenFrom": ["Partner-Portal-External"]
+    },
+    "groundTruth": { "businessName": "Northern Trust", "internalExternal": "external" }
+  }
+]

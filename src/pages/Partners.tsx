@@ -1,5 +1,5 @@
-import { useState, useMemo } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { useState, useMemo, Fragment } from 'react';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import {
   Box,
   Stack,
@@ -8,8 +8,24 @@ import {
   Checkbox,
   Link,
   IconButton,
+  ToggleButtonGroup,
+  ToggleButton as MuiToggleButton,
+  Select,
+  MenuItem,
+  Divider,
+  FormControl,
+  SelectChangeEvent,
+  Table as MuiTable,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Collapse,
+  Alert,
 } from '@mui/material';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { PartnerColorSwatch } from '../components/PartnerColorSwatch';
 import {
   PageHeader,
@@ -18,6 +34,10 @@ import {
   Table,
   TableColumn,
   SegmentedControl,
+  Tag,
+  Chips,
+  Button,
+  Modal,
 } from '@design-system';
 import { PageLayout } from '../components/PageLayout';
 
@@ -28,14 +48,81 @@ export interface Partner {
   contacts: number;
 }
 
-export interface ExternalUser {
+export interface UncategorizedEndpoint {
+  id: string;
+  endpoint: string;
+  protocol: string;
+  name?: string;
+}
+
+export interface InternalSystem {
   id: string;
   name: string;
-  email: string;
-  partnerId: string;
-  partnerName: string;
-  lastActivity: string;
+  endpoints: number;
 }
+
+const mockUncategorizedEndpoints: UncategorizedEndpoint[] = [
+  { id: 'u1', endpoint: 'CDI_MROCFTP01_NxRspacer1', protocol: 'CDI', name: 'MROCFTP01' },
+  { id: 'u2', endpoint: 'CDI_ACBN0TCLOAD', protocol: 'CDI' },
+  { id: 'u3', endpoint: 'FTP_MROCFTP01_NxRspacer1', protocol: 'FTP' },
+  { id: 'u4', endpoint: 'FTP_MROCFTP02_Wholesale', protocol: 'FTP', name: 'MROCFTP02' },
+  { id: 'u5', endpoint: 'FTP_ACBN0TCLOAD', protocol: 'FTP' },
+  { id: 'u6', endpoint: 'MBX_', protocol: 'MBX' },
+  { id: 'u7', endpoint: 'MBX_OKAccounts/hubhvhP', protocol: 'MBX' },
+  { id: 'u8', endpoint: 'MBX_OKAccounts/hubAUrTA3A', protocol: 'MBX' },
+  { id: 'u9', endpoint: 'MBX_Innatem/Completed', protocol: 'MBX' },
+  { id: 'u10', endpoint: 'MBX_InnaTemTo_MarketingFTP', protocol: 'MBX' },
+  { id: 'u11', endpoint: 'MBX_OceanServ/Completed', protocol: 'MBX' },
+  { id: 'u12', endpoint: 'MBX_OceanServ/Collector', protocol: 'MBX', name: 'service-Recognized=prod' },
+  { id: 'u13', endpoint: 'MBX_OCB0/Items', protocol: 'MBX' },
+  { id: 'u14', endpoint: 'MBX_ChicagoClearing/Completed', protocol: 'MBX', name: 'MROCFTP02' },
+  { id: 'u15', endpoint: 'MBX_Comm/Credits/Completed', protocol: 'MBX' },
+  { id: 'u16', endpoint: 'MBX_Comm/Logic/Completed', protocol: 'MBX' },
+  { id: 'u17', endpoint: 'MBX_CoreLogicBiz/Outgoing', protocol: 'MBX' },
+  { id: 'u18', endpoint: 'MBX_CreditFin/Union', protocol: 'MBX' },
+  { id: 'u19', endpoint: 'MBX_DeltaPayroll/Inbound', protocol: 'MBX' },
+  { id: 'u20', endpoint: 'MBX_EastCoast/Settlements', protocol: 'MBX' },
+  { id: 'u21', endpoint: 'MBX_FidelityTrade/Outbound', protocol: 'MBX' },
+  { id: 'u22', endpoint: 'MBX_GlobalNet/Transfers', protocol: 'MBX' },
+  { id: 'u23', endpoint: 'MBX_HarborBank/Clearing', protocol: 'MBX' },
+  { id: 'u24', endpoint: 'MBX_IronBridge/Completed', protocol: 'MBX', name: 'service-Recognized=prod' },
+  { id: 'u25', endpoint: 'MBX_JupiterFin/Inbound', protocol: 'MBX' },
+  { id: 'u26', endpoint: 'MBX_KeystoneBank/Outgoing', protocol: 'MBX' },
+  { id: 'u27', endpoint: 'MBX_LakeFront/Settlements', protocol: 'MBX' },
+  { id: 'u28', endpoint: 'MBX_MidWest/Clearing', protocol: 'MBX' },
+  { id: 'u29', endpoint: 'AS2_MROCFTP01_Partner1', protocol: 'AS2' },
+  { id: 'u30', endpoint: 'AS2_ACBN0TC_Inbound', protocol: 'AS2' },
+  { id: 'u31', endpoint: 'AS2_GoldmanSachs/Transfer', protocol: 'AS2', name: 'MROCFTP01' },
+  { id: 'u32', endpoint: 'AS2_NorthernTrust/Outbound', protocol: 'AS2' },
+  { id: 'u33', endpoint: 'SFTP_MROCFTP02_Payroll', protocol: 'SFTP' },
+  { id: 'u34', endpoint: 'SFTP_ACBN0TC_Wholesale', protocol: 'SFTP' },
+  { id: 'u35', endpoint: 'SFTP_AlphaFin/Completed', protocol: 'SFTP', name: 'service-Recognized=prod' },
+  { id: 'u36', endpoint: 'SFTP_BetaLogistics/Inbound', protocol: 'SFTP' },
+  { id: 'u37', endpoint: 'SFTP_GammaSystems/Outbound', protocol: 'SFTP' },
+  { id: 'u38', endpoint: 'CDI_MROCFTP02_Partner2', protocol: 'CDI' },
+  { id: 'u39', endpoint: 'CDI_EastCoast/Settlements', protocol: 'CDI' },
+  { id: 'u40', endpoint: 'CDI_WestCoast/Transfers', protocol: 'CDI', name: 'MROCFTP02' },
+  { id: 'u41', endpoint: 'FTP_DeltaManufacturing/Out', protocol: 'FTP' },
+  { id: 'u42', endpoint: 'FTP_EpsilonConsult/Inbound', protocol: 'FTP' },
+  { id: 'u43', endpoint: 'FTP_ZetaHoldings/Transfer', protocol: 'FTP' },
+  { id: 'u44', endpoint: 'MBX_NorthEast/Clearing', protocol: 'MBX' },
+  { id: 'u45', endpoint: 'MBX_OceanView/Completed', protocol: 'MBX' },
+  { id: 'u46', endpoint: 'MBX_PacificRim/Outbound', protocol: 'MBX' },
+  { id: 'u47', endpoint: 'MBX_QuantumFin/Inbound', protocol: 'MBX', name: 'service-Recognized=prod' },
+  { id: 'u48', endpoint: 'MBX_RiverBend/Settlements', protocol: 'MBX' },
+  { id: 'u49', endpoint: 'MBX_SilverBridge/Clearing', protocol: 'MBX' },
+  { id: 'u50', endpoint: 'MBX_TridentBank/Transfer', protocol: 'MBX' },
+  { id: 'u51', endpoint: 'MBX_UnionPac/Completed', protocol: 'MBX' },
+  { id: 'u52', endpoint: 'MBX_VaultNet/Outbound', protocol: 'MBX' },
+  { id: 'u53', endpoint: 'MBX_WestBridge/Inbound', protocol: 'MBX' },
+  { id: 'u54', endpoint: 'MBX_XcelFin/Clearing', protocol: 'MBX' },
+  { id: 'u55', endpoint: 'AS2_YieldPoint/Settlements', protocol: 'AS2' },
+  { id: 'u56', endpoint: 'AS2_ZenithBank/Transfer', protocol: 'AS2' },
+  { id: 'u57', endpoint: 'SFTP_ApexCapital/Inbound', protocol: 'SFTP' },
+  { id: 'u58', endpoint: 'SFTP_BlueStar/Outbound', protocol: 'SFTP' },
+  { id: 'u59', endpoint: 'CDI_ClearPath/Completed', protocol: 'CDI' },
+  { id: 'u60', endpoint: 'CDI_DawnBreak/Transfer', protocol: 'CDI', name: 'MROCFTP01' },
+];
 
 export const mockPartners: Partner[] = [
   { id: '1', partnerName: '1234', endpoints: 0, contacts: 0 },
@@ -70,53 +157,90 @@ export const mockPartners: Partner[] = [
   { id: '30', partnerName: 'Iota Solutions', endpoints: 0, contacts: 0 },
 ];
 
-const mockExternalUsers: ExternalUser[] = [
-  { id: 'u1', name: 'Abhi Arora', email: 'abhi.arora@coenterprise.com', partnerId: '3', partnerName: 'Acme Corporation', lastActivity: 'February 11, 2026' },
-  { id: 'u2', name: 'Aman Kapoor', email: 'aman.kapoor@coenterprise.com', partnerId: '2', partnerName: 'A & M Investment', lastActivity: 'February 10, 2026' },
-  { id: 'u3', name: 'Avinash Kumar Ext', email: 'avinash.kumar@partner.com', partnerId: '14', partnerName: 'Partner Payroll Engine', lastActivity: 'December 26, 2025' },
-  { id: 'u4', name: 'Priya Sharma', email: 'priya.sharma@coenterprise.com', partnerId: '7', partnerName: 'Commercial Banking New York', lastActivity: 'February 5, 2026' },
-  { id: 'u5', name: 'Raj Patel', email: 'raj.patel@coenterprise.com', partnerId: '18', partnerName: 'Stonebridge Capital Management', lastActivity: 'January 28, 2026' },
-  { id: 'u6', name: 'Sarah Chen', email: 'sarah.chen@coenterprise.com', partnerId: '11', partnerName: 'John Deere', lastActivity: 'February 1, 2026' },
-  { id: 'u7', name: 'Michael Torres', email: 'michael.torres@coenterprise.com', partnerId: '19', partnerName: 'Sunrise Builders', lastActivity: 'January 15, 2026' },
-  { id: 'u8', name: 'Emily Watson', email: 'emily.watson@coenterprise.com', partnerId: '22', partnerName: 'Alpha Financial Services', lastActivity: 'February 8, 2026' },
+const mockInternalSystems: InternalSystem[] = [
+  { id: 'is1', name: 'Core Banking System', endpoints: 0 },
+  { id: 'is2', name: 'Loan Processing Engine', endpoints: 0 },
+  { id: 'is3', name: 'Trade Settlement Platform', endpoints: 0 },
+  { id: 'is4', name: 'Risk Analytics Hub', endpoints: 0 },
+  { id: 'is5', name: 'Compliance Monitoring System', endpoints: 0 },
+  { id: 'is6', name: 'Payment Gateway', endpoints: 0 },
+  { id: 'is7', name: 'Customer Data Platform', endpoints: 0 },
 ];
 
 const SEGMENT_ITEMS = [
   { id: 'external-partners', text: 'External Partners' },
   { id: 'internal-systems', text: 'Internal Systems' },
   { id: 'uncategorized', text: 'Uncategorized' },
-  { id: 'external-users', text: 'External Users' },
 ];
 
-const LAST_ACTIVITY_OPTIONS = [
-  { value: '7', label: 'Last 7 days' },
-  { value: '30', label: 'Last 30 days' },
-  { value: '90', label: 'Last 90 days' },
-  { value: 'all', label: 'All time' },
+const PROTOCOL_TAG_VARIANT: Record<string, 'info' | 'error' | 'warning' | 'success' | 'neutral' | 'primary'> = {
+  CDI: 'primary',
+  FTP: 'info',
+  MBX: 'success',
+  AS2: 'warning',
+  SFTP: 'neutral',
+};
+
+const PROTOCOL_OPTIONS = [
+  { value: 'all', label: 'All' },
+  { value: 'CDI', label: 'CDI' },
+  { value: 'FTP', label: 'FTP' },
+  { value: 'MBX', label: 'MBX' },
+  { value: 'AS2', label: 'AS2' },
+  { value: 'SFTP', label: 'SFTP' },
 ];
 
-function isWithinDays(dateStr: string, days: number): boolean {
-  const date = new Date(dateStr);
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-  return diffDays <= days;
+function getEndpointDetails(ep: UncategorizedEndpoint) {
+  const withoutProtocol = ep.endpoint.replace(/^[A-Za-z0-9]+_/, '');
+  const hasSlash = withoutProtocol.includes('/');
+  if (hasSlash) {
+    return {
+      directory: '/' + withoutProtocol.replace(/_/g, '/'),
+      user: '-',
+      host: ep.name || withoutProtocol.split('/')[0] || '-',
+    };
+  }
+  const parts = withoutProtocol.split('_');
+  return {
+    directory: '-',
+    host: parts[0] || '-',
+    user: parts[1] || '-',
+  };
 }
 
 function Partners() {
+  const navigate = useNavigate();
   const [activeSegment, setActiveSegment] = useState<string | number>('external-partners');
   const [searchValue, setSearchValue] = useState('');
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-  const [selectedUserIds, setSelectedUserIds] = useState<Set<string>>(new Set());
+  const [selectedUncatIds, setSelectedUncatIds] = useState<Set<string>>(new Set());
+  const [partners, setPartners] = useState<Partner[]>(mockPartners);
+  const [internalSystems, setInternalSystems] = useState<InternalSystem[]>(mockInternalSystems);
+  const [uncategorizedEndpoints, setUncategorizedEndpoints] = useState<UncategorizedEndpoint[]>(mockUncategorizedEndpoints);
   const [sortField, setSortField] = useState<string>('partnerName');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
-  const [sortFieldUser, setSortFieldUser] = useState<string>('name');
-  const [sortDirectionUser, setSortDirectionUser] = useState<'asc' | 'desc'>('asc');
-  const [partnerFilter, setPartnerFilter] = useState<string | number>('all');
-  const [lastActivityFilter, setLastActivityFilter] = useState<string | number>('all');
+  const [sortFieldUncat, setSortFieldUncat] = useState<string>('endpoint');
+  const [sortDirectionUncat, setSortDirectionUncat] = useState<'asc' | 'desc'>('asc');
+  const [protocolFilter, setProtocolFilter] = useState<string | number>('all');
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+
+  const toggleExpanded = (id: string) => {
+    setExpandedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  // Categorize modal state
+  const [categorizeOpen, setCategorizeOpen] = useState(false);
+  const [categorizeTarget, setCategorizeTarget] = useState<UncategorizedEndpoint | null>(null);
+  const [integrationType, setIntegrationType] = useState<'external' | 'internal'>('external');
+  const [selectedCategory, setSelectedCategory] = useState('');
 
   const filteredPartners = useMemo(() => {
-    let list = [...mockPartners];
+    let list = [...partners];
     if (searchValue.trim()) {
       const q = searchValue.toLowerCase();
       list = list.filter(
@@ -125,54 +249,58 @@ function Partners() {
           p.id.toLowerCase().includes(q)
       );
     }
-    if (partnerFilter !== 'all') {
-      list = list.filter((p) => p.partnerName === partnerFilter);
-    }
     list.sort((a, b) => {
-      const aVal = String((a as any)[sortField] ?? '').toLowerCase();
-      const bVal = String((b as any)[sortField] ?? '').toLowerCase();
       if (sortField === 'endpoints' || sortField === 'contacts') {
         const an = (a as any)[sortField] ?? 0;
         const bn = (b as any)[sortField] ?? 0;
         return sortDirection === 'asc' ? an - bn : bn - an;
       }
+      const aVal = String((a as any)[sortField] ?? '').toLowerCase();
+      const bVal = String((b as any)[sortField] ?? '').toLowerCase();
       const cmp = aVal.localeCompare(bVal);
       return sortDirection === 'asc' ? cmp : -cmp;
     });
     return list;
-  }, [searchValue, partnerFilter, sortField, sortDirection]);
+  }, [partners, searchValue, sortField, sortDirection]);
 
-  const filteredExternalUsers = useMemo(() => {
-    let list = [...mockExternalUsers];
+  const filteredInternalSystems = useMemo(() => {
+    let list = [...internalSystems];
+    if (searchValue.trim()) {
+      const q = searchValue.toLowerCase();
+      list = list.filter((s) => s.name.toLowerCase().includes(q));
+    }
+    list.sort((a, b) => {
+      if (sortField === 'endpoints') {
+        return sortDirection === 'asc' ? a.endpoints - b.endpoints : b.endpoints - a.endpoints;
+      }
+      const cmp = a.name.toLowerCase().localeCompare(b.name.toLowerCase());
+      return sortDirection === 'asc' ? cmp : -cmp;
+    });
+    return list;
+  }, [internalSystems, searchValue, sortField, sortDirection]);
+
+  const filteredUncategorized = useMemo(() => {
+    let list = [...uncategorizedEndpoints];
     if (searchValue.trim()) {
       const q = searchValue.toLowerCase();
       list = list.filter(
-        (u) =>
-          u.name.toLowerCase().includes(q) ||
-          u.email.toLowerCase().includes(q) ||
-          u.partnerName.toLowerCase().includes(q)
+        (e) =>
+          e.endpoint.toLowerCase().includes(q) ||
+          e.protocol.toLowerCase().includes(q) ||
+          (e.name ?? '').toLowerCase().includes(q)
       );
     }
-    if (partnerFilter !== 'all') {
-      list = list.filter((u) => u.partnerName === partnerFilter);
-    }
-    if (lastActivityFilter !== 'all') {
-      const days = Number(lastActivityFilter);
-      list = list.filter((u) => isWithinDays(u.lastActivity, days));
+    if (protocolFilter !== 'all') {
+      list = list.filter((e) => e.protocol === protocolFilter);
     }
     list.sort((a, b) => {
-      const aVal = String((a as any)[sortFieldUser] ?? '').toLowerCase();
-      const bVal = String((b as any)[sortFieldUser] ?? '').toLowerCase();
-      if (sortFieldUser === 'lastActivity') {
-        const ad = new Date(a.lastActivity).getTime();
-        const bd = new Date(b.lastActivity).getTime();
-        return sortDirectionUser === 'asc' ? ad - bd : bd - ad;
-      }
+      const aVal = String((a as any)[sortFieldUncat] ?? '').toLowerCase();
+      const bVal = String((b as any)[sortFieldUncat] ?? '').toLowerCase();
       const cmp = aVal.localeCompare(bVal);
-      return sortDirectionUser === 'asc' ? cmp : -cmp;
+      return sortDirectionUncat === 'asc' ? cmp : -cmp;
     });
     return list;
-  }, [searchValue, partnerFilter, lastActivityFilter, sortFieldUser, sortDirectionUser]);
+  }, [uncategorizedEndpoints, searchValue, protocolFilter, sortFieldUncat, sortDirectionUncat]);
 
   const handleSort = (field: string) => {
     if (sortField === field) {
@@ -180,6 +308,15 @@ function Partners() {
     } else {
       setSortField(field);
       setSortDirection('asc');
+    }
+  };
+
+  const handleSortUncat = (field: string) => {
+    if (sortFieldUncat === field) {
+      setSortDirectionUncat((d) => (d === 'asc' ? 'desc' : 'asc'));
+    } else {
+      setSortFieldUncat(field);
+      setSortDirectionUncat('asc');
     }
   };
 
@@ -200,16 +337,16 @@ function Partners() {
     });
   };
 
-  const handleHeaderCheckboxChangeUsers = (_: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
+  const handleHeaderCheckboxChangeUncat = (_: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
     if (checked) {
-      setSelectedUserIds(new Set(filteredExternalUsers.map((u) => u.id)));
+      setSelectedUncatIds(new Set(filteredUncategorized.map((e) => e.id)));
     } else {
-      setSelectedUserIds(new Set());
+      setSelectedUncatIds(new Set());
     }
   };
 
-  const handleRowCheckboxChangeUser = (id: string, checked: boolean) => {
-    setSelectedUserIds((prev) => {
+  const handleRowCheckboxChangeUncat = (id: string, checked: boolean) => {
+    setSelectedUncatIds((prev) => {
       const next = new Set(prev);
       if (checked) next.add(id);
       else next.delete(id);
@@ -217,66 +354,55 @@ function Partners() {
     });
   };
 
-  const handleSortUser = (field: string) => {
-    if (sortFieldUser === field) {
-      setSortDirectionUser((d) => (d === 'asc' ? 'desc' : 'asc'));
-    } else {
-      setSortFieldUser(field);
-      setSortDirectionUser('asc');
-    }
+  const handleOpenCategorize = (endpoint?: UncategorizedEndpoint) => {
+    setCategorizeTarget(endpoint ?? null);
+    setIntegrationType('external');
+    setSelectedCategory('');
+    setCategorizeOpen(true);
   };
 
-  const partnerFilterOptions = useMemo(
-    () => [
-      { value: 'all', label: 'All' },
-      ...mockPartners.map((p) => ({ value: p.partnerName, label: p.partnerName })),
-    ],
-    []
-  );
+  const handleCloseCategorize = () => {
+    setCategorizeOpen(false);
+  };
 
-  const lastActivityFilterOptions = useMemo(() => LAST_ACTIVITY_OPTIONS, []);
-
-  const filterOptions: FilterOption[] = [
+  const uncatFilterOptions: FilterOption[] = [
     {
-      id: 'partner',
-      label: 'Partner',
-      value: partnerFilter,
-      options: partnerFilterOptions,
-    },
-    {
-      id: 'lastActivity',
-      label: 'Last Activity',
-      value: lastActivityFilter,
-      options: lastActivityFilterOptions,
+      id: 'protocol',
+      label: 'Protocols',
+      value: protocolFilter,
+      options: PROTOCOL_OPTIONS,
     },
   ];
 
-  const activeFilters = useMemo(() => {
+  const uncatActiveFilters = useMemo(() => {
     const list: { id: string; label: string; value: string; filterId: string }[] = [];
-    if (partnerFilter !== 'all') {
+    if (protocolFilter !== 'all') {
       list.push({
-        id: 'partner-chip',
-        label: 'Partner',
-        value: String(partnerFilter),
-        filterId: 'partner',
-      });
-    }
-    if (lastActivityFilter !== 'all') {
-      const option = lastActivityFilterOptions.find((o) => o.value === lastActivityFilter);
-      list.push({
-        id: 'lastActivity-chip',
-        label: 'Last Activity',
-        value: option?.label ?? String(lastActivityFilter),
-        filterId: 'lastActivity',
+        id: 'protocol-chip',
+        label: 'Protocol',
+        value: String(protocolFilter),
+        filterId: 'protocol',
       });
     }
     return list;
-  }, [partnerFilter, lastActivityFilter, lastActivityFilterOptions]);
+  }, [protocolFilter]);
 
   const hasSelection =
-    activeSegment === 'external-partners'
-      ? selectedIds.size > 0
-      : selectedUserIds.size > 0;
+    activeSegment === 'uncategorized'
+      ? selectedUncatIds.size > 0
+      : selectedIds.size > 0;
+
+  const resultCount =
+    activeSegment === 'uncategorized'
+      ? `${filteredUncategorized.length} results`
+      : activeSegment === 'internal-systems'
+      ? `${filteredInternalSystems.length} results`
+      : `${filteredPartners.length} results`;
+
+  const isUncategorized = activeSegment === 'uncategorized';
+
+  const bulkCategorizeCount = selectedUncatIds.size;
+  const bulkCategorizeLabel = `Categorize ${bulkCategorizeCount} Endpoint${bulkCategorizeCount !== 1 ? 's' : ''}`;
 
   const partnerColumns: TableColumn<Partner>[] = [
     {
@@ -362,107 +488,72 @@ function Partners() {
     },
   ];
 
-  const externalUserColumns: TableColumn<ExternalUser>[] = [
+
+  const internalSystemColumns: TableColumn<InternalSystem>[] = [
     {
       id: 'select',
       label: '',
       sortable: false,
       minWidth: 48,
       headerCheckbox: true,
-      headerCheckboxChecked: selectedUserIds.size === filteredExternalUsers.length && filteredExternalUsers.length > 0,
-      headerCheckboxIndeterminate: selectedUserIds.size > 0 && selectedUserIds.size < filteredExternalUsers.length,
-      onHeaderCheckboxChange: handleHeaderCheckboxChangeUsers,
+      headerCheckboxChecked: selectedIds.size === filteredInternalSystems.length && filteredInternalSystems.length > 0,
+      headerCheckboxIndeterminate: selectedIds.size > 0 && selectedIds.size < filteredInternalSystems.length,
+      onHeaderCheckboxChange: handleHeaderCheckboxChange,
       render: (row) => (
         <Checkbox
           size="small"
-          checked={selectedUserIds.has(row.id)}
-          onChange={(_, checked) => handleRowCheckboxChangeUser(row.id, checked)}
+          checked={selectedIds.has(row.id)}
+          onChange={(_, checked) => handleRowCheckboxChange(row.id, checked)}
           onClick={(e) => e.stopPropagation()}
         />
       ),
     },
     {
+      id: 'color',
+      label: '',
+      sortable: false,
+      minWidth: 40,
+      render: (row) => <PartnerColorSwatch partnerName={row.name} />,
+    },
+    {
       id: 'name',
       label: (
         <TableSortLabel
-          active={sortFieldUser === 'name'}
-          direction={sortFieldUser === 'name' ? sortDirectionUser : 'asc'}
-          onClick={() => handleSortUser('name')}
+          active={sortField === 'name'}
+          direction={sortField === 'name' ? sortDirection : 'asc'}
+          onClick={() => handleSort('name')}
         >
-          Name
+          System Name
         </TableSortLabel>
       ),
-      minWidth: 240,
+      minWidth: 220,
       render: (row) => (
-        <Box>
-          <Link
-            component={RouterLink}
-            to={`/partners/users/${row.id}`}
-            sx={{ color: 'primary.main', fontWeight: 500, textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
-          >
-            {row.name}
-          </Link>
-          <Typography variant="body2" color="text.secondary" sx={{ fontSize: '12px' }}>
-            {row.email}
-          </Typography>
-        </Box>
+        <Typography variant="body2" sx={{ fontWeight: 500 }}>
+          {row.name}
+        </Typography>
       ),
     },
     {
-      id: 'partner',
+      id: 'endpoints',
       label: (
         <TableSortLabel
-          active={sortFieldUser === 'partnerName'}
-          direction={sortFieldUser === 'partnerName' ? sortDirectionUser : 'asc'}
-          onClick={() => handleSortUser('partnerName')}
+          active={sortField === 'endpoints'}
+          direction={sortField === 'endpoints' ? sortDirection : 'asc'}
+          onClick={() => handleSort('endpoints')}
         >
-          Partner
+          Endpoints
         </TableSortLabel>
       ),
-      minWidth: 200,
+      minWidth: 120,
       render: (row) => (
-          <Link
-            component={RouterLink}
-            to={`/partners/${encodeURIComponent(row.partnerName)}`}
-            sx={{ color: 'primary.main', textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
-          >
-            {row.partnerName}
-          </Link>
-      ),
-    },
-    {
-      id: 'lastActivity',
-      label: (
-        <TableSortLabel
-          active={sortFieldUser === 'lastActivity'}
-          direction={sortFieldUser === 'lastActivity' ? sortDirectionUser : 'asc'}
-          onClick={() => handleSortUser('lastActivity')}
-        >
-          Last Activity
-        </TableSortLabel>
-      ),
-      minWidth: 140,
-      render: (row) => (
-        <Typography variant="body2">{row.lastActivity}</Typography>
-      ),
-    },
-    {
-      id: 'actions',
-      label: 'Actions',
-      sortable: false,
-      minWidth: 80,
-      align: 'left',
-      render: () => (
-        <IconButton size="small" aria-label="Actions">
-          <MoreVertIcon fontSize="small" />
-        </IconButton>
+        <Typography variant="body2">{row.endpoints}</Typography>
       ),
     },
   ];
 
   const tableSx = {
     border: 'none',
-    '& .MuiTableBody-root .MuiTableRow-root': { height: 48 },
+    '& .MuiTableBody-root .MuiTableRow-root:not(.expand-row)': { height: 48 },
     '& .MuiTableCell-root': { borderLeft: 'none !important', borderRight: 'none !important' },
     '& .MuiTableCell-head': {
       fontWeight: 700,
@@ -471,15 +562,57 @@ function Partners() {
       borderBottom: '1px solid',
       borderBottomColor: 'divider',
     },
-    '& .MuiTableCell-body': {
+    '& .MuiTableCell-body:not(.expand-cell)': {
       padding: '6px 12px !important',
       borderBottom: '1px solid',
       borderBottomColor: 'divider',
     },
-    '& .MuiTableBody-root .MuiTableRow-root:last-child .MuiTableCell-body': {
+    '& .MuiTableCell-body.expand-cell': {
+      padding: '0 !important',
+      borderBottom: 'none !important',
+    },
+    '& .MuiTableBody-root .MuiTableRow-root:last-child .MuiTableCell-body:not(.expand-cell)': {
       borderBottom: 'none !important',
     },
   };
+
+  const handleConfirmCategorize = () => {
+    if (!selectedCategory) {
+      handleCloseCategorize();
+      return;
+    }
+
+    const idsToRemove = categorizeTarget
+      ? new Set([categorizeTarget.id])
+      : selectedUncatIds;
+    const count = idsToRemove.size;
+
+    setUncategorizedEndpoints((prev) => prev.filter((e) => !idsToRemove.has(e.id)));
+
+    if (integrationType === 'external') {
+      setPartners((prev) =>
+        prev.map((p) =>
+          p.id === selectedCategory ? { ...p, endpoints: p.endpoints + count } : p
+        )
+      );
+    } else {
+      setInternalSystems((prev) =>
+        prev.map((s) =>
+          s.id === selectedCategory ? { ...s, endpoints: s.endpoints + count } : s
+        )
+      );
+    }
+
+    if (!categorizeTarget) {
+      setSelectedUncatIds(new Set());
+    }
+
+    handleCloseCategorize();
+  };
+
+  // Derive endpoint details for the modal
+  const modalDetails = categorizeTarget ? getEndpointDetails(categorizeTarget) : null;
+  const categoryOptions = integrationType === 'external' ? partners : internalSystems;
 
   return (
     <PageLayout selectedNavItem="partners" backgroundColor="#FAFCFC">
@@ -495,6 +628,28 @@ function Partners() {
           defaultSelectedId={activeSegment}
           onChange={(id) => setActiveSegment(id)}
         />
+
+        {activeSegment === 'uncategorized' && uncategorizedEndpoints.length > 0 && (
+          <Alert
+            icon={<AutoAwesomeIcon fontSize="small" />}
+            severity="info"
+            sx={{ alignItems: 'center' }}
+            action={
+              <Button
+                variant="contained"
+                color="primary"
+                size="small"
+                onClick={() => navigate('/partners/categorize')}
+              >
+                Categorize uncategorized systems ({uncategorizedEndpoints.length})
+              </Button>
+            }
+          >
+            <Typography variant="body2">
+              <strong>New:</strong> Review system-suggested categorizations in one place with permission-impact preview and bulk confirm.
+            </Typography>
+          </Alert>
+        )}
       </Stack>
 
       <Box
@@ -516,40 +671,197 @@ function Partners() {
             onChange: setSearchValue,
             placeholder: 'Search',
           }}
-          filters={filterOptions}
+          filters={isUncategorized ? uncatFilterOptions : []}
           onFilterChange={(filterId, value) => {
-            if (filterId === 'partner') setPartnerFilter(value);
-            if (filterId === 'lastActivity') setLastActivityFilter(value);
+            if (filterId === 'protocol') setProtocolFilter(value);
           }}
-          activeFilters={activeFilters}
+          activeFilters={isUncategorized ? uncatActiveFilters : []}
           onFilterRemove={(filterId) => {
-            if (filterId === 'partner') setPartnerFilter('all');
-            if (filterId === 'lastActivity') setLastActivityFilter('all');
+            if (filterId === 'protocol') setProtocolFilter('all');
           }}
           onClearAll={() => {
-            setPartnerFilter('all');
-            setLastActivityFilter('all');
+            setProtocolFilter('all');
           }}
           clearAllLabel="Reset filters"
           alwaysShowClearAll
-          resultCount={activeSegment === 'external-users' ? `${filteredExternalUsers.length} results` : `${filteredPartners.length} results`}
+          resultCount={resultCount}
           actions={{
             secondary: {
               label: 'Actions',
-              options: [],
+              options: isUncategorized && selectedUncatIds.size > 0
+                ? [{ value: 'categorize', label: bulkCategorizeLabel }]
+                : [],
               disabled: !hasSelection,
+              onSelect: (value) => {
+                if (value === 'categorize') handleOpenCategorize();
+              },
             },
           }}
         />
       </Box>
 
       <Box sx={{ mx: 0, ...tableSx }}>
-        {activeSegment === 'external-users' ? (
+        {activeSegment === 'internal-systems' ? (
           <Table
-            columns={externalUserColumns}
-            rows={filteredExternalUsers}
+            columns={internalSystemColumns}
+            rows={filteredInternalSystems}
             stickyHeader
           />
+        ) : isUncategorized ? (
+          <MuiTable stickyHeader>
+            <TableHead>
+              <TableRow>
+                <TableCell padding="checkbox" sx={{ width: 48, minWidth: 48, bgcolor: '#FAFCFC' }}>
+                  <Checkbox
+                    size="small"
+                    checked={selectedUncatIds.size === filteredUncategorized.length && filteredUncategorized.length > 0}
+                    indeterminate={selectedUncatIds.size > 0 && selectedUncatIds.size < filteredUncategorized.length}
+                    onChange={handleHeaderCheckboxChangeUncat}
+                  />
+                </TableCell>
+                <TableCell sx={{ minWidth: 280, bgcolor: '#FAFCFC' }}>
+                  <TableSortLabel
+                    active={sortFieldUncat === 'endpoint'}
+                    direction={sortFieldUncat === 'endpoint' ? sortDirectionUncat : 'asc'}
+                    onClick={() => handleSortUncat('endpoint')}
+                  >
+                    Endpoint
+                  </TableSortLabel>
+                </TableCell>
+                <TableCell sx={{ minWidth: 100, bgcolor: '#FAFCFC' }}>
+                  <TableSortLabel
+                    active={sortFieldUncat === 'protocol'}
+                    direction={sortFieldUncat === 'protocol' ? sortDirectionUncat : 'asc'}
+                    onClick={() => handleSortUncat('protocol')}
+                  >
+                    Protocol
+                  </TableSortLabel>
+                </TableCell>
+                <TableCell sx={{ minWidth: 200, bgcolor: '#FAFCFC' }}>
+                  <TableSortLabel
+                    active={sortFieldUncat === 'name'}
+                    direction={sortFieldUncat === 'name' ? sortDirectionUncat : 'asc'}
+                    onClick={() => handleSortUncat('name')}
+                  >
+                    Name
+                  </TableSortLabel>
+                </TableCell>
+                <TableCell align="right" sx={{ minWidth: 160, bgcolor: '#FAFCFC' }} />
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {filteredUncategorized.map((row) => {
+                const isExpanded = expandedIds.has(row.id);
+                const details = getEndpointDetails(row);
+                const direction = /inbound/i.test(row.endpoint)
+                  ? 'Inbound'
+                  : /outbound|outgoing/i.test(row.endpoint)
+                  ? 'Outbound'
+                  : '-';
+                return (
+                  <Fragment key={row.id}>
+                    <TableRow>
+                      <TableCell padding="checkbox">
+                        <Checkbox
+                          size="small"
+                          checked={selectedUncatIds.has(row.id)}
+                          onChange={(_, checked) => handleRowCheckboxChangeUncat(row.id, checked)}
+                          onClick={(e) => e.stopPropagation()}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Typography variant="body2" sx={{ fontFamily: 'monospace', fontSize: '13px' }}>
+                          {row.endpoint}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Tag
+                          label={row.protocol}
+                          variant={PROTOCOL_TAG_VARIANT[row.protocol] ?? 'neutral'}
+                          size="small"
+                          hideIcon
+                        />
+                      </TableCell>
+                      <TableCell>
+                        {row.name ? <Chips label={row.name} size="small" variant="outlined" /> : null}
+                      </TableCell>
+                      <TableCell align="right">
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'flex-end' }}>
+                          <Button
+                            variant="outlined"
+                            size="small"
+                            color="primary"
+                            onClick={(e) => { e.stopPropagation(); handleOpenCategorize(row); }}
+                          >
+                            Categorize
+                          </Button>
+                          <IconButton
+                            size="small"
+                            onClick={() => toggleExpanded(row.id)}
+                            aria-label={isExpanded ? 'Collapse' : 'Expand'}
+                          >
+                            {isExpanded
+                              ? <KeyboardArrowUpIcon fontSize="small" />
+                              : <KeyboardArrowDownIcon fontSize="small" />}
+                          </IconButton>
+                        </Box>
+                      </TableCell>
+                    </TableRow>
+                    <TableRow className="expand-row">
+                      <TableCell colSpan={5} className="expand-cell">
+                        <Collapse in={isExpanded} unmountOnExit>
+                          <Box
+                            sx={{
+                              display: 'grid',
+                              gridTemplateColumns: '1fr 1fr',
+                              px: 7,
+                              py: 0.5,
+                              bgcolor: 'grey.50',
+                              borderBottom: '1px solid',
+                              borderBottomColor: 'divider',
+                            }}
+                          >
+                            <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 2, py: 0.75 }}>
+                              <Typography variant="caption" color="text.secondary" sx={{ minWidth: 70 }}>
+                                Port
+                              </Typography>
+                              <Typography variant="body2" sx={{ fontStyle: 'italic', fontWeight: 600 }}>
+                                0
+                              </Typography>
+                            </Box>
+                            <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 2, py: 0.75 }}>
+                              <Typography variant="caption" color="text.secondary" sx={{ minWidth: 160 }}>
+                                Authentication Method
+                              </Typography>
+                              <Typography variant="body2" sx={{ fontStyle: 'italic', fontWeight: 600 }}>
+                                None
+                              </Typography>
+                            </Box>
+                            <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 2, py: 0.75 }}>
+                              <Typography variant="caption" color="text.secondary" sx={{ minWidth: 70 }}>
+                                Directory
+                              </Typography>
+                              <Typography variant="body2" sx={{ fontStyle: 'italic', fontWeight: 600 }}>
+                                {details.directory}
+                              </Typography>
+                            </Box>
+                            <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 2, py: 0.75 }}>
+                              <Typography variant="caption" color="text.secondary" sx={{ minWidth: 160 }}>
+                                Direction
+                              </Typography>
+                              <Typography variant="body2" sx={{ fontStyle: 'italic', fontWeight: 600 }}>
+                                {direction}
+                              </Typography>
+                            </Box>
+                          </Box>
+                        </Collapse>
+                      </TableCell>
+                    </TableRow>
+                  </Fragment>
+                );
+              })}
+            </TableBody>
+          </MuiTable>
         ) : (
           <Table
             columns={partnerColumns}
@@ -558,6 +870,180 @@ function Partners() {
           />
         )}
       </Box>
+
+      {/* Categorize Modal */}
+      <Modal
+        open={categorizeOpen}
+        onClose={handleCloseCategorize}
+        maxWidth="md"
+        title={
+          <>
+            Categorize
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5, fontWeight: 400 }}>
+              Categorize this entity as a partner or system.
+            </Typography>
+          </>
+        }
+        actions={
+          <>
+            <Button variant="text" color="secondary" onClick={handleCloseCategorize}>
+              Cancel
+            </Button>
+            <Button variant="contained" onClick={handleConfirmCategorize} disabled={!selectedCategory}>
+              Done
+            </Button>
+          </>
+        }
+      >
+        <Box sx={{ display: 'flex', gap: 0, minHeight: 260 }}>
+          {/* Left panel — endpoint details (single endpoint only) */}
+          {categorizeTarget && modalDetails && (
+            <>
+              <Box sx={{ width: 200, flexShrink: 0, pr: 3 }}>
+                <Stack spacing={2.5}>
+                  <Box>
+                    <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
+                      Directory
+                    </Typography>
+                    <Typography variant="body2" sx={{ fontFamily: 'monospace', fontSize: '13px', wordBreak: 'break-all' }}>
+                      {modalDetails.directory}
+                    </Typography>
+                  </Box>
+                  <Box>
+                    <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
+                      User
+                    </Typography>
+                    <Typography variant="body2">{modalDetails.user}</Typography>
+                  </Box>
+                  <Box>
+                    <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
+                      Host
+                    </Typography>
+                    <Typography variant="body2">{modalDetails.host}</Typography>
+                  </Box>
+                  <Box>
+                    <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
+                      Protocol
+                    </Typography>
+                    <Typography variant="body2">{categorizeTarget.protocol}</Typography>
+                  </Box>
+                  <Box>
+                    <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
+                      Port
+                    </Typography>
+                    <Typography variant="body2">0</Typography>
+                  </Box>
+                </Stack>
+              </Box>
+              <Divider orientation="vertical" flexItem sx={{ mr: 3 }} />
+            </>
+          )}
+
+          {/* Bulk info banner when no specific endpoint */}
+          {!categorizeTarget && (
+            <>
+              <Box sx={{ width: 200, flexShrink: 0, pr: 3 }}>
+                <Typography variant="body2" color="text.secondary">
+                  {bulkCategorizeCount} endpoint{bulkCategorizeCount !== 1 ? 's' : ''} selected
+                </Typography>
+              </Box>
+              <Divider orientation="vertical" flexItem sx={{ mr: 3 }} />
+            </>
+          )}
+
+          {/* Right panel — categorization form */}
+          <Box sx={{ flex: 1 }}>
+            <Stack spacing={3}>
+              <Box>
+                <Typography variant="subtitle2" sx={{ mb: 1.5, fontWeight: 600 }}>
+                  Integration Relationship
+                </Typography>
+                <ToggleButtonGroup
+                  value={integrationType}
+                  exclusive
+                  onChange={(_e, val) => { if (val) { setIntegrationType(val); setSelectedCategory(''); } }}
+                  size="small"
+                  sx={{
+                    '& .MuiToggleButton-root': {
+                      textTransform: 'none',
+                      fontSize: '14px',
+                      px: 2,
+                      py: 0.75,
+                      borderColor: 'divider',
+                      color: 'text.secondary',
+                      '&.Mui-selected': {
+                        color: 'text.primary',
+                        backgroundColor: 'action.selected',
+                        fontWeight: 500,
+                      },
+                    },
+                  }}
+                >
+                  <MuiToggleButton value="external">External Partner</MuiToggleButton>
+                  <MuiToggleButton value="internal">Internal System</MuiToggleButton>
+                </ToggleButtonGroup>
+              </Box>
+
+              <Box>
+                <Typography variant="subtitle2" sx={{ mb: 1.5, fontWeight: 600 }}>
+                  Categorize
+                </Typography>
+                <FormControl fullWidth size="small">
+                  <Select
+                    displayEmpty
+                    value={selectedCategory}
+                    onChange={(e: SelectChangeEvent) => setSelectedCategory(e.target.value)}
+                    renderValue={(val) => {
+                      if (!val) {
+                        return (
+                          <Typography variant="body2" color="text.disabled">
+                            {integrationType === 'external'
+                              ? 'Select an external partner'
+                              : 'Select an internal system'}
+                          </Typography>
+                        );
+                      }
+                      const match = categoryOptions.find(
+                        (o) => o.id === val
+                      );
+                      return (
+                        <Typography variant="body2">
+                          {integrationType === 'external'
+                            ? (match as Partner)?.partnerName
+                            : (match as typeof mockInternalSystems[0])?.name}
+                        </Typography>
+                      );
+                    }}
+                    sx={{ borderRadius: '8px' }}
+                  >
+                    {integrationType === 'external'
+                      ? partners.map((p) => (
+                          <MenuItem key={p.id} value={p.id}>
+                            <Typography variant="body2">{p.partnerName}</Typography>
+                          </MenuItem>
+                        ))
+                      : internalSystems.map((s) => (
+                          <MenuItem key={s.id} value={s.id}>
+                            <Typography variant="body2">{s.name}</Typography>
+                          </MenuItem>
+                        ))}
+                  </Select>
+                </FormControl>
+
+                <Button
+                  variant="text"
+                  color="primary"
+                  size="small"
+                  sx={{ mt: 1, px: 0, textTransform: 'none', fontSize: '14px' }}
+                  onClick={() => {}}
+                >
+                  Create New
+                </Button>
+              </Box>
+            </Stack>
+          </Box>
+        </Box>
+      </Modal>
     </PageLayout>
   );
 }

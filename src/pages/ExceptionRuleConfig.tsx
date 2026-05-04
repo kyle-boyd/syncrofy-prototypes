@@ -36,6 +36,7 @@ import {
   IconButton,
 } from '@design-system';
 import { PageLayout } from '../components/PageLayout';
+import PartnerSystemMultiSelect from '../components/PartnerSystemMultiSelect';
 import { Link } from 'react-router-dom';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -56,33 +57,33 @@ interface CreateRuleForm {
   ruleCategory: string;
   ruleType: string;
   // Late Rule / Missing File fields
-  partnerSystem: string;
+  partnerSystem: string[];
   frequency: string;
   filePattern: string;
   // Frequent Transfer Failures fields
-  failurePartnerSystem: string;
+  failurePartnerSystem: string[];
   failureCount: string;
   failureDuration: string;
   // Expected File Received fields
-  fileMatchPartnerSystem: string;
+  fileMatchPartnerSystem: string[];
   fileMatchPattern: string;
   // Transfer Failure fields
-  singlePartnerSystem: string;
+  singlePartnerSystem: string[];
   singleFilePattern: string;
   retryMode: 'first_failure' | 'after_retries';
   retryCount: string;
   // Zero Byte File fields
-  zeroBytePartnerSystem: string;
+  zeroBytePartnerSystem: string[];
   zeroByteFilePattern: string;
   // Staged Not Picked Up fields
-  stagedPartnerSystem: string;
+  stagedPartnerSystem: string[];
   stagedDuration: string;
   stagedFilePattern: string;
   // Staged File Downloaded fields
-  stagedDownloadedPartnerSystem: string;
+  stagedDownloadedPartnerSystem: string[];
   stagedDownloadedFilePattern: string;
   // File Delivered to Partner fields
-  deliveredPartnerSystem: string;
+  deliveredPartnerSystem: string[];
   deliveredFilePattern: string;
   // Common fields
   assignedTo: string;
@@ -127,26 +128,26 @@ const defaultForm: CreateRuleForm = {
   enabled: true,
   ruleCategory: 'all',
   ruleType: 'missing',
-  partnerSystem: '',
+  partnerSystem: [],
   frequency: '',
   filePattern: '',
-  failurePartnerSystem: '',
+  failurePartnerSystem: [],
   failureCount: '',
   failureDuration: '',
-  fileMatchPartnerSystem: '',
+  fileMatchPartnerSystem: [],
   fileMatchPattern: '',
-  singlePartnerSystem: '',
+  singlePartnerSystem: [],
   singleFilePattern: '',
   retryMode: 'first_failure',
   retryCount: '',
-  zeroBytePartnerSystem: '',
+  zeroBytePartnerSystem: [],
   zeroByteFilePattern: '',
-  stagedPartnerSystem: '',
+  stagedPartnerSystem: [],
   stagedDuration: '',
   stagedFilePattern: '',
-  stagedDownloadedPartnerSystem: '',
+  stagedDownloadedPartnerSystem: [],
   stagedDownloadedFilePattern: '',
-  deliveredPartnerSystem: '',
+  deliveredPartnerSystem: [],
   deliveredFilePattern: '',
   assignedTo: 'me',
   severity: 'critical',
@@ -156,16 +157,6 @@ const defaultForm: CreateRuleForm = {
 };
 
 // ─── Module-level constants and helpers (must NOT be defined inside the component) ──
-
-const PARTNER_OPTIONS = [
-  { value: 'sap',       label: 'SAP Krishna' },
-  { value: 'aws',       label: 'AWS S3' },
-  { value: 'jd',        label: 'John Deere' },
-  { value: '1234',      label: '1234' },
-  { value: 'anderson',  label: 'Anderson & Sons' },
-  { value: 'summit',    label: 'Summit Energy Partners' },
-  { value: 'mainframe', label: 'Mainframe' },
-];
 
 interface RuleFieldRowProps {
   filled: boolean;
@@ -220,6 +211,7 @@ function ExceptionRuleConfig() {
   const [form, setForm] = useState<CreateRuleForm>(defaultForm);
   const [viewMode, setViewMode] = useState<'list' | 'grid' | 'table'>('list');
   const [filterStates, setFilterStates] = useState<Record<string, string>>({});
+  const [partnerSystemFilter, setPartnerSystemFilter] = useState<string[]>([]);
 
   const isAllSelected   = selected.length === rules.length;
   const isIndeterminate = selected.length > 0 && selected.length < rules.length;
@@ -243,16 +235,6 @@ function ExceptionRuleConfig() {
   // ── Filter defs ─────────────────────────────────────────────────────────────
 
   const filterDefs = [
-    {
-      id: 'partnerSystem',
-      label: 'Partner/System',
-      options: [
-        { value: '', label: 'All' },
-        { value: 'sap', label: 'SAP Krishna' },
-        { value: 'aws', label: 'AWS S3' },
-        { value: 'jd',  label: 'John Deere US' },
-      ],
-    },
     {
       id: 'createdBy',
       label: 'Created by',
@@ -423,14 +405,14 @@ function ExceptionRuleConfig() {
 
   const canCreate = (() => {
     switch (form.ruleType) {
-      case 'frequent_failures':    return form.failurePartnerSystem !== '' && form.failureCount !== '' && form.failureDuration !== '';
-      case 'single_failure':       return form.singlePartnerSystem !== '';
-      case 'zero_byte':            return form.zeroBytePartnerSystem !== '';
-      case 'staged_not_picked_up': return form.stagedPartnerSystem !== '' && form.stagedDuration !== '';
-      case 'file_match':           return form.fileMatchPartnerSystem !== '' && form.fileMatchPattern !== '';
-      case 'staged_downloaded':    return form.stagedDownloadedPartnerSystem !== '' && form.stagedDownloadedFilePattern !== '';
-      case 'file_delivered':       return form.deliveredPartnerSystem !== '' && form.deliveredFilePattern !== '';
-      default:                     return form.partnerSystem !== '' && form.frequency !== '';
+      case 'frequent_failures':    return form.failurePartnerSystem.length > 0 && form.failureCount !== '' && form.failureDuration !== '';
+      case 'single_failure':       return form.singlePartnerSystem.length > 0;
+      case 'zero_byte':            return form.zeroBytePartnerSystem.length > 0;
+      case 'staged_not_picked_up': return form.stagedPartnerSystem.length > 0 && form.stagedDuration !== '';
+      case 'file_match':           return form.fileMatchPartnerSystem.length > 0 && form.fileMatchPattern !== '';
+      case 'staged_downloaded':    return form.stagedDownloadedPartnerSystem.length > 0 && form.stagedDownloadedFilePattern !== '';
+      case 'file_delivered':       return form.deliveredPartnerSystem.length > 0 && form.deliveredFilePattern !== '';
+      default:                     return form.partnerSystem.length > 0 && form.frequency !== '';
     }
   })();
 
@@ -488,6 +470,12 @@ function ExceptionRuleConfig() {
         }}
       >
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+          <PartnerSystemMultiSelect
+            value={partnerSystemFilter}
+            onChange={setPartnerSystemFilter}
+            placeholder="Partner/System"
+            width={160}
+          />
           {filterDefs.map((f) => (
             <Dropdown
               key={f.id}
@@ -739,13 +727,11 @@ function ExceptionRuleConfig() {
           {/* Missing File */}
           {form.ruleType === 'missing' && (
             <>
-              <RuleFieldRow filled={!!form.partnerSystem} label="Partner or System" tooltip="Select the partner or system that should be sending files on the defined schedule.">
-                <FormControl size="small" sx={{ width: 240 }}>
-                  <InputLabel>Select Partner or System</InputLabel>
-                  <Select label="Select Partner or System" value={form.partnerSystem} onChange={(e) => setForm((f) => ({ ...f, partnerSystem: e.target.value }))}>
-                    {PARTNER_OPTIONS.map((o) => <MuiMenuItem key={o.value} value={o.value}>{o.label}</MuiMenuItem>)}
-                  </Select>
-                </FormControl>
+              <RuleFieldRow filled={form.partnerSystem.length > 0} label="Partner or System" tooltip="Select the partner or system that should be sending files on the defined schedule.">
+                <PartnerSystemMultiSelect
+                  value={form.partnerSystem}
+                  onChange={(next) => setForm((f) => ({ ...f, partnerSystem: next }))}
+                />
               </RuleFieldRow>
 
               <RuleFieldRow filled={!!form.frequency} label="Expected Frequency" tooltip="How often the file should arrive. An exception is raised if the file has not appeared by this schedule.">
@@ -770,13 +756,11 @@ function ExceptionRuleConfig() {
           {/* Frequent Transfer Failures */}
           {form.ruleType === 'frequent_failures' && (
             <>
-              <RuleFieldRow filled={!!form.failurePartnerSystem} label="Partner or System" tooltip="Select the partner or system whose incoming or outgoing transfers should be monitored for failure spikes.">
-                <FormControl size="small" sx={{ width: 240 }}>
-                  <InputLabel>Select Partner or System</InputLabel>
-                  <Select label="Select Partner or System" value={form.failurePartnerSystem} onChange={(e) => setForm((f) => ({ ...f, failurePartnerSystem: e.target.value }))}>
-                    {PARTNER_OPTIONS.map((o) => <MuiMenuItem key={o.value} value={o.value}>{o.label}</MuiMenuItem>)}
-                  </Select>
-                </FormControl>
+              <RuleFieldRow filled={form.failurePartnerSystem.length > 0} label="Partner or System" tooltip="Select the partner or system whose incoming or outgoing transfers should be monitored for failure spikes.">
+                <PartnerSystemMultiSelect
+                  value={form.failurePartnerSystem}
+                  onChange={(next) => setForm((f) => ({ ...f, failurePartnerSystem: next }))}
+                />
               </RuleFieldRow>
 
               <RuleFieldRow filled={!!form.failureCount} label="Failed Transfers" tooltip="Enter the number of failed transfers that must occur within the selected time window to trigger this rule.">
@@ -799,13 +783,11 @@ function ExceptionRuleConfig() {
           {/* Expected File Received */}
           {form.ruleType === 'file_match' && (
             <>
-              <RuleFieldRow filled={!!form.fileMatchPartnerSystem} label="Partner or System" tooltip="Select the partner or system whose incoming transfers should be monitored for matching files.">
-                <FormControl size="small" sx={{ width: 240 }}>
-                  <InputLabel>Select Partner or System</InputLabel>
-                  <Select label="Select Partner or System" value={form.fileMatchPartnerSystem} onChange={(e) => setForm((f) => ({ ...f, fileMatchPartnerSystem: e.target.value }))}>
-                    {PARTNER_OPTIONS.map((o) => <MuiMenuItem key={o.value} value={o.value}>{o.label}</MuiMenuItem>)}
-                  </Select>
-                </FormControl>
+              <RuleFieldRow filled={form.fileMatchPartnerSystem.length > 0} label="Partner or System" tooltip="Select the partner or system whose incoming transfers should be monitored for matching files.">
+                <PartnerSystemMultiSelect
+                  value={form.fileMatchPartnerSystem}
+                  onChange={(next) => setForm((f) => ({ ...f, fileMatchPartnerSystem: next }))}
+                />
               </RuleFieldRow>
 
               <RuleFieldRow filled={!!form.fileMatchPattern} label="File Name Pattern" tooltip="Enter the file name pattern to watch for. An exception is triggered when a file matching this pattern is received, e.g. invoice_*.xml.">
@@ -817,13 +799,11 @@ function ExceptionRuleConfig() {
           {/* Transfer Failure */}
           {form.ruleType === 'single_failure' && (
             <>
-              <RuleFieldRow filled={!!form.singlePartnerSystem} label="Partner or System" tooltip="Select the partner or system to monitor. An exception will be created when a transfer failure is detected.">
-                <FormControl size="small" sx={{ width: 240 }}>
-                  <InputLabel>Select Partner or System</InputLabel>
-                  <Select label="Select Partner or System" value={form.singlePartnerSystem} onChange={(e) => setForm((f) => ({ ...f, singlePartnerSystem: e.target.value }))}>
-                    {PARTNER_OPTIONS.map((o) => <MuiMenuItem key={o.value} value={o.value}>{o.label}</MuiMenuItem>)}
-                  </Select>
-                </FormControl>
+              <RuleFieldRow filled={form.singlePartnerSystem.length > 0} label="Partner or System" tooltip="Select the partner or system to monitor. An exception will be created when a transfer failure is detected.">
+                <PartnerSystemMultiSelect
+                  value={form.singlePartnerSystem}
+                  onChange={(next) => setForm((f) => ({ ...f, singlePartnerSystem: next }))}
+                />
               </RuleFieldRow>
 
               <RuleFieldRow filled={true} required={false} label="Trigger Condition" tooltip="Choose when to trigger the exception: immediately on the first failure, or only after a specified number of retries.">
@@ -864,13 +844,11 @@ function ExceptionRuleConfig() {
           {/* Zero Byte File */}
           {form.ruleType === 'zero_byte' && (
             <>
-              <RuleFieldRow filled={!!form.zeroBytePartnerSystem} label="Partner or System" tooltip="Select the partner or system to monitor for incoming or outgoing zero byte files.">
-                <FormControl size="small" sx={{ width: 240 }}>
-                  <InputLabel>Select Partner or System</InputLabel>
-                  <Select label="Select Partner or System" value={form.zeroBytePartnerSystem} onChange={(e) => setForm((f) => ({ ...f, zeroBytePartnerSystem: e.target.value }))}>
-                    {PARTNER_OPTIONS.map((o) => <MuiMenuItem key={o.value} value={o.value}>{o.label}</MuiMenuItem>)}
-                  </Select>
-                </FormControl>
+              <RuleFieldRow filled={form.zeroBytePartnerSystem.length > 0} label="Partner or System" tooltip="Select the partner or system to monitor for incoming or outgoing zero byte files.">
+                <PartnerSystemMultiSelect
+                  value={form.zeroBytePartnerSystem}
+                  onChange={(next) => setForm((f) => ({ ...f, zeroBytePartnerSystem: next }))}
+                />
               </RuleFieldRow>
 
               <RuleFieldRow filled={!!form.zeroByteFilePattern} required={false} label="File Name Pattern" tooltip="Optionally match only files whose name matches this pattern, e.g. *.txt.">
@@ -882,13 +860,11 @@ function ExceptionRuleConfig() {
           {/* Staged but Not Picked Up */}
           {form.ruleType === 'staged_not_picked_up' && (
             <>
-              <RuleFieldRow filled={!!form.stagedPartnerSystem} label="Partner or System" tooltip="Select the partner or system whose staged files should be monitored for pickup delays.">
-                <FormControl size="small" sx={{ width: 240 }}>
-                  <InputLabel>Select Partner or System</InputLabel>
-                  <Select label="Select Partner or System" value={form.stagedPartnerSystem} onChange={(e) => setForm((f) => ({ ...f, stagedPartnerSystem: e.target.value }))}>
-                    {PARTNER_OPTIONS.map((o) => <MuiMenuItem key={o.value} value={o.value}>{o.label}</MuiMenuItem>)}
-                  </Select>
-                </FormControl>
+              <RuleFieldRow filled={form.stagedPartnerSystem.length > 0} label="Partner or System" tooltip="Select the partner or system whose staged files should be monitored for pickup delays.">
+                <PartnerSystemMultiSelect
+                  value={form.stagedPartnerSystem}
+                  onChange={(next) => setForm((f) => ({ ...f, stagedPartnerSystem: next }))}
+                />
               </RuleFieldRow>
 
               <RuleFieldRow filled={!!form.stagedDuration} label="Staged Duration" tooltip="How long a file can remain staged and not picked up before an exception is triggered.">
@@ -913,13 +889,11 @@ function ExceptionRuleConfig() {
           {/* Staged File Downloaded */}
           {form.ruleType === 'staged_downloaded' && (
             <>
-              <RuleFieldRow filled={!!form.stagedDownloadedPartnerSystem} label="Partner or System" tooltip="Select the partner or system whose staged files should be monitored for downloads.">
-                <FormControl size="small" sx={{ width: 240 }}>
-                  <InputLabel>Select Partner or System</InputLabel>
-                  <Select label="Select Partner or System" value={form.stagedDownloadedPartnerSystem} onChange={(e) => setForm((f) => ({ ...f, stagedDownloadedPartnerSystem: e.target.value }))}>
-                    {PARTNER_OPTIONS.map((o) => <MuiMenuItem key={o.value} value={o.value}>{o.label}</MuiMenuItem>)}
-                  </Select>
-                </FormControl>
+              <RuleFieldRow filled={form.stagedDownloadedPartnerSystem.length > 0} label="Partner or System" tooltip="Select the partner or system whose staged files should be monitored for downloads.">
+                <PartnerSystemMultiSelect
+                  value={form.stagedDownloadedPartnerSystem}
+                  onChange={(next) => setForm((f) => ({ ...f, stagedDownloadedPartnerSystem: next }))}
+                />
               </RuleFieldRow>
 
               <RuleFieldRow filled={!!form.stagedDownloadedFilePattern} label="File Name Pattern" tooltip="Enter the file name pattern to watch for. An exception is triggered when a staged file matching this pattern is downloaded, e.g. report_*.csv.">
@@ -931,13 +905,11 @@ function ExceptionRuleConfig() {
           {/* File Delivered to Partner */}
           {form.ruleType === 'file_delivered' && (
             <>
-              <RuleFieldRow filled={!!form.deliveredPartnerSystem} label="Partner or System" tooltip="Select the partner or system to monitor. An exception is triggered when a file matching the pattern is delivered to this destination.">
-                <FormControl size="small" sx={{ width: 240 }}>
-                  <InputLabel>Select Partner or System</InputLabel>
-                  <Select label="Select Partner or System" value={form.deliveredPartnerSystem} onChange={(e) => setForm((f) => ({ ...f, deliveredPartnerSystem: e.target.value }))}>
-                    {PARTNER_OPTIONS.map((o) => <MuiMenuItem key={o.value} value={o.value}>{o.label}</MuiMenuItem>)}
-                  </Select>
-                </FormControl>
+              <RuleFieldRow filled={form.deliveredPartnerSystem.length > 0} label="Partner or System" tooltip="Select the partner or system to monitor. An exception is triggered when a file matching the pattern is delivered to this destination.">
+                <PartnerSystemMultiSelect
+                  value={form.deliveredPartnerSystem}
+                  onChange={(next) => setForm((f) => ({ ...f, deliveredPartnerSystem: next }))}
+                />
               </RuleFieldRow>
 
               <RuleFieldRow filled={!!form.deliveredFilePattern} label="File Name Pattern" tooltip="Enter the file name pattern to watch for. An exception is triggered when a file matching this pattern is delivered to the selected partner or system, e.g. invoice_*.xml.">
