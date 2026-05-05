@@ -46,7 +46,7 @@ interface ExceptionRule {
   name: string;
   lastModifiedBy: string;
   lastModifiedDate: string;
-  partnerSystem: string;
+  partnerSystem: string[];
   severity: 'critical' | 'high' | 'medium' | 'low';
   assignedTo: { initials: string; name: string };
   active: boolean;
@@ -96,21 +96,22 @@ interface CreateRuleForm {
 // ─── Mock Data ────────────────────────────────────────────────────────────────
 
 const mockRules: ExceptionRule[] = [
-  { id: '1',  name: 'SAP Krishna was supposed to send a file named by Every hour, every day',                                               lastModifiedBy: 'Krishna Gajula',    lastModifiedDate: 'February 10, 2026 at 10:22',  partnerSystem: 'SAP Krishna',                       severity: 'medium',   assignedTo: { initials: 'KG', name: 'Krishna' },    active: true },
-  { id: '2',  name: '1234 was supposed to send a file named 123123.12312 by 12:00 PM, on the last day of the month',                       lastModifiedBy: 'Igor Kovalev',      lastModifiedDate: 'February 5, 2026 at 08:34',   partnerSystem: '1234',                              severity: 'critical', assignedTo: { initials: 'IK', name: 'Igor' },       active: true },
-  { id: '3',  name: '1234 was supposed to send a file named by Every hour, every day',                                                     lastModifiedBy: 'Rahul Pancholi',    lastModifiedDate: 'January 29, 2026 at 07:42',   partnerSystem: '1234',                              severity: 'critical', assignedTo: { initials: 'RP', name: 'Rahul' },      active: true },
-  { id: '4',  name: '1234 was supposed to send a file named by 08:00 AM, every weekday',                                                   lastModifiedBy: 'Krishna Gajula',    lastModifiedDate: 'January 29, 2026 at 07:25',   partnerSystem: '1234',                              severity: 'critical', assignedTo: { initials: 'AA', name: 'Abhi' },       active: true },
-  { id: '5',  name: 'COE_Test_Internal_System_For_Testing was supposed to send a file named by 05:00 PM, only on Friday',                  lastModifiedBy: 'Vince Tkac',        lastModifiedDate: 'January 28, 2026 at 08:47',   partnerSystem: 'COE_Test_Internal_System_For_Testing', severity: 'critical', assignedTo: { initials: 'AR', name: 'Arthur' },   active: true },
-  { id: '6',  name: '1234 was supposed to send a file named by Every hour, every day',                                                     lastModifiedBy: 'Krishna Gajula',    lastModifiedDate: 'January 15, 2026 at 11:12',   partnerSystem: '1234',                              severity: 'critical', assignedTo: { initials: 'SS', name: 'shubhankar' }, active: true },
-  { id: '7',  name: 'test file name',                                                                                                      lastModifiedBy: 'shubhankar Sengupta',lastModifiedDate: 'January 12, 2026 at 11:54',  partnerSystem: '1234',                              severity: 'critical', assignedTo: { initials: 'SS', name: 'shubhankar' }, active: false },
-  { id: '8',  name: '1234 was supposed to send a file named by 05:00 PM, on the last day of the month',                                    lastModifiedBy: 'Rahul Pancholi',    lastModifiedDate: 'January 29, 2026 at 06:49',   partnerSystem: '1234',                              severity: 'critical', assignedTo: { initials: 'RP', name: 'Rahul' },      active: false },
-  { id: '9',  name: 'Anderson & Sons was supposed to send a file named *.txt by Every hour, every day',                                    lastModifiedBy: 'Krishna Gajula',    lastModifiedDate: 'January 27, 2026 at 09:45',   partnerSystem: 'Anderson & Sons',                   severity: 'critical', assignedTo: { initials: 'AK', name: 'Avinash' },    active: true },
-  { id: '10', name: '1234 was supposed to send a file named *.* by 08:00 AM, only on Friday',                                             lastModifiedBy: 'kamal Singh',       lastModifiedDate: 'January 6, 2026 at 06:48',    partnerSystem: '1234',                              severity: 'critical', assignedTo: { initials: 'MK', name: 'Mayank' },     active: true },
-  { id: '11', name: '1234 was supposed to send a file named *.* by 12:00 PM, only on Friday',                                             lastModifiedBy: 'kamal Singh',       lastModifiedDate: 'January 7, 2026 at 10:00',    partnerSystem: '1234',                              severity: 'medium',   assignedTo: { initials: 'MK', name: 'Mayank' },     active: true },
-  { id: '12', name: 'John Deere US was supposed to send a file named report.txt by 05:00 PM, only on Friday',                             lastModifiedBy: 'Vince Tkac',        lastModifiedDate: 'December 19, 2025 at 08:34',  partnerSystem: 'John Deere US',                     severity: 'critical', assignedTo: { initials: 'VT', name: 'Vince' },      active: true },
-  { id: '13', name: 'John Deere rule every hour',                                                                                         lastModifiedBy: 'Krishna Gajula',    lastModifiedDate: 'January 29, 2026 at 07:21',   partnerSystem: 'John Deere Inc.',                   severity: 'high',     assignedTo: { initials: 'RP', name: 'Rahul' },      active: true },
-  { id: '14', name: 'AWS S3 was supposed to send a file named ARTHURTEST by Every hour, every day',                                       lastModifiedBy: 'Arthur Rafal',      lastModifiedDate: 'December 17, 2025 at 14:02',  partnerSystem: 'AWS S3',                            severity: 'critical', assignedTo: { initials: 'AR', name: 'Arthur' },     active: true },
-  { id: '15', name: '1234 was supposed to send a file named abc.txt by 08:00 AM, every day',                                              lastModifiedBy: 'kamal Singh',       lastModifiedDate: 'February 6, 2026 at 07:20',   partnerSystem: '1234',                              severity: 'critical', assignedTo: { initials: 'TS', name: 'Tracy' },      active: true },
+  { id: '1',  name: 'Finance LOB partners were supposed to send a file named *.csv by Every hour, every day',                              lastModifiedBy: 'Krishna Gajula',    lastModifiedDate: 'February 10, 2026 at 10:22',  partnerSystem: ['SAP Krishna', 'Goldman Sachs', 'Fidelity', 'Northern Trust'], severity: 'medium',   assignedTo: { initials: 'KG', name: 'Krishna' },    active: true },
+  { id: '2',  name: '1234 was supposed to send a file named 123123.12312 by 12:00 PM, on the last day of the month',                       lastModifiedBy: 'Igor Kovalev',      lastModifiedDate: 'February 5, 2026 at 08:34',   partnerSystem: ['1234'],                              severity: 'critical', assignedTo: { initials: 'IK', name: 'Igor' },       active: true },
+  { id: '3',  name: 'Energy LOB rule — every hour',                                                                                        lastModifiedBy: 'Rahul Pancholi',    lastModifiedDate: 'January 29, 2026 at 07:42',   partnerSystem: ['Summit Energy Partners', 'AWS S3', 'Mainframe'], severity: 'critical', assignedTo: { initials: 'RP', name: 'Rahul' },      active: true },
+  { id: '4',  name: '1234 was supposed to send a file named by 08:00 AM, every weekday',                                                   lastModifiedBy: 'Krishna Gajula',    lastModifiedDate: 'January 29, 2026 at 07:25',   partnerSystem: ['1234'],                              severity: 'critical', assignedTo: { initials: 'AA', name: 'Abhi' },       active: true },
+  { id: '5',  name: 'COE_Test_Internal_System_For_Testing was supposed to send a file named by 05:00 PM, only on Friday',                  lastModifiedBy: 'Vince Tkac',        lastModifiedDate: 'January 28, 2026 at 08:47',   partnerSystem: ['COE_Test_Internal_System_For_Testing'], severity: 'critical', assignedTo: { initials: 'AR', name: 'Arthur' },   active: true },
+  { id: '6',  name: 'Manufacturing LOB rule — every hour, every day',                                                                      lastModifiedBy: 'Krishna Gajula',    lastModifiedDate: 'January 15, 2026 at 11:12',   partnerSystem: ['Acme Corp', 'Delta Manufacturing', 'John Deere', 'SAP Krishna'], severity: 'critical', assignedTo: { initials: 'SS', name: 'shubhankar' }, active: true },
+  { id: '7',  name: 'test file name',                                                                                                      lastModifiedBy: 'shubhankar Sengupta',lastModifiedDate: 'January 12, 2026 at 11:54',  partnerSystem: ['1234'],                              severity: 'critical', assignedTo: { initials: 'SS', name: 'shubhankar' }, active: false },
+  { id: '8',  name: '1234 was supposed to send a file named by 05:00 PM, on the last day of the month',                                    lastModifiedBy: 'Rahul Pancholi',    lastModifiedDate: 'January 29, 2026 at 06:49',   partnerSystem: ['1234'],                              severity: 'critical', assignedTo: { initials: 'RP', name: 'Rahul' },      active: false },
+  { id: '9',  name: 'Anderson & Sons + Acme was supposed to send a file named *.txt by Every hour, every day',                             lastModifiedBy: 'Krishna Gajula',    lastModifiedDate: 'January 27, 2026 at 09:45',   partnerSystem: ['Anderson & Sons', 'Acme Corp'],      severity: 'critical', assignedTo: { initials: 'AK', name: 'Avinash' },    active: true },
+  { id: '10', name: '1234 was supposed to send a file named *.* by 08:00 AM, only on Friday',                                             lastModifiedBy: 'kamal Singh',       lastModifiedDate: 'January 6, 2026 at 06:48',    partnerSystem: ['1234'],                              severity: 'critical', assignedTo: { initials: 'MK', name: 'Mayank' },     active: true },
+  { id: '11', name: '1234 was supposed to send a file named *.* by 12:00 PM, only on Friday',                                             lastModifiedBy: 'kamal Singh',       lastModifiedDate: 'January 7, 2026 at 10:00',    partnerSystem: ['1234'],                              severity: 'medium',   assignedTo: { initials: 'MK', name: 'Mayank' },     active: true },
+  { id: '12', name: 'John Deere US + Mainframe was supposed to send a file named report.txt by 05:00 PM, only on Friday',                 lastModifiedBy: 'Vince Tkac',        lastModifiedDate: 'December 19, 2025 at 08:34',  partnerSystem: ['John Deere US', 'Mainframe'],         severity: 'critical', assignedTo: { initials: 'VT', name: 'Vince' },      active: true },
+  { id: '13', name: 'John Deere rule every hour',                                                                                         lastModifiedBy: 'Krishna Gajula',    lastModifiedDate: 'January 29, 2026 at 07:21',   partnerSystem: ['John Deere Inc.'],                   severity: 'high',     assignedTo: { initials: 'RP', name: 'Rahul' },      active: true },
+  { id: '14', name: 'AWS S3 + Trade Settlement was supposed to send a file named ARTHURTEST by Every hour, every day',                    lastModifiedBy: 'Arthur Rafal',      lastModifiedDate: 'December 17, 2025 at 14:02',  partnerSystem: ['AWS S3', 'Trade Settlement Platform', 'Core Banking System'], severity: 'critical', assignedTo: { initials: 'AR', name: 'Arthur' },     active: true },
+  { id: '15', name: '1234 was supposed to send a file named abc.txt by 08:00 AM, every day',                                              lastModifiedBy: 'kamal Singh',       lastModifiedDate: 'February 6, 2026 at 07:20',   partnerSystem: ['1234'],                              severity: 'critical', assignedTo: { initials: 'TS', name: 'Tracy' },      active: true },
+  { id: '16', name: 'Global rule — applies to every partner and system',                                                                   lastModifiedBy: 'Vince Tkac',        lastModifiedDate: 'February 12, 2026 at 09:15',  partnerSystem: ['SAP Krishna', 'AWS S3', 'Mainframe', 'Core Banking System', 'Trade Settlement Platform', 'John Deere', 'Anderson & Sons', 'Summit Energy Partners', 'Acme Corp', 'Goldman Sachs', 'Fidelity', 'Northern Trust', 'Delta Manufacturing', '1234', 'COE_Test_Internal_System'], severity: 'high',     assignedTo: { initials: 'VT', name: 'Vince' },      active: true },
 ];
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -344,15 +345,24 @@ function ExceptionRuleConfig() {
     {
       id: 'partnerSystem',
       label: 'Partner or System',
-      width: 220,
-      render: (row) => (
-        <Tag
-          label={row.partnerSystem}
-          variant="neutral"
-          size="small"
-          hideIcon
-        />
-      ),
+      width: 260,
+      render: (row) => {
+        const MAX_VISIBLE = 2;
+        const visible = row.partnerSystem.slice(0, MAX_VISIBLE);
+        const remaining = row.partnerSystem.length - visible.length;
+        return (
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, alignItems: 'center' }}>
+            {visible.map((p) => (
+              <Tag key={p} label={p} variant="neutral" size="small" hideIcon />
+            ))}
+            {remaining > 0 && (
+              <Box title={row.partnerSystem.slice(MAX_VISIBLE).join(', ')} sx={{ display: 'inline-flex' }}>
+                <Tag label={`+${remaining}`} variant="neutral" size="small" hideIcon />
+              </Box>
+            )}
+          </Box>
+        );
+      },
     },
     {
       id: 'severity',
