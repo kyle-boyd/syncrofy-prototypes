@@ -96,6 +96,21 @@ const PartnerSystemMultiSelect: React.FC<Props> = ({
     onChange(value.includes(val) ? value.filter((v) => v !== val) : [...value, val]);
   };
 
+  const toggleAll = (options: PartnerSystemOption[]) => {
+    const optionValues = options.map((o) => o.value);
+    const allSelected = optionValues.every((v) => value.includes(v));
+    if (allSelected) {
+      onChange(value.filter((v) => !optionValues.includes(v)));
+    } else {
+      const next = new Set(value);
+      optionValues.forEach((v) => next.add(v));
+      onChange(Array.from(next));
+    }
+  };
+
+  const isAllSelected = (options: PartnerSystemOption[]) =>
+    options.length > 0 && options.every((o) => value.includes(o.value));
+
   const allOptions = useMemo(
     () => [
       ...sections.linesOfBusiness,
@@ -188,12 +203,11 @@ const PartnerSystemMultiSelect: React.FC<Props> = ({
           {/* Lines of Business — chip toggle style */}
           {filtered.linesOfBusiness.length > 0 && (
             <Box sx={{ px: 1.5, pb: 1 }}>
-              <Typography
-                variant="caption"
-                sx={{ fontWeight: 600, color: 'text.primary', display: 'block', mb: 0.75 }}
-              >
-                Lines of Business
-              </Typography>
+              <SectionHeader
+                title="Lines of Business"
+                allSelected={isAllSelected(filtered.linesOfBusiness)}
+                onToggleAll={() => toggleAll(filtered.linesOfBusiness)}
+              />
               <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75 }}>
                 {filtered.linesOfBusiness.map((o) => {
                   const selected = value.includes(o.value);
@@ -240,6 +254,8 @@ const PartnerSystemMultiSelect: React.FC<Props> = ({
             options={filtered.partners}
             selected={value}
             onToggle={toggle}
+            allSelected={isAllSelected(filtered.partners)}
+            onToggleAll={() => toggleAll(filtered.partners)}
           />
           {filtered.partners.length > 0 && filtered.systems.length > 0 && (
             <Divider sx={{ my: 0.5 }} />
@@ -249,6 +265,8 @@ const PartnerSystemMultiSelect: React.FC<Props> = ({
             options={filtered.systems}
             selected={value}
             onToggle={toggle}
+            allSelected={isAllSelected(filtered.systems)}
+            onToggleAll={() => toggleAll(filtered.systems)}
           />
           {(filtered.partners.length > 0 || filtered.systems.length > 0) &&
             filtered.uncategorized.length > 0 && <Divider sx={{ my: 0.5 }} />}
@@ -257,6 +275,8 @@ const PartnerSystemMultiSelect: React.FC<Props> = ({
             options={filtered.uncategorized}
             selected={value}
             onToggle={toggle}
+            allSelected={isAllSelected(filtered.uncategorized)}
+            onToggleAll={() => toggleAll(filtered.uncategorized)}
           />
         </Box>
       </Popover>
@@ -264,21 +284,54 @@ const PartnerSystemMultiSelect: React.FC<Props> = ({
   );
 };
 
+const SectionHeader: React.FC<{
+  title: string;
+  allSelected: boolean;
+  onToggleAll: () => void;
+}> = ({ title, allSelected, onToggleAll }) => (
+  <Box
+    sx={{
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      mb: 0.5,
+    }}
+  >
+    <Typography variant="caption" sx={{ fontWeight: 600, color: 'text.primary' }}>
+      {title}
+    </Typography>
+    <Box
+      component="button"
+      type="button"
+      onClick={onToggleAll}
+      sx={{
+        background: 'none',
+        border: 'none',
+        cursor: 'pointer',
+        p: 0,
+        fontSize: 12,
+        fontWeight: 500,
+        color: '#0F6B7A',
+        '&:hover': { textDecoration: 'underline' },
+      }}
+    >
+      {allSelected ? 'Clear all' : 'Select all'}
+    </Box>
+  </Box>
+);
+
 const CheckboxSection: React.FC<{
   title: string;
   options: PartnerSystemOption[];
   selected: string[];
   onToggle: (v: string) => void;
-}> = ({ title, options, selected, onToggle }) => {
+  allSelected: boolean;
+  onToggleAll: () => void;
+}> = ({ title, options, selected, onToggle, allSelected, onToggleAll }) => {
   if (options.length === 0) return null;
   return (
     <Box sx={{ px: 1.5, py: 0.5 }}>
-      <Typography
-        variant="caption"
-        sx={{ fontWeight: 600, color: 'text.primary', display: 'block', mb: 0.25 }}
-      >
-        {title}
-      </Typography>
+      <SectionHeader title={title} allSelected={allSelected} onToggleAll={onToggleAll} />
       <Box>
         {options.map((o) => (
           <Box
