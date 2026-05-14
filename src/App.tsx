@@ -25,6 +25,7 @@ import CompanyMismatch3 from './pages/CompanyMismatch3';
 import DashboardsHome from './pages/DashboardsHome';
 import DashboardDetail from './pages/DashboardDetail';
 import IconButtonTooltips from './pages/IconButtonTooltips';
+import { supplyChainRoutes } from './pages/supplychainoverhaul';
 
 function App() {
   return (
@@ -55,6 +56,7 @@ function App() {
           <Route path="/company-mismatch/2" element={<CompanyMismatch2 />} />
           <Route path="/company-mismatch/3" element={<CompanyMismatch3 />} />
           <Route path="/icon-button-tooltips" element={<IconButtonTooltips />} />
+          {supplyChainRoutes}
         </Routes>
       </BrowserRouter>
     </ThemeProvider>
