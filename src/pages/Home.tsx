@@ -403,6 +403,32 @@ function Home() {
           </Button>
         </Paper>
 
+        {/* AI Features Prototype */}
+        <Paper elevation={1} sx={{ p: 3 }}>
+          <Typography variant="h5" gutterBottom>
+            AI Features: Ghost Files & Failure Fingerprints
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+            Two AI-powered features for MFT observability: Ghost File Detection surfaces expected files that never arrived, and Failure Fingerprinting clusters similar failures into named patterns with root cause analysis.
+          </Typography>
+          <Stack direction="row" spacing={2}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => navigate('/ai/transfers')}
+            >
+              AI Transfers (Ghost Files)
+            </Button>
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={() => navigate('/ai/fingerprints')}
+            >
+              Failure Fingerprints
+            </Button>
+          </Stack>
+        </Paper>
+
         {/* Integration Cloud (SIC) Demo */}
         <Paper elevation={1} sx={{ p: 3 }}>
           <Typography variant="h5" gutterBottom>

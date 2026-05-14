@@ -25,6 +25,8 @@ import CompanyMismatch3 from './pages/CompanyMismatch3';
 import DashboardsHome from './pages/DashboardsHome';
 import DashboardDetail from './pages/DashboardDetail';
 import IconButtonTooltips from './pages/IconButtonTooltips';
+import AITransfers from './pages/ai/AITransfers';
+import AIFingerprints from './pages/ai/AIFingerprints';
 import { supplyChainRoutes } from './pages/supplychainoverhaul';
 
 function App() {
@@ -56,6 +58,8 @@ function App() {
           <Route path="/company-mismatch/2" element={<CompanyMismatch2 />} />
           <Route path="/company-mismatch/3" element={<CompanyMismatch3 />} />
           <Route path="/icon-button-tooltips" element={<IconButtonTooltips />} />
+          <Route path="/ai/transfers" element={<AITransfers />} />
+          <Route path="/ai/fingerprints" element={<AIFingerprints />} />
           {supplyChainRoutes}
         </Routes>
       </BrowserRouter>

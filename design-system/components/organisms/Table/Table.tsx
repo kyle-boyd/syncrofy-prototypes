@@ -19,7 +19,7 @@ export type SortDirection = 'asc' | 'desc';
 
 export interface TableColumn<T = any> {
   id: string;
-  label: string;
+  label: React.ReactNode;
   align?: 'left' | 'center' | 'right';
   headerCheckbox?: boolean;
   headerCheckboxChecked?: boolean;
@@ -51,6 +51,10 @@ export interface TableProps<T = any> extends BaseComponentProps {
   onSort?: (columnId: string, direction: SortDirection) => void;
   /** When true, columns can be resized by dragging the header edge */
   resizableColumns?: boolean;
+  /** Called when a row is clicked */
+  onRowClick?: (row: T) => void;
+  /** Row id that should appear selected/highlighted */
+  selectedRowId?: string | number;
   /** MUI sx prop merged into the root Box */
   sx?: SxProps<Theme>;
 }
@@ -95,6 +99,8 @@ export function Table<T = any>({
   sortDirection: controlledSortDirection,
   onSort,
   resizableColumns = false,
+  onRowClick,
+  selectedRowId,
   className,
   'data-testid': testId,
   sx: sxProp,
@@ -334,12 +340,21 @@ export function Table<T = any>({
           </TableRow>
         </TableHead>
         <TableBody>
-          {sortedRows.map((row, rowIndex) => (
+          {sortedRows.map((row, rowIndex) => {
+            const isSelected = selectedRowId != null && (row as any)?.id === selectedRowId;
+            return (
             <TableRow
               key={(row as any)?.id || rowIndex}
+              onClick={onRowClick ? () => onRowClick(row) : undefined}
+              selected={isSelected}
               sx={{
+                ...(onRowClick && { cursor: 'pointer', '&:hover': { backgroundColor: 'action.hover' } }),
                 ...(striped && rowIndex % 2 === 1 && {
                   backgroundColor: 'action.hover',
+                }),
+                ...(isSelected && {
+                  '&.Mui-selected': { backgroundColor: 'rgba(25, 118, 210, 0.08)' },
+                  '&.Mui-selected:hover': { backgroundColor: 'rgba(25, 118, 210, 0.12)' },
                 }),
               }}
             >
@@ -353,7 +368,8 @@ export function Table<T = any>({
                 </TableCell>
               ))}
             </TableRow>
-          ))}
+            );
+          })}
         </TableBody>
       </MuiTable>
     </TableContainer>
