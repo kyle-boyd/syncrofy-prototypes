@@ -1,5 +1,4 @@
 import { useState, useMemo, useRef, useCallback, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Stack,
@@ -20,6 +19,7 @@ import {
 } from '@design-system';
 import { PageLayout } from '../components/PageLayout';
 import { CustomizeColumnsModal, ColumnConfig } from '../components/CustomizeColumnsModal';
+import { TransferDetailPanel } from '../components/TransferDetailPanel';
 
 // Transfer data interface
 export interface Transfer {
@@ -249,7 +249,6 @@ const COLUMN_LABELS: Record<string, string> = {
 };
 
 function Transfers() {
-  const navigate = useNavigate();
   // State management
   const [selectedView, setSelectedView] = useState<string>('default');
   const [isViewFavorited, setIsViewFavorited] = useState(false);
@@ -262,6 +261,7 @@ function Transfers() {
   const [customizeColumnsOpen, setCustomizeColumnsOpen] = useState(false);
   const [customizeColumnsAnchor, setCustomizeColumnsAnchor] = useState<HTMLElement | null>(null);
   const [visibleColumns, setVisibleColumns] = useState<string[]>(ALL_COLUMN_IDS);
+  const [selectedTransferId, setSelectedTransferId] = useState<string | null>(null);
   
   // Column resizing state
   const [columnWidths, setColumnWidths] = useState<Record<string, number>>({});
@@ -379,6 +379,39 @@ function Transfers() {
       setSortDirection('asc');
     }
   };
+
+  // Selected transfer derived values
+  const selectedIndex = selectedTransferId
+    ? filteredAndSortedTransfers.findIndex(t => t.id === selectedTransferId)
+    : -1;
+  const selectedTransfer = selectedIndex >= 0 ? filteredAndSortedTransfers[selectedIndex] : null;
+
+  // Refs for keyboard handler to avoid stale closures
+  const selectedTransferIdRef = useRef(selectedTransferId);
+  selectedTransferIdRef.current = selectedTransferId;
+  const filteredTransfersRef = useRef(filteredAndSortedTransfers);
+  filteredTransfersRef.current = filteredAndSortedTransfers;
+
+  // Keyboard navigation: ArrowUp/Down to move between transfers, Escape to close
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const currentId = selectedTransferIdRef.current;
+      if (!currentId) return;
+      const transfers = filteredTransfersRef.current;
+      const idx = transfers.findIndex(t => t.id === currentId);
+      if (e.key === 'ArrowUp' && idx > 0) {
+        e.preventDefault();
+        setSelectedTransferId(transfers[idx - 1].id);
+      } else if (e.key === 'ArrowDown' && idx < transfers.length - 1) {
+        e.preventDefault();
+        setSelectedTransferId(transfers[idx + 1].id);
+      } else if (e.key === 'Escape') {
+        setSelectedTransferId(null);
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   // Column resizing handlers
   const handleResizeStart = useCallback((columnId: string, clickX: number) => {
@@ -518,15 +551,16 @@ function Transfers() {
       setHeaderPositions(positions);
     };
     
-    // Use a small delay to ensure table is rendered
-    const timeoutId = setTimeout(updatePositions, 0);
+    // Use a small delay to ensure table is rendered; longer delay when panel opens to wait for animation
+    const delay = selectedTransferId !== null ? 280 : 0;
+    const timeoutId = setTimeout(updatePositions, delay);
     window.addEventListener('resize', updatePositions);
-    
+
     return () => {
       clearTimeout(timeoutId);
       window.removeEventListener('resize', updatePositions);
     };
-  }, [columnIds, filteredAndSortedTransfers.length, resizingColumn]); // Added resizingColumn to skip updates during resize
+  }, [columnIds, filteredAndSortedTransfers.length, resizingColumn, selectedTransferId]); // Added selectedTransferId to re-measure after panel opens
 
   // Track filter controls height so sticky table header knows how far down to offset
   useEffect(() => {
@@ -841,6 +875,9 @@ function Transfers() {
 
   return (
     <PageLayout selectedNavItem="transfers" backgroundColor="#FAFCFC" contentPadding={0}>
+      <Box sx={{ display: 'flex', height: '100%', overflow: 'hidden' }}>
+      {/* Left — table area (scrollable) */}
+      <Box sx={{ flex: 1, minWidth: 0, overflowY: 'auto' }}>
       {/* Page header — scrolls away */}
       <Stack spacing={2} sx={{ mb: '16px', px: 3, pt: 3 }}>
         <PageHeader
@@ -1006,9 +1043,9 @@ function Transfers() {
         <Table
           columns={columns}
           rows={filteredAndSortedTransfers}
-          getRowId={(row) => row.id}
           stickyHeader
-          bordered={false}
+          selectedRowId={selectedTransferId ?? undefined}
+          onRowClick={(row) => setSelectedTransferId(prev => prev === row.id ? null : row.id)}
           sx={{
             border: 'none',
             '& .MuiTableCell-root': {
@@ -1016,11 +1053,6 @@ function Transfers() {
               borderRight: 'none !important',
             },
           }}
-          {...({
-            onRowClick: (row: any) => {
-              navigate(`/transfers/${row.id as string}`);
-            },
-          } as any)}
         />
         {/* Resize handles overlay — sticky at same offset as sticky table header */}
         <Box
@@ -1101,6 +1133,30 @@ function Transfers() {
           setColumnWidths({});
         }}
       />
+      </Box>{/* end left panel */}
+
+      {/* Right — detail panel (pushes the table) */}
+      <Box sx={{
+        width: selectedTransferId ? 481 : 0,
+        flexShrink: 0,
+        overflow: 'hidden',
+        transition: 'width 0.25s ease',
+      }}>
+        <Box sx={{ width: 480, height: '100%', borderLeft: '1px solid', borderColor: 'divider' }}>
+          {selectedTransfer && (
+            <TransferDetailPanel
+              transfer={selectedTransfer}
+              onClose={() => setSelectedTransferId(null)}
+              onPrev={() => selectedIndex > 0 && setSelectedTransferId(filteredAndSortedTransfers[selectedIndex - 1].id)}
+              onNext={() => selectedIndex < filteredAndSortedTransfers.length - 1 && setSelectedTransferId(filteredAndSortedTransfers[selectedIndex + 1].id)}
+              hasPrev={selectedIndex > 0}
+              hasNext={selectedIndex < filteredAndSortedTransfers.length - 1}
+            />
+          )}
+        </Box>
+      </Box>
+
+      </Box>{/* end flex row */}
     </PageLayout>
   );
 }

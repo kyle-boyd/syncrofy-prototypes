@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Box,
@@ -14,197 +14,137 @@ import {
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import ArrowCircleUpIcon from '@mui/icons-material/ArrowCircleUp';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import EmailIcon from '@mui/icons-material/Email';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import RefreshIcon from '@mui/icons-material/Refresh';
-import DataObjectIcon from '@mui/icons-material/DataObject';
-import { Button, Tag, Chips } from '@design-system';
-import { RawEventsModal } from '../components/RawEventsModal';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import { Button, Tag } from '@design-system';
 import { PageLayout } from '../components/PageLayout';
+
+interface ConnectionDetails {
+  protocol: string;
+  host: string;
+  port: string;
+  directory: string;
+  user: string;
+  transferSize: string;
+  transactionId: string;
+  interaction: string;
+  interactionLabel: string;
+}
+
+interface SubItem {
+  time: string;
+  date: string;
+  type: string;
+  description: string;
+  fileName: string;
+}
 
 interface TimelineItem {
   time: string;
   date: string;
   title: string;
-  subtitle?: string;
-  status: 'success' | 'processing';
-  actionCount: number;
-  details?: {
-    type: string;
-    description: string;
-    fileName: string;
-    status: 'success';
-  }[];
-  connectionDetails?: {
-    protocol: string;
-    port: string;
-    user: string;
-    transactionId: string;
-    host: string;
-    directory: string;
-    transferSize: string;
-    interactionType: string;
-  };
+  subtitle: string;
+  status: 'success';
+  actionCount?: number;
+  connectionDetails: ConnectionDetails;
+  subItems?: SubItem[];
 }
 
 function TransferDetails() {
   const navigate = useNavigate();
-  const [expandedTimeline, setExpandedTimeline] = useState<string>('timeline-0');
+  const [expandedItems, setExpandedItems] = useState<Set<number>>(new Set([0, 1]));
   const [comment, setComment] = useState('');
-  const [rawEventsModalOpen, setRawEventsModalOpen] = useState(false);
-  const [rawEvents, setRawEvents] = useState<unknown[] | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+
+  const transfer = {
+    filename: 'edi.dat',
+    fileSize: '1.21 KB',
+    transferId: '20260410032481848373',
+    routeId: '-',
+  };
+
+  const sentBy = { name: 'MBX_/SYN_MBX_Producer/Outbound', time: '8:48 AM', date: 'Apr 10 2026' };
+  const deliveredTo = { name: 'MBX_/SYN_MBX_Consumer/Inbox', time: '8:48 AM', date: 'Apr 10 2026' };
 
   const timelineData: TimelineItem[] = [
     {
-      time: '12:00:32 PM',
-      date: 'Dec 16 2025',
-      title: 'Loan Management System',
+      time: '8:48 AM',
+      date: 'Apr 10 2026',
+      title: 'MBX_/SYN_MBX_Producer/Outbound',
       subtitle: 'Sent By',
       status: 'success',
-      actionCount: 1,
       connectionDetails: {
-        protocol: 'SFTP',
-        port: '22',
-        user: 'loanfund_user',
-        transactionId: 'S73847958390500035265',
-        host: 'sftp.loanfund.bank.com',
-        directory: '/home/loanfund',
-        transferSize: '888.00 KB',
-        interactionType: 'PUSH',
+        protocol: 'MBX',
+        host: '-',
+        port: '-',
+        directory: '/SYN_MBX_Producer/Outbound',
+        user: 'SYN_MBX_Producer',
+        transferSize: '1.21 KB',
+        transactionId: '20260410032481848373',
+        interaction: 'PUSH',
+        interactionLabel: 'Interaction',
       },
-      details: [
-        {
-          type: 'Zip',
-          description: 'File unzipped',
-          fileName: 'anderson_loan_funding.dat',
-          status: 'success',
-        },
-      ],
     },
     {
-      time: '12:00:32 PM',
-      date: 'Dec 16 2025',
-      title: 'Processing',
+      time: '8:48 AM',
+      date: 'Apr 10 2026',
+      title: 'MBX_/SYN_MBX_Consumer/Inbox',
+      subtitle: 'Delivered to',
       status: 'success',
-      actionCount: 1,
-      details: [
-        {
-          type: 'Verify',
-          description: 'Loan funding validations passed',
-          fileName: 'funding_check.log',
-          status: 'success',
-        },
-      ],
-    },
-    {
-      time: '12:00:32 PM',
-      date: 'Dec 16 2025',
-      title: 'Anderson & Sons',
-      subtitle: 'Delivered To',
-      status: 'success',
-      actionCount: 3,
+      actionCount: 2,
       connectionDetails: {
-        protocol: 'SFTP',
-        port: '22',
-        user: 'anderson_sftp',
-        transactionId: 'S73847958390500035265',
-        host: 'sftp.anderson.com',
-        directory: '/incoming/loans',
-        transferSize: '888.00 KB',
-        interactionType: 'PUSH',
+        protocol: 'MBX',
+        host: '-',
+        port: '-',
+        directory: '/SYN_MBX_Consumer/Inbox',
+        user: '-',
+        transferSize: '1.21 KB',
+        transactionId: '20260410089481848375',
+        interaction: 'PUSH',
+        interactionLabel: 'Interaction Type',
       },
-      details: [
-        {
-          type: 'Connect',
-          description: 'Connection established',
-          fileName: '-',
-          status: 'success',
-        },
-        {
-          type: 'Upload',
-          description: 'File uploaded successfully',
-          fileName: 'anderson_loan_funding.dat',
-          status: 'success',
-        },
-        {
-          type: 'Disconnect',
-          description: 'Connection closed',
-          fileName: '-',
-          status: 'success',
-        },
+      subItems: [
+        { time: '8:48 AM', date: 'Apr 10 2026', type: 'Delivery', description: 'Delivery started', fileName: 'edi.dat' },
+        { time: '8:48 AM', date: 'Apr 10 2026', type: 'Staged', description: 'Staged to temporary mailbox', fileName: 'edi.dat' },
       ],
     },
   ];
 
-  const handleTimelineChange = (panel: string) => {
-    setExpandedTimeline(expandedTimeline === panel ? '' : panel);
+  const toggleItem = (index: number) => {
+    setExpandedItems(prev => {
+      const next = new Set(prev);
+      if (next.has(index)) next.delete(index);
+      else next.add(index);
+      return next;
+    });
   };
 
-  const handleCommentSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (comment.trim()) {
-      // Handle comment submission
-      console.log('Comment submitted:', comment);
-      setComment('');
-    }
-  };
-
-  // Load raw events from the example JSON file
-  const loadRawEvents = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await fetch('/PUSH_PULL_A_pretty.json');
-      if (!response.ok) {
-        throw new Error('Failed to load raw events');
-      }
-      const data = await response.json();
-      setRawEvents(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load raw events');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (rawEventsModalOpen && !rawEvents && !loading) {
-      loadRawEvents();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rawEventsModalOpen]);
-
-  const handleOpenRawEvents = () => {
-    setRawEventsModalOpen(true);
-  };
-
-  const handleCloseRawEvents = () => {
-    setRawEventsModalOpen(false);
-  };
+  const getConnectionRows = (cd: ConnectionDetails): [string, string, string, string][] => [
+    ['Protocol', cd.protocol, 'Host', cd.host],
+    ['Port', cd.port, 'Directory', cd.directory],
+    ['User', cd.user, 'Transfer Size', cd.transferSize],
+    ['Transaction/Route ID', cd.transactionId, cd.interactionLabel, cd.interaction],
+  ];
 
   return (
     <PageLayout selectedNavItem="transfers" hideHeaderBorder backgroundColor="#FAFCFC">
-      {/* Breadcrumb */}
+      {/* Breadcrumb + page heading */}
       <Box sx={{ mb: 3 }}>
         <Box
-          sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer', mb: 2 }}
-          onClick={() => navigate('/')}
+          sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer', mb: 1, width: 'fit-content' }}
+          onClick={() => navigate('/transfers')}
         >
           <ChevronLeftIcon sx={{ fontSize: 20, mr: 0.5 }} />
           <Typography variant="subtitle2">Transfers</Typography>
         </Box>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-          <Typography variant="h6">
-            Transfer Details
-          </Typography>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, pb: 0.5 }}>
-            <Typography variant="caption" color="text.secondary">
-              Last Refreshed: 35 seconds ago
-            </Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Typography variant="h6">Transfer Details</Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Typography variant="caption" color="text.secondary">Last refreshed: Just now</Typography>
             <IconButton size="small" color="secondary" sx={{ p: 0.5 }}>
               <RefreshIcon fontSize="small" />
             </IconButton>
@@ -214,39 +154,32 @@ function TransferDetails() {
 
       {/* Overview Card */}
       <Paper elevation={0} sx={{ p: 3, mb: 3, border: '1px solid', borderColor: 'divider', bgcolor: '#ffffff' }}>
-        {/* Header Section */}
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 4 }}>
-          {/* Left: File Info */}
-          <Box>
-            <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1.5, mb: 0.5 }}>
-              <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                fund_notification_4744.dat
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                888.00 KB
-              </Typography>
-              <Tag
-                label="Outbound"
-                variant="warning"
-                size="small"
-                icon={<ArrowCircleUpIcon sx={{ fontSize: 14 }} />}
-              />
-            </Box>
-            <Typography variant="body2" color="text.secondary" sx={{ fontFamily: 'monospace' }}>
-              S73847958390500035265
-            </Typography>
+        {/* Title row */}
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.5 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+            <Typography variant="h6" fontWeight={600}>{transfer.filename}</Typography>
+            <Typography variant="body2" color="text.secondary">{transfer.fileSize}</Typography>
+            <Tag
+              label="Unknown"
+              variant="neutral"
+              size="small"
+              icon={<HelpOutlineIcon sx={{ fontSize: 14 }} />}
+            />
           </Box>
-
-          {/* Right: Actions */}
           <Stack direction="row" spacing={1} alignItems="center">
-            <Button variant="outlined" size="small" startIcon={<DataObjectIcon />} onClick={handleOpenRawEvents} sx={{ color: 'text.primary', borderColor: 'divider' }}>
-              View code
-            </Button>
-            <Button variant="outlined" size="small" startIcon={<EmailIcon />} sx={{ color: 'text.primary', borderColor: 'divider' }}>
+            <Button
+              variant="outlined"
+              size="small"
+              startIcon={<EmailIcon />}
+              sx={{ color: 'text.primary', borderColor: 'divider' }}
+            >
               Email
             </Button>
-            <IconButton size="small" sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 1 }}>
-              <VisibilityIcon fontSize="small" />
+            <IconButton size="small" sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 1, p: 0.75 }}>
+              <VisibilityIcon sx={{ fontSize: 16 }} />
+            </IconButton>
+            <IconButton size="small" sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 1, p: 0.75 }}>
+              <MoreHorizIcon sx={{ fontSize: 16 }} />
             </IconButton>
             <Tag
               label="Success"
@@ -257,306 +190,257 @@ function TransferDetails() {
           </Stack>
         </Box>
 
-        {/* Flow Section */}
-        <Grid container alignItems="center" spacing={4}>
-          {/* Sent By */}
-          <Grid item xs={5}>
+        {/* Transfer ID / Route ID row */}
+        <Box sx={{ display: 'flex', gap: 5, mb: 3 }}>
+          <Box>
+            <Typography variant="caption" color="text.secondary" display="block">Transfer ID</Typography>
+            <Typography variant="body2">{transfer.transferId}</Typography>
+          </Box>
+          <Box>
+            <Typography variant="caption" color="text.secondary" display="block">Route ID</Typography>
+            <Typography variant="body2">{transfer.routeId}</Typography>
+          </Box>
+        </Box>
+
+        {/* Sent By → Delivered to flow */}
+        <Grid container alignItems="center">
+          <Grid size={5}>
             <Typography variant="caption" color="text.secondary" display="block" gutterBottom>
               Sent By
             </Typography>
             <Typography variant="body1" fontWeight={600} gutterBottom>
-              Loan Management System
+              {sentBy.name}
             </Typography>
-            <Box sx={{ mb: 1.5, display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
-              <Typography variant="body2" component="span" fontWeight={500} sx={{ mr: 1 }}>
-                12:00:32 PM
-              </Typography>
-              <Typography variant="body2" color="text.secondary" component="span" sx={{ mr: 2 }}>
-                Dec 16, 2025
-              </Typography>
-              <Stack direction="row" spacing={1}>
-                <Chips label="Finance" size="small" variant="rounded" />
-                <Chips label="Priority" size="small" variant="rounded" />
-              </Stack>
-            </Box>
+            <Typography variant="body2" color="text.secondary">
+              {sentBy.time}&nbsp;&nbsp;{sentBy.date}
+            </Typography>
           </Grid>
-
-          {/* Arrow */}
-          <Grid item xs={2} sx={{ display: 'flex', justifyContent: 'center' }}>
-            <ArrowForwardIcon sx={{ fontSize: 40, color: 'action.disabled' }} />
+          <Grid size={2} sx={{ display: 'flex', justifyContent: 'center' }}>
+            <ArrowForwardIcon sx={{ fontSize: 36, color: 'action.disabled' }} />
           </Grid>
-
-          {/* Delivered To */}
-          <Grid item xs={5}>
+          <Grid size={5}>
             <Typography variant="caption" color="text.secondary" display="block" gutterBottom>
               Delivered to
             </Typography>
             <Typography variant="body1" fontWeight={600} gutterBottom>
-              Anderson & Sons
+              {deliveredTo.name}
             </Typography>
-            <Box sx={{ mb: 1.5, display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
-              <Typography variant="body2" component="span" fontWeight={500} sx={{ mr: 1 }}>
-                12:01:15 PM
-              </Typography>
-              <Typography variant="body2" color="text.secondary" component="span" sx={{ mr: 2 }}>
-                Dec 16, 2025
-              </Typography>
-              <Stack direction="row" spacing={1} alignItems="center">
-                <Chips label="External" size="small" variant="rounded" />
-                <Chips label="Vendor" size="small" variant="rounded" />
-                <Box sx={{ border: '1px solid', borderColor: 'divider', px: 1, py: 0.25, borderRadius: 4 }}>
-                  <Typography variant="caption" color="text.secondary">+ 4 more</Typography>
-                </Box>
-              </Stack>
-            </Box>
+            <Typography variant="body2" color="text.secondary">
+              {deliveredTo.time}&nbsp;&nbsp;{deliveredTo.date}
+            </Typography>
           </Grid>
         </Grid>
       </Paper>
 
       {/* Timeline Card */}
       <Paper elevation={0} sx={{ p: 3, mb: 3, border: '1px solid', borderColor: 'divider', bgcolor: '#ffffff' }}>
-        <Typography variant="h6" sx={{ fontWeight: 600, mb: 4 }}>
-          Timeline
-        </Typography>
-        <Box>
-          {timelineData.map((item, index) => {
-            const isLastItem = index === timelineData.length - 1;
-            const isExpanded = expandedTimeline === `timeline-${index}`;
+        <Typography variant="h6" fontWeight={600} sx={{ mb: 3 }}>Timeline</Typography>
 
-            return (
-              <Box key={index}>
-                {/* Main Row */}
-                <Box
-                  sx={{ display: 'flex', cursor: 'pointer' }}
-                  onClick={() => handleTimelineChange(`timeline-${index}`)}
-                >
-                  {/* Time Column */}
-                  <Box sx={{ width: 120, textAlign: 'right', pr: 3, pt: 0.5 }}>
-                    <Typography variant="body2" sx={{ fontWeight: 500, lineHeight: 1.2 }}>
-                      {item.time}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary" sx={{ lineHeight: 1.2 }}>
-                      {item.date}
-                    </Typography>
-                  </Box>
+        {timelineData.map((item, index) => {
+          const isExpanded = expandedItems.has(index);
+          const isLastItem = index === timelineData.length - 1;
+          const hasSubItems = (item.subItems?.length ?? 0) > 0;
 
-                  {/* Line Column */}
-                  <Box sx={{ width: 40, position: 'relative', display: 'flex', justifyContent: 'center' }}>
-                    {/* Vertical Line */}
-                    {!isLastItem && (
-                      <Box
-                        sx={{
-                          position: 'absolute',
-                          top: 12,
-                          bottom: -12, // Connect to next item
-                          width: '2px',
-                          bgcolor: 'divider',
-                          left: '50%',
-                          transform: 'translateX(-1px)' // Center perfectly
-                        }}
-                      />
-                    )}
-                    {(isExpanded && item.details) && (
-                      <Box
-                        sx={{
-                          position: 'absolute',
-                          top: 12,
-                          bottom: 0,
-                          width: '2px',
-                          bgcolor: 'divider',
-                          left: '50%',
-                          transform: 'translateX(-1px)'
-                        }}
-                      />
-                    )}
+          return (
+            <Box key={index}>
+              {/* Main timeline row */}
+              <Box
+                sx={{ display: 'flex', cursor: 'pointer' }}
+                onClick={() => toggleItem(index)}
+              >
+                {/* Time column */}
+                <Box sx={{ width: 120, textAlign: 'right', pr: 3, pt: 0.5, flexShrink: 0 }}>
+                  <Typography variant="body2" fontWeight={500} sx={{ lineHeight: 1.3 }}>
+                    {item.time}
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary" sx={{ lineHeight: 1.3 }}>
+                    {item.date}
+                  </Typography>
+                </Box>
 
-                    {/* Main Icon */}
-                    <Box sx={{ position: 'relative', zIndex: 1, bgcolor: '#ffffff' }}>
-                      {item.status === 'success' ? (
-                        <CheckCircleOutlineIcon color="success" sx={{ fontSize: 24, bgcolor: 'white' }} />
-                      ) : (
-                        <Box sx={{ width: 24, height: 24, borderRadius: '50%', border: '2px solid', borderColor: 'primary.main' }} />
-                      )}
-                    </Box>
-                  </Box>
-
-                  {/* Content Column */}
-                  <Box sx={{ flex: 1, pt: 0, pb: 4 }}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                      <Box>
-                        {item.subtitle && (
-                          <Typography variant="caption" color="text.secondary" display="block">
-                            {item.subtitle}
-                          </Typography>
-                        )}
-                        <Typography variant="h6" sx={{ fontWeight: 700, lineHeight: 1.2 }}>
-                          {item.title}
-                        </Typography>
-                      </Box>
-
-                      <Stack direction="row" spacing={2} alignItems="center">
-                        <Typography variant="body2" color="text.secondary">
-                          {item.actionCount} Actions
-                        </Typography>
-                        <Tag
-                          label="Success"
-                          variant="success"
-                          size="medium"
-                          icon={<CheckCircleOutlineIcon fontSize="small" />}
-                        />
-                        <Box sx={{
-                          transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
-                          transition: 'transform 0.2s',
-                          display: 'flex'
-                        }}>
-                          <ExpandMoreIcon color="action" />
-                        </Box>
-                      </Stack>
-                    </Box>
+                {/* Icon + line column */}
+                <Box sx={{ width: 40, position: 'relative', display: 'flex', justifyContent: 'center', flexShrink: 0 }}>
+                  {/* Vertical line below icon */}
+                  {(!isLastItem || isExpanded) && (
+                    <Box sx={{
+                      position: 'absolute',
+                      top: 24,
+                      bottom: isExpanded ? 0 : -16,
+                      width: 2,
+                      bgcolor: 'divider',
+                      left: '50%',
+                      transform: 'translateX(-1px)',
+                    }} />
+                  )}
+                  <Box sx={{ position: 'relative', zIndex: 1, bgcolor: '#ffffff', lineHeight: 0 }}>
+                    <CheckCircleOutlineIcon color="success" sx={{ fontSize: 24 }} />
                   </Box>
                 </Box>
 
-                {/* Expanded Details */}
-                <Collapse in={isExpanded}>
-                  <Box>
-                    {item.details?.map((detail, dIndex) => {
-                      const isLastDetail = dIndex === (item.details?.length || 0) - 1;
-                      const showLineBelow = !isLastDetail || !isLastItem;
-
-                      return (
-                        <Box key={dIndex} sx={{ display: 'flex' }}>
-                          {/* Time Column */}
-                          <Box sx={{ width: 120, textAlign: 'right', pr: 3, pt: 0.5 }}>
-                            <Typography variant="body2" sx={{ fontWeight: 500, lineHeight: 1.2 }}>
-                              {item.time}
-                            </Typography>
-                            <Typography variant="caption" color="text.secondary" sx={{ lineHeight: 1.2 }}>
-                              {item.date}
-                            </Typography>
-                          </Box>
-
-                          {/* Line Column */}
-                          <Box sx={{ width: 40, position: 'relative', display: 'flex', justifyContent: 'center' }}>
-                            <Box
-                              sx={{
-                                position: 'absolute',
-                                top: 0,
-                                bottom: showLineBelow ? 0 : '50%',
-                                width: '2px',
-                                bgcolor: 'divider',
-                                left: '50%',
-                                transform: 'translateX(-1px)'
-                              }}
-                            />
-                            {/* Dot Icon */}
-                            <Box sx={{
-                              position: 'relative',
-                              zIndex: 1,
-                              mt: 0.8,
-                              width: 12,
-                              height: 12,
-                              borderRadius: '50%',
-                              bgcolor: 'success.main',
-                              border: '2px solid white',
-                              boxShadow: '0 0 0 1px #4caf50'
-                            }} />
-                          </Box>
-
-                          {/* Content Column */}
-                          <Box sx={{ flex: 1, pt: 0.5, pb: 3, pr: 2 }}>
-                            <Box sx={{
-                              pb: 2,
-                              borderBottom: isLastDetail ? 'none' : '1px solid',
-                              borderColor: 'divider',
-                              display: 'flex',
-                              alignItems: 'center'
-                            }}>
-                              <Box sx={{ width: '25%' }}>
-                                <Typography variant="body2" fontWeight={700}>
-                                  {detail.type}
-                                </Typography>
-                              </Box>
-                              <Box sx={{ flex: 1 }}>
-                                <Typography variant="body2" color="text.secondary">
-                                  {detail.description}
-                                </Typography>
-                              </Box>
-                              <Box sx={{ width: '25%' }}>
-                                <Typography variant="body2" color="text.secondary">
-                                  {detail.fileName}
-                                </Typography>
-                              </Box>
-                              <Box sx={{ width: 40, textAlign: 'right' }}>
-                                <CheckCircleOutlineIcon color="success" fontSize="small" />
-                              </Box>
-                            </Box>
-                          </Box>
-                        </Box>
-                      );
-                    })}
+                {/* Content column */}
+                <Box sx={{ flex: 1, pb: isExpanded ? 1.5 : 4 }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <Box>
+                      <Typography variant="caption" color="text.secondary" display="block">
+                        {item.subtitle}
+                      </Typography>
+                      <Typography variant="subtitle1" fontWeight={700}>
+                        {item.title}
+                      </Typography>
+                    </Box>
+                    <Stack direction="row" spacing={1.5} alignItems="center" sx={{ ml: 2 }}>
+                      {item.actionCount != null && (
+                        <Typography variant="body2" color="text.secondary">
+                          {item.actionCount} Actions
+                        </Typography>
+                      )}
+                      <Tag
+                        label="Success"
+                        variant="success"
+                        size="medium"
+                        icon={<CheckCircleOutlineIcon fontSize="small" />}
+                      />
+                      <Box sx={{
+                        transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+                        transition: 'transform 0.2s',
+                        display: 'flex',
+                      }}>
+                        <ExpandMoreIcon color="action" />
+                      </Box>
+                    </Stack>
                   </Box>
-                </Collapse>
+                </Box>
               </Box>
-            );
-          })}
-        </Box>
+
+              {/* Expanded section: connection details + sub-items */}
+              <Collapse in={isExpanded}>
+                {/* Connection details grid */}
+                <Box sx={{ display: 'flex' }}>
+                  <Box sx={{ width: 120, flexShrink: 0 }} />
+                  <Box sx={{ width: 40, position: 'relative', display: 'flex', justifyContent: 'center', flexShrink: 0 }}>
+                    <Box sx={{
+                      position: 'absolute',
+                      top: 0,
+                      bottom: 0,
+                      width: 2,
+                      bgcolor: 'divider',
+                      left: '50%',
+                      transform: 'translateX(-1px)',
+                    }} />
+                  </Box>
+                  <Box sx={{ flex: 1, pb: hasSubItems ? 2 : 4, pt: 0.5 }}>
+                    {getConnectionRows(item.connectionDetails).map((row, rowIndex) => (
+                      <Grid container key={rowIndex} sx={{ mb: 0.75 }}>
+                        <Grid size={3}>
+                          <Typography variant="body2" color="text.secondary">{row[0]}</Typography>
+                        </Grid>
+                        <Grid size={3}>
+                          <Typography variant="body2">{row[1]}</Typography>
+                        </Grid>
+                        <Grid size={3}>
+                          <Typography variant="body2" color="text.secondary">{row[2]}</Typography>
+                        </Grid>
+                        <Grid size={3}>
+                          <Typography variant="body2">{row[3]}</Typography>
+                        </Grid>
+                      </Grid>
+                    ))}
+                  </Box>
+                </Box>
+
+                {/* Sub-items */}
+                {item.subItems?.map((subItem, subIndex) => {
+                  const isLastSub = subIndex === (item.subItems?.length ?? 0) - 1;
+                  const showLineBelow = !isLastSub || !isLastItem;
+
+                  return (
+                    <Box key={subIndex} sx={{ display: 'flex' }}>
+                      {/* Time column */}
+                      <Box sx={{ width: 120, textAlign: 'right', pr: 3, pt: 0.5, flexShrink: 0 }}>
+                        <Typography variant="body2" fontWeight={500} sx={{ lineHeight: 1.3 }}>
+                          {subItem.time}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary" sx={{ lineHeight: 1.3 }}>
+                          {subItem.date}
+                        </Typography>
+                      </Box>
+
+                      {/* Dot + line column */}
+                      <Box sx={{ width: 40, position: 'relative', display: 'flex', justifyContent: 'center', flexShrink: 0 }}>
+                        {showLineBelow && (
+                          <Box sx={{
+                            position: 'absolute',
+                            top: 0,
+                            bottom: 0,
+                            width: 2,
+                            bgcolor: 'divider',
+                            left: '50%',
+                            transform: 'translateX(-1px)',
+                          }} />
+                        )}
+                        <Box sx={{
+                          position: 'relative',
+                          zIndex: 1,
+                          mt: 0.75,
+                          width: 12,
+                          height: 12,
+                          borderRadius: '50%',
+                          bgcolor: 'primary.main',
+                          flexShrink: 0,
+                        }} />
+                      </Box>
+
+                      {/* Sub-item content */}
+                      <Box sx={{
+                        flex: 1,
+                        pt: 0.25,
+                        pb: isLastSub ? 0 : 3,
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        justifyContent: 'space-between',
+                        gap: 2,
+                      }}>
+                        <Box sx={{ display: 'flex', gap: 3, alignItems: 'baseline' }}>
+                          <Typography variant="body2" fontWeight={700} sx={{ minWidth: 80 }}>
+                            {subItem.type}
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            {subItem.description}
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            {subItem.fileName}
+                          </Typography>
+                        </Box>
+                        <InfoOutlinedIcon sx={{ fontSize: 16, color: 'primary.main', flexShrink: 0, mt: 0.25 }} />
+                      </Box>
+                    </Box>
+                  );
+                })}
+              </Collapse>
+            </Box>
+          );
+        })}
       </Paper>
 
       {/* Comments Card */}
       <Paper elevation={0} sx={{ p: 3, border: '1px solid', borderColor: 'divider', bgcolor: '#ffffff' }}>
-        <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
-          Comments
-        </Typography>
-        <Box sx={{ mb: 3 }}>
-          <Box sx={{ p: 3, borderRadius: 1, bgcolor: 'background.default' }}>
-            <Typography variant="subtitle1" color="primary">
-              No one has commented yet.
-            </Typography>
-          </Box>
+        <Typography variant="h6" fontWeight={600} sx={{ mb: 2 }}>Comments</Typography>
+        <Box sx={{ py: 3, textAlign: 'center', mb: 2 }}>
+          <Typography variant="body2" color="text.secondary">No one has commented yet.</Typography>
         </Box>
-        <form onSubmit={handleCommentSubmit}>
-          <Grid container spacing={2} alignItems="flex-start">
-            <Grid item>
-              <Avatar sx={{ width: 40, height: 40, cursor: 'pointer' }}>
-                <Typography variant="body1">KB</Typography>
-              </Avatar>
-            </Grid>
-            <Grid item xs sx={{ width: '100%' }}>
-              <TextField
-                fullWidth
-                multiline
-                size="small"
-                placeholder="Say Something..."
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-                minRows={1}
-                sx={{
-                  '& .MuiInputBase-root': {
-                    width: '100%',
-                  },
-                }}
-              />
-            </Grid>
-          </Grid>
-          <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
-            <Button variant="outlined" color="secondary" type="submit" sx={{ width: 'fit-content' }}>
-              Comment
-            </Button>
-          </Box>
-        </form>
+        <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
+          <Avatar sx={{ width: 32, height: 32, fontSize: '0.75rem', flexShrink: 0 }}>KB</Avatar>
+          <TextField
+            fullWidth
+            size="small"
+            placeholder="Say Something..."
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+          />
+        </Box>
       </Paper>
-
-      <RawEventsModal
-        open={rawEventsModalOpen}
-        onClose={handleCloseRawEvents}
-        events={rawEvents}
-        loading={loading}
-        error={error}
-        onRetry={loadRawEvents}
-      />
     </PageLayout>
   );
 }
 
 export default TransferDetails;
-
