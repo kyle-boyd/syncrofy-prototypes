@@ -50,6 +50,9 @@ export type { SearchProps } from './Search';
 export { SegmentedControlItem } from './SegmentedControlItem';
 export type { SegmentedControlItemProps } from './SegmentedControlItem';
 
+export { Select } from './Select';
+export type { SelectProps, SelectOption } from './Select';
+
 export { Slot } from './Slot';
 export type { SlotProps } from './Slot';
 

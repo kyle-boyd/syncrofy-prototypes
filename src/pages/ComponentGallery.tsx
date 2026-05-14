@@ -8,9 +8,9 @@ import {
   List,
   ListItemButton,
   ListItemText,
+  Menu,
   MenuItem,
   Paper,
-  Select,
   Typography,
   useTheme,
   useMediaQuery,
@@ -36,6 +36,7 @@ import {
   PasswordInput,
   Radio,
   Search,
+  Select,
   Spinner,
   Tag,
   Toggle,
@@ -81,6 +82,7 @@ const SIDEBAR_SECTIONS: { id: string; label: string; items: { id: string; label:
       { id: 'password-input', label: 'Password Input' },
       { id: 'radio', label: 'Radio' },
       { id: 'search', label: 'Search' },
+      { id: 'select', label: 'Select' },
       { id: 'spinner', label: 'Spinner' },
       { id: 'tag', label: 'Tag' },
       { id: 'toggle', label: 'Toggle' },
@@ -95,6 +97,7 @@ const SIDEBAR_SECTIONS: { id: string; label: string; items: { id: string; label:
       { id: 'button-group', label: 'Button Group' },
       { id: 'dropdown', label: 'Dropdown' },
       { id: 'list-item', label: 'List Item' },
+      { id: 'menu', label: 'Menu' },
       { id: 'segmented-control', label: 'Segmented Control' },
       { id: 'snackbar', label: 'SnackBar' },
       { id: 'stepper', label: 'Stepper' },
@@ -144,17 +147,10 @@ function ControlBar({ controls }: { controls: ControlDef[] }) {
               {ctrl.label}
             </Typography>
             <Select
-              size="small"
               value={ctrl.value}
-              onChange={(e) => ctrl.onChange(e.target.value)}
-              sx={{ fontSize: 13, minWidth: 110 }}
-            >
-              {ctrl.options.map((opt) => (
-                <MenuItem key={opt.value} value={opt.value} sx={{ fontSize: 13 }}>
-                  {opt.label}
-                </MenuItem>
-              ))}
-            </Select>
+              onChange={(e) => ctrl.onChange(e.target.value as string)}
+              options={ctrl.options}
+            />
           </Box>
         ) : (
           <Box key={i} sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
@@ -297,6 +293,16 @@ export default function ComponentGallery() {
 
   // Typeahead controls
   const [typeaheadDisabled, setTypeaheadDisabled] = useState(false);
+
+  // Select controls
+  const [selectValue, setSelectValue] = useState('1');
+  const [selectSize, setSelectSize] = useState<'small' | 'medium'>('medium');
+  const [selectDisabled, setSelectDisabled] = useState(false);
+
+  // Menu controls
+  const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
+  const [menuSelected, setMenuSelected] = useState<string | null>(null);
+  const [menuDense, setMenuDense] = useState(false);
 
   const handleSelect = (id: string) => {
     setSelectedId(id);
@@ -638,6 +644,39 @@ export default function ComponentGallery() {
             <Search placeholder="Search..." disabled={searchDisabled} />
           </ComponentStory>
         );
+      case 'select':
+        return (
+          <ComponentStory
+            id="select"
+            title="Select"
+            description="Compact form select. Bare MUI Select (no FormControl/InputLabel) — default size small."
+            controls={[
+              {
+                type: 'select',
+                label: 'Size',
+                value: selectSize,
+                onChange: (v) => setSelectSize(v as typeof selectSize),
+                options: [
+                  { value: 'small', label: 'Small' },
+                  { value: 'medium', label: 'Medium' },
+                ],
+              },
+              { type: 'toggle', label: 'Disabled', value: selectDisabled, onChange: setSelectDisabled },
+            ]}
+          >
+            <Select
+              size={selectSize}
+              disabled={selectDisabled}
+              value={selectValue}
+              onChange={(e) => setSelectValue(e.target.value as string)}
+              options={[
+                { value: '1', label: 'Option 1' },
+                { value: '2', label: 'Option 2' },
+                { value: '3', label: 'Option 3' },
+              ]}
+            />
+          </ComponentStory>
+        );
       case 'spinner':
         return (
           <ComponentStory
@@ -796,6 +835,56 @@ export default function ComponentGallery() {
               <ListItem primary="List item" />
               <ListItem primary="With secondary" secondary="Secondary text" />
             </Box>
+          </ComponentStory>
+        );
+      case 'menu':
+        return (
+          <ComponentStory
+            id="menu"
+            title="Menu"
+            description="Button-triggered menu with a dropdown list of actions."
+            controls={[
+              { type: 'toggle', label: 'Dense', value: menuDense, onChange: setMenuDense },
+            ]}
+          >
+            <Button variant="outlined" onClick={(e) => setMenuAnchor(e.currentTarget)}>
+              Open menu
+            </Button>
+            <Menu
+              anchorEl={menuAnchor}
+              open={Boolean(menuAnchor)}
+              onClose={() => setMenuAnchor(null)}
+              MenuListProps={{ dense: menuDense }}
+              slotProps={{
+                paper: {
+                  sx: {
+                    border: 1,
+                    borderColor: 'divider',
+                    borderRadius: 2,
+                    '& .MuiList-root': { px: 0.75, py: 0.75 },
+                    '& .MuiMenuItem-root': { borderRadius: 1.5, my: 0.25 },
+                  },
+                },
+              }}
+            >
+              {['Profile', 'My account', 'Settings', 'Logout'].map((label) => (
+                <MenuItem
+                  key={label}
+                  selected={menuSelected === label}
+                  onClick={() => {
+                    setMenuSelected(label);
+                    setMenuAnchor(null);
+                  }}
+                >
+                  {label}
+                </MenuItem>
+              ))}
+            </Menu>
+            {menuSelected && (
+              <Typography variant="body2" color="text.secondary">
+                Selected: {menuSelected}
+              </Typography>
+            )}
           </ComponentStory>
         );
       case 'segmented-control':

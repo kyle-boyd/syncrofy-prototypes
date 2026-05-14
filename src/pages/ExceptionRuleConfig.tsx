@@ -36,6 +36,7 @@ import {
   IconButton,
 } from '@design-system';
 import { PageLayout } from '../components/PageLayout';
+import PartnerSystemMultiSelect from '../components/PartnerSystemMultiSelect';
 import { Link } from 'react-router-dom';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -45,7 +46,7 @@ interface ExceptionRule {
   name: string;
   lastModifiedBy: string;
   lastModifiedDate: string;
-  partnerSystem: string;
+  partnerSystem: string[];
   severity: 'critical' | 'high' | 'medium' | 'low';
   assignedTo: { initials: string; name: string };
   active: boolean;
@@ -56,33 +57,33 @@ interface CreateRuleForm {
   ruleCategory: string;
   ruleType: string;
   // Late Rule / Missing File fields
-  partnerSystem: string;
+  partnerSystem: string[];
   frequency: string;
   filePattern: string;
   // Frequent Transfer Failures fields
-  failurePartnerSystem: string;
+  failurePartnerSystem: string[];
   failureCount: string;
   failureDuration: string;
   // Expected File Received fields
-  fileMatchPartnerSystem: string;
+  fileMatchPartnerSystem: string[];
   fileMatchPattern: string;
   // Transfer Failure fields
-  singlePartnerSystem: string;
+  singlePartnerSystem: string[];
   singleFilePattern: string;
   retryMode: 'first_failure' | 'after_retries';
   retryCount: string;
   // Zero Byte File fields
-  zeroBytePartnerSystem: string;
+  zeroBytePartnerSystem: string[];
   zeroByteFilePattern: string;
   // Staged Not Picked Up fields
-  stagedPartnerSystem: string;
+  stagedPartnerSystem: string[];
   stagedDuration: string;
   stagedFilePattern: string;
   // Staged File Downloaded fields
-  stagedDownloadedPartnerSystem: string;
+  stagedDownloadedPartnerSystem: string[];
   stagedDownloadedFilePattern: string;
   // File Delivered to Partner fields
-  deliveredPartnerSystem: string;
+  deliveredPartnerSystem: string[];
   deliveredFilePattern: string;
   // Common fields
   assignedTo: string;
@@ -95,21 +96,22 @@ interface CreateRuleForm {
 // ─── Mock Data ────────────────────────────────────────────────────────────────
 
 const mockRules: ExceptionRule[] = [
-  { id: '1',  name: 'SAP Krishna was supposed to send a file named by Every hour, every day',                                               lastModifiedBy: 'Krishna Gajula',    lastModifiedDate: 'February 10, 2026 at 10:22',  partnerSystem: 'SAP Krishna',                       severity: 'medium',   assignedTo: { initials: 'KG', name: 'Krishna' },    active: true },
-  { id: '2',  name: '1234 was supposed to send a file named 123123.12312 by 12:00 PM, on the last day of the month',                       lastModifiedBy: 'Igor Kovalev',      lastModifiedDate: 'February 5, 2026 at 08:34',   partnerSystem: '1234',                              severity: 'critical', assignedTo: { initials: 'IK', name: 'Igor' },       active: true },
-  { id: '3',  name: '1234 was supposed to send a file named by Every hour, every day',                                                     lastModifiedBy: 'Rahul Pancholi',    lastModifiedDate: 'January 29, 2026 at 07:42',   partnerSystem: '1234',                              severity: 'critical', assignedTo: { initials: 'RP', name: 'Rahul' },      active: true },
-  { id: '4',  name: '1234 was supposed to send a file named by 08:00 AM, every weekday',                                                   lastModifiedBy: 'Krishna Gajula',    lastModifiedDate: 'January 29, 2026 at 07:25',   partnerSystem: '1234',                              severity: 'critical', assignedTo: { initials: 'AA', name: 'Abhi' },       active: true },
-  { id: '5',  name: 'COE_Test_Internal_System_For_Testing was supposed to send a file named by 05:00 PM, only on Friday',                  lastModifiedBy: 'Vince Tkac',        lastModifiedDate: 'January 28, 2026 at 08:47',   partnerSystem: 'COE_Test_Internal_System_For_Testing', severity: 'critical', assignedTo: { initials: 'AR', name: 'Arthur' },   active: true },
-  { id: '6',  name: '1234 was supposed to send a file named by Every hour, every day',                                                     lastModifiedBy: 'Krishna Gajula',    lastModifiedDate: 'January 15, 2026 at 11:12',   partnerSystem: '1234',                              severity: 'critical', assignedTo: { initials: 'SS', name: 'shubhankar' }, active: true },
-  { id: '7',  name: 'test file name',                                                                                                      lastModifiedBy: 'shubhankar Sengupta',lastModifiedDate: 'January 12, 2026 at 11:54',  partnerSystem: '1234',                              severity: 'critical', assignedTo: { initials: 'SS', name: 'shubhankar' }, active: false },
-  { id: '8',  name: '1234 was supposed to send a file named by 05:00 PM, on the last day of the month',                                    lastModifiedBy: 'Rahul Pancholi',    lastModifiedDate: 'January 29, 2026 at 06:49',   partnerSystem: '1234',                              severity: 'critical', assignedTo: { initials: 'RP', name: 'Rahul' },      active: false },
-  { id: '9',  name: 'Anderson & Sons was supposed to send a file named *.txt by Every hour, every day',                                    lastModifiedBy: 'Krishna Gajula',    lastModifiedDate: 'January 27, 2026 at 09:45',   partnerSystem: 'Anderson & Sons',                   severity: 'critical', assignedTo: { initials: 'AK', name: 'Avinash' },    active: true },
-  { id: '10', name: '1234 was supposed to send a file named *.* by 08:00 AM, only on Friday',                                             lastModifiedBy: 'kamal Singh',       lastModifiedDate: 'January 6, 2026 at 06:48',    partnerSystem: '1234',                              severity: 'critical', assignedTo: { initials: 'MK', name: 'Mayank' },     active: true },
-  { id: '11', name: '1234 was supposed to send a file named *.* by 12:00 PM, only on Friday',                                             lastModifiedBy: 'kamal Singh',       lastModifiedDate: 'January 7, 2026 at 10:00',    partnerSystem: '1234',                              severity: 'medium',   assignedTo: { initials: 'MK', name: 'Mayank' },     active: true },
-  { id: '12', name: 'John Deere US was supposed to send a file named report.txt by 05:00 PM, only on Friday',                             lastModifiedBy: 'Vince Tkac',        lastModifiedDate: 'December 19, 2025 at 08:34',  partnerSystem: 'John Deere US',                     severity: 'critical', assignedTo: { initials: 'VT', name: 'Vince' },      active: true },
-  { id: '13', name: 'John Deere rule every hour',                                                                                         lastModifiedBy: 'Krishna Gajula',    lastModifiedDate: 'January 29, 2026 at 07:21',   partnerSystem: 'John Deere Inc.',                   severity: 'high',     assignedTo: { initials: 'RP', name: 'Rahul' },      active: true },
-  { id: '14', name: 'AWS S3 was supposed to send a file named ARTHURTEST by Every hour, every day',                                       lastModifiedBy: 'Arthur Rafal',      lastModifiedDate: 'December 17, 2025 at 14:02',  partnerSystem: 'AWS S3',                            severity: 'critical', assignedTo: { initials: 'AR', name: 'Arthur' },     active: true },
-  { id: '15', name: '1234 was supposed to send a file named abc.txt by 08:00 AM, every day',                                              lastModifiedBy: 'kamal Singh',       lastModifiedDate: 'February 6, 2026 at 07:20',   partnerSystem: '1234',                              severity: 'critical', assignedTo: { initials: 'TS', name: 'Tracy' },      active: true },
+  { id: '1',  name: 'Finance LOB partners were supposed to send a file named *.csv by Every hour, every day',                              lastModifiedBy: 'Krishna Gajula',    lastModifiedDate: 'February 10, 2026 at 10:22',  partnerSystem: ['SAP Krishna', 'Goldman Sachs', 'Fidelity', 'Northern Trust'], severity: 'medium',   assignedTo: { initials: 'KG', name: 'Krishna' },    active: true },
+  { id: '2',  name: '1234 was supposed to send a file named 123123.12312 by 12:00 PM, on the last day of the month',                       lastModifiedBy: 'Igor Kovalev',      lastModifiedDate: 'February 5, 2026 at 08:34',   partnerSystem: ['1234'],                              severity: 'critical', assignedTo: { initials: 'IK', name: 'Igor' },       active: true },
+  { id: '3',  name: 'Energy LOB rule — every hour',                                                                                        lastModifiedBy: 'Rahul Pancholi',    lastModifiedDate: 'January 29, 2026 at 07:42',   partnerSystem: ['Summit Energy Partners', 'AWS S3', 'Mainframe'], severity: 'critical', assignedTo: { initials: 'RP', name: 'Rahul' },      active: true },
+  { id: '4',  name: '1234 was supposed to send a file named by 08:00 AM, every weekday',                                                   lastModifiedBy: 'Krishna Gajula',    lastModifiedDate: 'January 29, 2026 at 07:25',   partnerSystem: ['1234'],                              severity: 'critical', assignedTo: { initials: 'AA', name: 'Abhi' },       active: true },
+  { id: '5',  name: 'COE_Test_Internal_System_For_Testing was supposed to send a file named by 05:00 PM, only on Friday',                  lastModifiedBy: 'Vince Tkac',        lastModifiedDate: 'January 28, 2026 at 08:47',   partnerSystem: ['COE_Test_Internal_System_For_Testing'], severity: 'critical', assignedTo: { initials: 'AR', name: 'Arthur' },   active: true },
+  { id: '6',  name: 'Manufacturing LOB rule — every hour, every day',                                                                      lastModifiedBy: 'Krishna Gajula',    lastModifiedDate: 'January 15, 2026 at 11:12',   partnerSystem: ['Acme Corp', 'Delta Manufacturing', 'John Deere', 'SAP Krishna'], severity: 'critical', assignedTo: { initials: 'SS', name: 'shubhankar' }, active: true },
+  { id: '7',  name: 'test file name',                                                                                                      lastModifiedBy: 'shubhankar Sengupta',lastModifiedDate: 'January 12, 2026 at 11:54',  partnerSystem: ['1234'],                              severity: 'critical', assignedTo: { initials: 'SS', name: 'shubhankar' }, active: false },
+  { id: '8',  name: '1234 was supposed to send a file named by 05:00 PM, on the last day of the month',                                    lastModifiedBy: 'Rahul Pancholi',    lastModifiedDate: 'January 29, 2026 at 06:49',   partnerSystem: ['1234'],                              severity: 'critical', assignedTo: { initials: 'RP', name: 'Rahul' },      active: false },
+  { id: '9',  name: 'Anderson & Sons + Acme was supposed to send a file named *.txt by Every hour, every day',                             lastModifiedBy: 'Krishna Gajula',    lastModifiedDate: 'January 27, 2026 at 09:45',   partnerSystem: ['Anderson & Sons', 'Acme Corp'],      severity: 'critical', assignedTo: { initials: 'AK', name: 'Avinash' },    active: true },
+  { id: '10', name: '1234 was supposed to send a file named *.* by 08:00 AM, only on Friday',                                             lastModifiedBy: 'kamal Singh',       lastModifiedDate: 'January 6, 2026 at 06:48',    partnerSystem: ['1234'],                              severity: 'critical', assignedTo: { initials: 'MK', name: 'Mayank' },     active: true },
+  { id: '11', name: '1234 was supposed to send a file named *.* by 12:00 PM, only on Friday',                                             lastModifiedBy: 'kamal Singh',       lastModifiedDate: 'January 7, 2026 at 10:00',    partnerSystem: ['1234'],                              severity: 'medium',   assignedTo: { initials: 'MK', name: 'Mayank' },     active: true },
+  { id: '12', name: 'John Deere US + Mainframe was supposed to send a file named report.txt by 05:00 PM, only on Friday',                 lastModifiedBy: 'Vince Tkac',        lastModifiedDate: 'December 19, 2025 at 08:34',  partnerSystem: ['John Deere US', 'Mainframe'],         severity: 'critical', assignedTo: { initials: 'VT', name: 'Vince' },      active: true },
+  { id: '13', name: 'John Deere rule every hour',                                                                                         lastModifiedBy: 'Krishna Gajula',    lastModifiedDate: 'January 29, 2026 at 07:21',   partnerSystem: ['John Deere Inc.'],                   severity: 'high',     assignedTo: { initials: 'RP', name: 'Rahul' },      active: true },
+  { id: '14', name: 'AWS S3 + Trade Settlement was supposed to send a file named ARTHURTEST by Every hour, every day',                    lastModifiedBy: 'Arthur Rafal',      lastModifiedDate: 'December 17, 2025 at 14:02',  partnerSystem: ['AWS S3', 'Trade Settlement Platform', 'Core Banking System'], severity: 'critical', assignedTo: { initials: 'AR', name: 'Arthur' },     active: true },
+  { id: '15', name: '1234 was supposed to send a file named abc.txt by 08:00 AM, every day',                                              lastModifiedBy: 'kamal Singh',       lastModifiedDate: 'February 6, 2026 at 07:20',   partnerSystem: ['1234'],                              severity: 'critical', assignedTo: { initials: 'TS', name: 'Tracy' },      active: true },
+  { id: '16', name: 'Global rule — applies to every partner and system',                                                                   lastModifiedBy: 'Vince Tkac',        lastModifiedDate: 'February 12, 2026 at 09:15',  partnerSystem: ['SAP Krishna', 'AWS S3', 'Mainframe', 'Core Banking System', 'Trade Settlement Platform', 'John Deere', 'Anderson & Sons', 'Summit Energy Partners', 'Acme Corp', 'Goldman Sachs', 'Fidelity', 'Northern Trust', 'Delta Manufacturing', '1234', 'COE_Test_Internal_System'], severity: 'high',     assignedTo: { initials: 'VT', name: 'Vince' },      active: true },
 ];
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -127,26 +129,26 @@ const defaultForm: CreateRuleForm = {
   enabled: true,
   ruleCategory: 'all',
   ruleType: 'missing',
-  partnerSystem: '',
+  partnerSystem: [],
   frequency: '',
   filePattern: '',
-  failurePartnerSystem: '',
+  failurePartnerSystem: [],
   failureCount: '',
   failureDuration: '',
-  fileMatchPartnerSystem: '',
+  fileMatchPartnerSystem: [],
   fileMatchPattern: '',
-  singlePartnerSystem: '',
+  singlePartnerSystem: [],
   singleFilePattern: '',
   retryMode: 'first_failure',
   retryCount: '',
-  zeroBytePartnerSystem: '',
+  zeroBytePartnerSystem: [],
   zeroByteFilePattern: '',
-  stagedPartnerSystem: '',
+  stagedPartnerSystem: [],
   stagedDuration: '',
   stagedFilePattern: '',
-  stagedDownloadedPartnerSystem: '',
+  stagedDownloadedPartnerSystem: [],
   stagedDownloadedFilePattern: '',
-  deliveredPartnerSystem: '',
+  deliveredPartnerSystem: [],
   deliveredFilePattern: '',
   assignedTo: 'me',
   severity: 'critical',
@@ -156,16 +158,6 @@ const defaultForm: CreateRuleForm = {
 };
 
 // ─── Module-level constants and helpers (must NOT be defined inside the component) ──
-
-const PARTNER_OPTIONS = [
-  { value: 'sap',       label: 'SAP Krishna' },
-  { value: 'aws',       label: 'AWS S3' },
-  { value: 'jd',        label: 'John Deere' },
-  { value: '1234',      label: '1234' },
-  { value: 'anderson',  label: 'Anderson & Sons' },
-  { value: 'summit',    label: 'Summit Energy Partners' },
-  { value: 'mainframe', label: 'Mainframe' },
-];
 
 interface RuleFieldRowProps {
   filled: boolean;
@@ -220,6 +212,7 @@ function ExceptionRuleConfig() {
   const [form, setForm] = useState<CreateRuleForm>(defaultForm);
   const [viewMode, setViewMode] = useState<'list' | 'grid' | 'table'>('list');
   const [filterStates, setFilterStates] = useState<Record<string, string>>({});
+  const [partnerSystemFilter, setPartnerSystemFilter] = useState<string[]>([]);
 
   const isAllSelected   = selected.length === rules.length;
   const isIndeterminate = selected.length > 0 && selected.length < rules.length;
@@ -243,16 +236,6 @@ function ExceptionRuleConfig() {
   // ── Filter defs ─────────────────────────────────────────────────────────────
 
   const filterDefs = [
-    {
-      id: 'partnerSystem',
-      label: 'Partner/System',
-      options: [
-        { value: '', label: 'All' },
-        { value: 'sap', label: 'SAP Krishna' },
-        { value: 'aws', label: 'AWS S3' },
-        { value: 'jd',  label: 'John Deere US' },
-      ],
-    },
     {
       id: 'createdBy',
       label: 'Created by',
@@ -362,15 +345,24 @@ function ExceptionRuleConfig() {
     {
       id: 'partnerSystem',
       label: 'Partner or System',
-      width: 220,
-      render: (row) => (
-        <Tag
-          label={row.partnerSystem}
-          variant="neutral"
-          size="small"
-          hideIcon
-        />
-      ),
+      width: 260,
+      render: (row) => {
+        const MAX_VISIBLE = 2;
+        const visible = row.partnerSystem.slice(0, MAX_VISIBLE);
+        const remaining = row.partnerSystem.length - visible.length;
+        return (
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, alignItems: 'center' }}>
+            {visible.map((p) => (
+              <Tag key={p} label={p} variant="neutral" size="small" hideIcon />
+            ))}
+            {remaining > 0 && (
+              <Box title={row.partnerSystem.slice(MAX_VISIBLE).join(', ')} sx={{ display: 'inline-flex' }}>
+                <Tag label={`+${remaining}`} variant="neutral" size="small" hideIcon />
+              </Box>
+            )}
+          </Box>
+        );
+      },
     },
     {
       id: 'severity',
@@ -423,14 +415,14 @@ function ExceptionRuleConfig() {
 
   const canCreate = (() => {
     switch (form.ruleType) {
-      case 'frequent_failures':    return form.failurePartnerSystem !== '' && form.failureCount !== '' && form.failureDuration !== '';
-      case 'single_failure':       return form.singlePartnerSystem !== '';
-      case 'zero_byte':            return form.zeroBytePartnerSystem !== '';
-      case 'staged_not_picked_up': return form.stagedPartnerSystem !== '' && form.stagedDuration !== '';
-      case 'file_match':           return form.fileMatchPartnerSystem !== '' && form.fileMatchPattern !== '';
-      case 'staged_downloaded':    return form.stagedDownloadedPartnerSystem !== '' && form.stagedDownloadedFilePattern !== '';
-      case 'file_delivered':       return form.deliveredPartnerSystem !== '' && form.deliveredFilePattern !== '';
-      default:                     return form.partnerSystem !== '' && form.frequency !== '';
+      case 'frequent_failures':    return form.failurePartnerSystem.length > 0 && form.failureCount !== '' && form.failureDuration !== '';
+      case 'single_failure':       return form.singlePartnerSystem.length > 0;
+      case 'zero_byte':            return form.zeroBytePartnerSystem.length > 0;
+      case 'staged_not_picked_up': return form.stagedPartnerSystem.length > 0 && form.stagedDuration !== '';
+      case 'file_match':           return form.fileMatchPartnerSystem.length > 0 && form.fileMatchPattern !== '';
+      case 'staged_downloaded':    return form.stagedDownloadedPartnerSystem.length > 0 && form.stagedDownloadedFilePattern !== '';
+      case 'file_delivered':       return form.deliveredPartnerSystem.length > 0 && form.deliveredFilePattern !== '';
+      default:                     return form.partnerSystem.length > 0 && form.frequency !== '';
     }
   })();
 
@@ -488,6 +480,12 @@ function ExceptionRuleConfig() {
         }}
       >
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+          <PartnerSystemMultiSelect
+            value={partnerSystemFilter}
+            onChange={setPartnerSystemFilter}
+            placeholder="Partner/System"
+            width={160}
+          />
           {filterDefs.map((f) => (
             <Dropdown
               key={f.id}
@@ -739,13 +737,11 @@ function ExceptionRuleConfig() {
           {/* Missing File */}
           {form.ruleType === 'missing' && (
             <>
-              <RuleFieldRow filled={!!form.partnerSystem} label="Partner or System" tooltip="Select the partner or system that should be sending files on the defined schedule.">
-                <FormControl size="small" sx={{ width: 240 }}>
-                  <InputLabel>Select Partner or System</InputLabel>
-                  <Select label="Select Partner or System" value={form.partnerSystem} onChange={(e) => setForm((f) => ({ ...f, partnerSystem: e.target.value }))}>
-                    {PARTNER_OPTIONS.map((o) => <MuiMenuItem key={o.value} value={o.value}>{o.label}</MuiMenuItem>)}
-                  </Select>
-                </FormControl>
+              <RuleFieldRow filled={form.partnerSystem.length > 0} label="Partner or System" tooltip="Select the partner or system that should be sending files on the defined schedule.">
+                <PartnerSystemMultiSelect
+                  value={form.partnerSystem}
+                  onChange={(next) => setForm((f) => ({ ...f, partnerSystem: next }))}
+                />
               </RuleFieldRow>
 
               <RuleFieldRow filled={!!form.frequency} label="Expected Frequency" tooltip="How often the file should arrive. An exception is raised if the file has not appeared by this schedule.">
@@ -770,13 +766,11 @@ function ExceptionRuleConfig() {
           {/* Frequent Transfer Failures */}
           {form.ruleType === 'frequent_failures' && (
             <>
-              <RuleFieldRow filled={!!form.failurePartnerSystem} label="Partner or System" tooltip="Select the partner or system whose incoming or outgoing transfers should be monitored for failure spikes.">
-                <FormControl size="small" sx={{ width: 240 }}>
-                  <InputLabel>Select Partner or System</InputLabel>
-                  <Select label="Select Partner or System" value={form.failurePartnerSystem} onChange={(e) => setForm((f) => ({ ...f, failurePartnerSystem: e.target.value }))}>
-                    {PARTNER_OPTIONS.map((o) => <MuiMenuItem key={o.value} value={o.value}>{o.label}</MuiMenuItem>)}
-                  </Select>
-                </FormControl>
+              <RuleFieldRow filled={form.failurePartnerSystem.length > 0} label="Partner or System" tooltip="Select the partner or system whose incoming or outgoing transfers should be monitored for failure spikes.">
+                <PartnerSystemMultiSelect
+                  value={form.failurePartnerSystem}
+                  onChange={(next) => setForm((f) => ({ ...f, failurePartnerSystem: next }))}
+                />
               </RuleFieldRow>
 
               <RuleFieldRow filled={!!form.failureCount} label="Failed Transfers" tooltip="Enter the number of failed transfers that must occur within the selected time window to trigger this rule.">
@@ -799,13 +793,11 @@ function ExceptionRuleConfig() {
           {/* Expected File Received */}
           {form.ruleType === 'file_match' && (
             <>
-              <RuleFieldRow filled={!!form.fileMatchPartnerSystem} label="Partner or System" tooltip="Select the partner or system whose incoming transfers should be monitored for matching files.">
-                <FormControl size="small" sx={{ width: 240 }}>
-                  <InputLabel>Select Partner or System</InputLabel>
-                  <Select label="Select Partner or System" value={form.fileMatchPartnerSystem} onChange={(e) => setForm((f) => ({ ...f, fileMatchPartnerSystem: e.target.value }))}>
-                    {PARTNER_OPTIONS.map((o) => <MuiMenuItem key={o.value} value={o.value}>{o.label}</MuiMenuItem>)}
-                  </Select>
-                </FormControl>
+              <RuleFieldRow filled={form.fileMatchPartnerSystem.length > 0} label="Partner or System" tooltip="Select the partner or system whose incoming transfers should be monitored for matching files.">
+                <PartnerSystemMultiSelect
+                  value={form.fileMatchPartnerSystem}
+                  onChange={(next) => setForm((f) => ({ ...f, fileMatchPartnerSystem: next }))}
+                />
               </RuleFieldRow>
 
               <RuleFieldRow filled={!!form.fileMatchPattern} label="File Name Pattern" tooltip="Enter the file name pattern to watch for. An exception is triggered when a file matching this pattern is received, e.g. invoice_*.xml.">
@@ -817,13 +809,11 @@ function ExceptionRuleConfig() {
           {/* Transfer Failure */}
           {form.ruleType === 'single_failure' && (
             <>
-              <RuleFieldRow filled={!!form.singlePartnerSystem} label="Partner or System" tooltip="Select the partner or system to monitor. An exception will be created when a transfer failure is detected.">
-                <FormControl size="small" sx={{ width: 240 }}>
-                  <InputLabel>Select Partner or System</InputLabel>
-                  <Select label="Select Partner or System" value={form.singlePartnerSystem} onChange={(e) => setForm((f) => ({ ...f, singlePartnerSystem: e.target.value }))}>
-                    {PARTNER_OPTIONS.map((o) => <MuiMenuItem key={o.value} value={o.value}>{o.label}</MuiMenuItem>)}
-                  </Select>
-                </FormControl>
+              <RuleFieldRow filled={form.singlePartnerSystem.length > 0} label="Partner or System" tooltip="Select the partner or system to monitor. An exception will be created when a transfer failure is detected.">
+                <PartnerSystemMultiSelect
+                  value={form.singlePartnerSystem}
+                  onChange={(next) => setForm((f) => ({ ...f, singlePartnerSystem: next }))}
+                />
               </RuleFieldRow>
 
               <RuleFieldRow filled={true} required={false} label="Trigger Condition" tooltip="Choose when to trigger the exception: immediately on the first failure, or only after a specified number of retries.">
@@ -864,13 +854,11 @@ function ExceptionRuleConfig() {
           {/* Zero Byte File */}
           {form.ruleType === 'zero_byte' && (
             <>
-              <RuleFieldRow filled={!!form.zeroBytePartnerSystem} label="Partner or System" tooltip="Select the partner or system to monitor for incoming or outgoing zero byte files.">
-                <FormControl size="small" sx={{ width: 240 }}>
-                  <InputLabel>Select Partner or System</InputLabel>
-                  <Select label="Select Partner or System" value={form.zeroBytePartnerSystem} onChange={(e) => setForm((f) => ({ ...f, zeroBytePartnerSystem: e.target.value }))}>
-                    {PARTNER_OPTIONS.map((o) => <MuiMenuItem key={o.value} value={o.value}>{o.label}</MuiMenuItem>)}
-                  </Select>
-                </FormControl>
+              <RuleFieldRow filled={form.zeroBytePartnerSystem.length > 0} label="Partner or System" tooltip="Select the partner or system to monitor for incoming or outgoing zero byte files.">
+                <PartnerSystemMultiSelect
+                  value={form.zeroBytePartnerSystem}
+                  onChange={(next) => setForm((f) => ({ ...f, zeroBytePartnerSystem: next }))}
+                />
               </RuleFieldRow>
 
               <RuleFieldRow filled={!!form.zeroByteFilePattern} required={false} label="File Name Pattern" tooltip="Optionally match only files whose name matches this pattern, e.g. *.txt.">
@@ -882,13 +870,11 @@ function ExceptionRuleConfig() {
           {/* Staged but Not Picked Up */}
           {form.ruleType === 'staged_not_picked_up' && (
             <>
-              <RuleFieldRow filled={!!form.stagedPartnerSystem} label="Partner or System" tooltip="Select the partner or system whose staged files should be monitored for pickup delays.">
-                <FormControl size="small" sx={{ width: 240 }}>
-                  <InputLabel>Select Partner or System</InputLabel>
-                  <Select label="Select Partner or System" value={form.stagedPartnerSystem} onChange={(e) => setForm((f) => ({ ...f, stagedPartnerSystem: e.target.value }))}>
-                    {PARTNER_OPTIONS.map((o) => <MuiMenuItem key={o.value} value={o.value}>{o.label}</MuiMenuItem>)}
-                  </Select>
-                </FormControl>
+              <RuleFieldRow filled={form.stagedPartnerSystem.length > 0} label="Partner or System" tooltip="Select the partner or system whose staged files should be monitored for pickup delays.">
+                <PartnerSystemMultiSelect
+                  value={form.stagedPartnerSystem}
+                  onChange={(next) => setForm((f) => ({ ...f, stagedPartnerSystem: next }))}
+                />
               </RuleFieldRow>
 
               <RuleFieldRow filled={!!form.stagedDuration} label="Staged Duration" tooltip="How long a file can remain staged and not picked up before an exception is triggered.">
@@ -913,13 +899,11 @@ function ExceptionRuleConfig() {
           {/* Staged File Downloaded */}
           {form.ruleType === 'staged_downloaded' && (
             <>
-              <RuleFieldRow filled={!!form.stagedDownloadedPartnerSystem} label="Partner or System" tooltip="Select the partner or system whose staged files should be monitored for downloads.">
-                <FormControl size="small" sx={{ width: 240 }}>
-                  <InputLabel>Select Partner or System</InputLabel>
-                  <Select label="Select Partner or System" value={form.stagedDownloadedPartnerSystem} onChange={(e) => setForm((f) => ({ ...f, stagedDownloadedPartnerSystem: e.target.value }))}>
-                    {PARTNER_OPTIONS.map((o) => <MuiMenuItem key={o.value} value={o.value}>{o.label}</MuiMenuItem>)}
-                  </Select>
-                </FormControl>
+              <RuleFieldRow filled={form.stagedDownloadedPartnerSystem.length > 0} label="Partner or System" tooltip="Select the partner or system whose staged files should be monitored for downloads.">
+                <PartnerSystemMultiSelect
+                  value={form.stagedDownloadedPartnerSystem}
+                  onChange={(next) => setForm((f) => ({ ...f, stagedDownloadedPartnerSystem: next }))}
+                />
               </RuleFieldRow>
 
               <RuleFieldRow filled={!!form.stagedDownloadedFilePattern} label="File Name Pattern" tooltip="Enter the file name pattern to watch for. An exception is triggered when a staged file matching this pattern is downloaded, e.g. report_*.csv.">
@@ -931,13 +915,11 @@ function ExceptionRuleConfig() {
           {/* File Delivered to Partner */}
           {form.ruleType === 'file_delivered' && (
             <>
-              <RuleFieldRow filled={!!form.deliveredPartnerSystem} label="Partner or System" tooltip="Select the partner or system to monitor. An exception is triggered when a file matching the pattern is delivered to this destination.">
-                <FormControl size="small" sx={{ width: 240 }}>
-                  <InputLabel>Select Partner or System</InputLabel>
-                  <Select label="Select Partner or System" value={form.deliveredPartnerSystem} onChange={(e) => setForm((f) => ({ ...f, deliveredPartnerSystem: e.target.value }))}>
-                    {PARTNER_OPTIONS.map((o) => <MuiMenuItem key={o.value} value={o.value}>{o.label}</MuiMenuItem>)}
-                  </Select>
-                </FormControl>
+              <RuleFieldRow filled={form.deliveredPartnerSystem.length > 0} label="Partner or System" tooltip="Select the partner or system to monitor. An exception is triggered when a file matching the pattern is delivered to this destination.">
+                <PartnerSystemMultiSelect
+                  value={form.deliveredPartnerSystem}
+                  onChange={(next) => setForm((f) => ({ ...f, deliveredPartnerSystem: next }))}
+                />
               </RuleFieldRow>
 
               <RuleFieldRow filled={!!form.deliveredFilePattern} label="File Name Pattern" tooltip="Enter the file name pattern to watch for. An exception is triggered when a file matching this pattern is delivered to the selected partner or system, e.g. invoice_*.xml.">

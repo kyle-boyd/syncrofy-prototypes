@@ -7,6 +7,7 @@ import ComponentGallery from './pages/ComponentGallery';
 import TransferDetails from './pages/TransferDetails';
 import Transfers from './pages/Transfers';
 import Partners from './pages/Partners';
+import PartnersCategorize from './pages/PartnersCategorize';
 import PartnerDetail from './pages/PartnerDetail';
 import IntegrationCloud from './pages/IntegrationCloud';
 import Settings from './pages/Settings';
@@ -26,6 +27,7 @@ import DashboardDetail from './pages/DashboardDetail';
 import IconButtonTooltips from './pages/IconButtonTooltips';
 import AITransfers from './pages/ai/AITransfers';
 import AIFingerprints from './pages/ai/AIFingerprints';
+import { supplyChainRoutes } from './pages/supplychainoverhaul';
 
 function App() {
   return (
@@ -40,6 +42,7 @@ function App() {
           <Route path="/transfers" element={<Transfers />} />
           <Route path="/transfers/:id" element={<TransferDetails />} />
           <Route path="/partners" element={<Partners />} />
+          <Route path="/partners/categorize" element={<PartnersCategorize />} />
           <Route path="/partners/:id" element={<PartnerDetail />} />
           <Route path="/integration-cloud" element={<IntegrationCloud />} />
           <Route path="/settings" element={<Settings />} />
@@ -57,6 +60,7 @@ function App() {
           <Route path="/icon-button-tooltips" element={<IconButtonTooltips />} />
           <Route path="/ai/transfers" element={<AITransfers />} />
           <Route path="/ai/fingerprints" element={<AIFingerprints />} />
+          {supplyChainRoutes}
         </Routes>
       </BrowserRouter>
     </ThemeProvider>

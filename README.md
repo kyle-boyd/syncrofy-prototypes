@@ -119,11 +119,71 @@ The design system includes a wide range of components:
 
 ## Theme
 
-The design system theme is automatically applied via the `ThemeProvider` in `App.tsx`. The theme includes:
-- Custom color palette
-- Typography settings
-- Component styling overrides
-- Custom elevation/shadow values
+The design system theme is automatically applied via the `ThemeProvider` in `App.tsx`. The theme includes a custom color palette, typography scale, component overrides, and elevation values.
+
+### Color tokens (MUI palette)
+
+Access via `theme.palette.<token>` or sx props (`color="primary.main"`, `bgcolor="grey.100"`).
+
+| Token | Value |
+| --- | --- |
+| `primary.main` / `light` / `dark` | `#266079` / `#5a85a1` / `#17374a` |
+| `secondary.main` / `light` / `dark` | `#424242` / `#6d6d6d` / `#1b1b1b` |
+| `error.main` / `light` / `dark` | `#C73A3A` / `#e26b6b` / `#a22b2b` |
+| `warning.main` / `light` / `dark` | `#8F6C1A` / `#b59754` / `#634b12` |
+| `info.main` / `light` / `dark` | `#0091EA` / `#33A7EF` / `#0066A4` |
+| `success.main` / `light` / `dark` | `#067A57` / `#52a288` / `#045c41` |
+| `grey.50` … `grey.900` | `#F9FAFB`, `#F3F4F6`, `#E5E7EB`, `#D1D5DB`, `#9CA3AF`, `#6B7280`, `#4B5563`, `#374151`, `#1F2937`, `#111827` |
+| `text.primary` / `secondary` / `disabled` | `#111827` / `#6B7280` / `#9CA3AF` |
+| `background.default` / `paper` | `#FAFCFC` / `#FFFFFF` |
+| `divider` | `#E5E7EB` |
+
+### Typography tokens
+
+Font family: **Geist, sans-serif**. Use via `<Typography variant="...">`.
+
+| Variant | Size | Weight | Line height |
+| --- | --- | --- | --- |
+| `h1` | 96px | 300 | 116.7px |
+| `h2` | 60px | 300 | 120px |
+| `h3` | 48px | 400 | 116.7px |
+| `h4` | 32px | — | 48px |
+| `h5` | 24px | 400 | 32px |
+| `h6` | 20px | 600 | 1.6 |
+| `subtitle1` | 16px | 400 | 1.75 |
+| `subtitle2` | 14px | 500 | 1.57 |
+| `body1` | 16px | 400 | 1.5 |
+| `body2` | 14px | 400 | 1.43 |
+| `body2Medium` | 14px | 500 | 1.43 |
+| `body2Bold` | 14px | 700 | 1.43 |
+| `button` | 14px | 500 | 1.75 (no uppercase) |
+| `overline` | 12px | 400 | 2.66 |
+| `caption` | 12px | 400 | 16px |
+
+### Spacing
+
+MUI 8px base. `theme.spacing(n)` = `n * 8px`. In `sx` props, numeric values use the same scale (e.g. `p: 2` = 16px).
+
+### Iconography
+
+Use **Material Icons** via `@mui/icons-material` (already a dependency). Import per-icon for tree-shaking:
+
+```tsx
+import CloseIcon from '@mui/icons-material/Close';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+```
+
+The design-system `Icon` and `IconButton` atoms wrap these for consistent sizing.
+
+## Prototype-local components (`src/components/`)
+
+Reusable pieces that fill gaps in the design system. Import directly:
+
+```tsx
+import { SideSheet } from '../components/SideSheet';
+```
+
+Available: `SideSheet`, `ChatThread`, `ConfidenceIndicator`, `FormSelect`, `Textarea`, `Timeline`, `EmptyState`, `Banner`, `Card`, `Skeleton` (`SkeletonText`, `SkeletonCard`, `SkeletonTable`).
 
 ## Development
 

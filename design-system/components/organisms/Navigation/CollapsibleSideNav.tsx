@@ -124,9 +124,11 @@ export const CollapsibleSideNav: React.FC<CollapsibleSideNavProps> = ({
             height: 64,
           }}
         >
-          <img
+          <Box
+            component="img"
             src={expanded ? '/logos/Syncrofy Logo.svg' : '/logos/Syncrofy Logo Collapsed.svg'}
             alt="Syncrofy Logo"
+            sx={{ height: expanded ? 28 : 18, width: 'auto' }}
           />
         </Box>
 

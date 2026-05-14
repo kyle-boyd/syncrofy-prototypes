@@ -7,6 +7,7 @@ import {
   Checkbox,
   Menu,
   MenuItem as MuiMenuItem,
+  Divider,
 } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
 import RefreshIcon from '@mui/icons-material/Refresh';
@@ -15,7 +16,6 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import ViewListIcon from '@mui/icons-material/ViewList';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import TableChartOutlinedIcon from '@mui/icons-material/TableChartOutlined';
@@ -30,40 +30,88 @@ import {
   IconButton,
 } from '@design-system';
 import { PageLayout } from '../components/PageLayout';
+import {
+  ExceptionDetailModal,
+  ExceptionDetail,
+  ExceptionType,
+  renderExceptionSentence,
+  exceptionStatusConfig,
+} from '../components/ExceptionDetailModal';
+import { exceptionToTransfers } from '../mocks/exceptionTransferLinks';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
 interface ExceptionItem {
   id: string;
-  status: 'pending' | 'in_progress';
+  type: ExceptionType;
+  status: 'pending' | 'in_progress' | 'resolved' | 'dismissed';
   partnerName: string;
   fileName: string;
   frequency: string;
   severity: 'critical' | 'high' | 'medium' | 'low';
   openDuration: string;
   modified: string;
+  // Type-specific
+  failureCount?: number;
+  failureWindow?: string;
+  stagedDuration?: string;
+  retryMode?: 'first_failure' | 'after_retries';
+  retryCount?: number;
+  // Detail meta
+  category?: string;
+  assigneeName?: string;
+  assigneeInitials?: string;
+  watchCount?: number;
+  openedAt?: string;
+  lastModifiedAt?: string;
 }
 
 // ─── Mock Data ────────────────────────────────────────────────────────────────
 
 const mockExceptions: ExceptionItem[] = [
-  { id: '1',  status: 'pending',     partnerName: 'Summit Energy Partners',         fileName: 'test_notification_settings.txt', frequency: 'Every 10 minutes, every day', severity: 'critical', openDuration: '10 minutes', modified: '' },
-  { id: '2',  status: 'pending',     partnerName: '1234',                           fileName: 'file.txt',                       frequency: 'Every hour, every day',         severity: 'critical', openDuration: '40 minutes', modified: '' },
-  { id: '3',  status: 'pending',     partnerName: 'AWS S3',                         fileName: 'ARTHURTEST',                     frequency: 'Every hour, every day',         severity: 'critical', openDuration: '40 minutes', modified: '' },
-  { id: '4',  status: 'pending',     partnerName: 'John Deere',                     fileName: 'report.txt',                     frequency: 'Every hour, every day',         severity: 'critical', openDuration: '40 minutes', modified: '' },
-  { id: '5',  status: 'pending',     partnerName: 'Commercial Loan System',         fileName: 'abc.txt',                        frequency: 'Every hour, every day',         severity: 'critical', openDuration: '40 minutes', modified: '' },
-  { id: '6',  status: 'pending',     partnerName: 'Mainframe',                      fileName: 'ABC.txt',                        frequency: 'Every hour, every day',         severity: 'critical', openDuration: '40 minutes', modified: '' },
-  { id: '7',  status: 'pending',     partnerName: 'Hello',                          fileName: 'file.txt',                       frequency: 'Every hour, every day',         severity: 'critical', openDuration: '40 minutes', modified: '' },
-  { id: '8',  status: 'pending',     partnerName: 'SAP Krishna',                    fileName: '',                               frequency: 'Every hour, every day',         severity: 'critical', openDuration: '40 minutes', modified: '' },
-  { id: '9',  status: 'pending',     partnerName: 'John Deere US',                  fileName: 'abc.txt',                        frequency: 'Every hour, every day',         severity: 'critical', openDuration: '40 minutes', modified: '' },
-  { id: '10', status: 'pending',     partnerName: 'Summit Energy Partners',         fileName: 'test_notification_settings.txt', frequency: 'Every 10 minutes, every day', severity: 'critical', openDuration: '40 minutes', modified: '' },
-  { id: '11', status: 'in_progress', partnerName: 'Summit Energy Partners',         fileName: 'test_notification_settings.txt', frequency: 'Every 10 minutes, every day', severity: 'critical', openDuration: '1 hour',     modified: '' },
-  { id: '12', status: 'in_progress', partnerName: '1234',                           fileName: 'file.txt',                       frequency: 'Every hour, every day',         severity: 'critical', openDuration: '1 hour',     modified: '' },
-  { id: '13', status: 'in_progress', partnerName: 'AWS S3',                         fileName: 'ARTHURTEST',                     frequency: 'Every hour, every day',         severity: 'critical', openDuration: '1 hour',     modified: '' },
-  { id: '14', status: 'pending',     partnerName: 'John Deere',                     fileName: 'report.txt',                     frequency: 'Every hour, every day',         severity: 'critical', openDuration: '1 hour',     modified: '' },
-  { id: '15', status: 'pending',     partnerName: 'Commercial Loan System',         fileName: 'abc.txt',                        frequency: 'Every hour, every day',         severity: 'critical', openDuration: '1 hour',     modified: '' },
-  { id: '16', status: 'pending',     partnerName: 'Mainframe',                      fileName: 'ABC.txt',                        frequency: 'Every hour, every day',         severity: 'critical', openDuration: '1 hour',     modified: '' },
-  { id: '17', status: 'pending',     partnerName: 'Hello',                          fileName: 'file.txt',                       frequency: 'Every hour, every day',         severity: 'critical', openDuration: '1 hour',     modified: '' },
+  { id: '1',  type: 'missing_file', status: 'pending',     partnerName: 'Summit Energy Partners',         fileName: 'test_notification_settings.txt', frequency: 'Every 10 minutes, every day', severity: 'critical', openDuration: '10 minutes', modified: '' },
+  { id: '2',  type: 'missing_file', status: 'pending',     partnerName: '1234',                           fileName: 'file.txt',                       frequency: 'Every hour, every day',         severity: 'critical', openDuration: '40 minutes', modified: '' },
+  { id: '3',  type: 'missing_file', status: 'pending',     partnerName: 'AWS S3',                         fileName: 'ARTHURTEST',                     frequency: 'Every hour, every day',         severity: 'critical', openDuration: '40 minutes', modified: '' },
+  { id: '4',  type: 'missing_file', status: 'pending',     partnerName: 'John Deere',                     fileName: 'report.txt',                     frequency: 'Every hour, every day',         severity: 'critical', openDuration: '40 minutes', modified: '' },
+  { id: '5',  type: 'missing_file', status: 'pending',     partnerName: 'Commercial Loan System',         fileName: 'abc.txt',                        frequency: 'Every hour, every day',         severity: 'critical', openDuration: '40 minutes', modified: '' },
+  { id: '6',  type: 'missing_file', status: 'pending',     partnerName: 'Mainframe',                      fileName: 'ABC.txt',                        frequency: 'Every hour, every day',         severity: 'critical', openDuration: '40 minutes', modified: '' },
+  { id: '7',  type: 'missing_file', status: 'pending',     partnerName: 'Hello',                          fileName: 'file.txt',                       frequency: 'Every hour, every day',         severity: 'critical', openDuration: '40 minutes', modified: '' },
+  { id: '8',  type: 'missing_file', status: 'pending',     partnerName: 'SAP Krishna',                    fileName: '',                               frequency: 'Every hour, every day',         severity: 'critical', openDuration: '40 minutes', modified: '' },
+  { id: '9',  type: 'missing_file', status: 'pending',     partnerName: 'John Deere US',                  fileName: 'abc.txt',                        frequency: 'Every hour, every day',         severity: 'critical', openDuration: '40 minutes', modified: '' },
+  { id: '10', type: 'missing_file', status: 'pending',     partnerName: 'Summit Energy Partners',         fileName: 'test_notification_settings.txt', frequency: 'Every 10 minutes, every day', severity: 'critical', openDuration: '40 minutes', modified: '' },
+  { id: '11', type: 'missing_file', status: 'in_progress', partnerName: 'Summit Energy Partners',         fileName: 'test_notification_settings.txt', frequency: 'Every 10 minutes, every day', severity: 'critical', openDuration: '1 hour',     modified: '' },
+  { id: '12', type: 'missing_file', status: 'in_progress', partnerName: '1234',                           fileName: 'file.txt',                       frequency: 'Every hour, every day',         severity: 'critical', openDuration: '1 hour',     modified: '' },
+  { id: '13', type: 'missing_file', status: 'in_progress', partnerName: 'AWS S3',                         fileName: 'ARTHURTEST',                     frequency: 'Every hour, every day',         severity: 'critical', openDuration: '1 hour',     modified: '' },
+  { id: '14', type: 'missing_file', status: 'pending',     partnerName: 'John Deere',                     fileName: 'report.txt',                     frequency: 'Every hour, every day',         severity: 'critical', openDuration: '1 hour',     modified: '' },
+  { id: '15', type: 'missing_file', status: 'pending',     partnerName: 'Commercial Loan System',         fileName: 'abc.txt',                        frequency: 'Every hour, every day',         severity: 'critical', openDuration: '1 hour',     modified: '' },
+  { id: '16', type: 'missing_file', status: 'pending',     partnerName: 'Mainframe',                      fileName: 'ABC.txt',                        frequency: 'Every hour, every day',         severity: 'critical', openDuration: '1 hour',     modified: '' },
+  { id: '17', type: 'missing_file', status: 'pending',     partnerName: 'Hello',                          fileName: 'file.txt',                       frequency: 'Every hour, every day',         severity: 'critical', openDuration: '1 hour',     modified: '' },
+
+  // ─── Frequent Transfer Failures ────────────────────────────────────────────
+  { id: '18', type: 'frequent_failures',      status: 'pending',     partnerName: 'AWS S3',                  fileName: '',              frequency: '', severity: 'critical', openDuration: '12 minutes', modified: '', failureCount: 8,  failureWindow: '15 minutes' },
+  { id: '19', type: 'frequent_failures',      status: 'in_progress', partnerName: 'Goldman Sachs',           fileName: '',              frequency: '', severity: 'high',     openDuration: '45 minutes', modified: '', failureCount: 12, failureWindow: '30 minutes' },
+
+  // ─── Transfer Failure (single) ─────────────────────────────────────────────
+  { id: '20', type: 'transfer_failure',       status: 'pending',     partnerName: 'John Deere',              fileName: 'report.txt',    frequency: '', severity: 'high',     openDuration: '5 minutes',  modified: '', retryMode: 'first_failure' },
+  { id: '21', type: 'transfer_failure',       status: 'pending',     partnerName: 'Mainframe',               fileName: 'payroll.csv',   frequency: '', severity: 'critical', openDuration: '20 minutes', modified: '', retryMode: 'after_retries', retryCount: 3 },
+
+  // ─── Zero Byte File ────────────────────────────────────────────────────────
+  { id: '22', type: 'zero_byte',              status: 'pending',     partnerName: 'Fidelity',                fileName: 'positions.csv', frequency: '', severity: 'medium',   openDuration: '8 minutes',  modified: '' },
+  { id: '23', type: 'zero_byte',              status: 'in_progress', partnerName: 'Northern Trust',          fileName: 'eod.xml',       frequency: '', severity: 'high',     openDuration: '32 minutes', modified: '' },
+
+  // ─── Staged but Not Picked Up ──────────────────────────────────────────────
+  { id: '24', type: 'staged_not_picked_up',   status: 'pending',     partnerName: 'Core Banking System',     fileName: 'batch_*.dat',   frequency: '', severity: 'high',     openDuration: '2 hours',    modified: '', stagedDuration: '2 hours' },
+  { id: '25', type: 'staged_not_picked_up',   status: 'pending',     partnerName: 'Trade Settlement Platform', fileName: 'trades.csv',  frequency: '', severity: 'critical', openDuration: '4 hours',    modified: '', stagedDuration: '4 hours' },
+
+  // ─── Expected File Received ────────────────────────────────────────────────
+  { id: '26', type: 'expected_file_received', status: 'pending',     partnerName: 'Acme Corp',               fileName: 'invoice_*.xml', frequency: '', severity: 'low',      openDuration: '2 minutes',  modified: '' },
+  { id: '27', type: 'expected_file_received', status: 'pending',     partnerName: 'Delta Manufacturing',     fileName: 'orders_*.json', frequency: '', severity: 'medium',   openDuration: '6 minutes',  modified: '' },
+
+  // ─── Staged File Downloaded ────────────────────────────────────────────────
+  { id: '28', type: 'staged_downloaded',      status: 'pending',     partnerName: 'Anderson & Sons',         fileName: 'report_*.csv',  frequency: '', severity: 'low',      openDuration: '3 minutes',  modified: '' },
+
+  // ─── File Delivered to Partner ─────────────────────────────────────────────
+  { id: '29', type: 'file_delivered',         status: 'pending',     partnerName: 'SAP Krishna',             fileName: 'invoice_*.xml', frequency: '', severity: 'low',      openDuration: '1 minute',   modified: '' },
 ];
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -85,15 +133,49 @@ function Exceptions() {
   const [viewMode, setViewMode]       = useState<'list' | 'grid' | 'table'>('list');
   const [selected, setSelected]       = useState<string[]>([]);
   const [rowMenuAnchor, setRowMenuAnchor] = useState<null | HTMLElement>(null);
+  const [selectedExceptionIdx, setSelectedExceptionIdx] = useState<number | null>(null);
+  const [typeMenuAnchor, setTypeMenuAnchor] = useState<null | HTMLElement>(null);
+  const [selectedTypes, setSelectedTypes] = useState<ExceptionType[]>([]);
+
+  // Enrich rows with detail fields used by the modal
+  const enrichException = (e: ExceptionItem): ExceptionDetail => ({
+    id: e.id,
+    type: e.type,
+    status: e.status,
+    partnerName: e.partnerName,
+    fileName: e.fileName,
+    frequency: e.frequency,
+    severity: e.severity,
+    failureCount: e.failureCount,
+    failureWindow: e.failureWindow,
+    stagedDuration: e.stagedDuration,
+    retryMode: e.retryMode,
+    retryCount: e.retryCount,
+    category: e.category ?? 'Commercial Banking',
+    assigneeName: e.assigneeName ?? 'Cindy Baker',
+    assigneeInitials: e.assigneeInitials ?? 'CB',
+    watchCount: e.watchCount ?? 0,
+    openedAt: e.openedAt ?? 'May 12, 2026 at 11:00 AM',
+    lastModifiedAt: e.lastModifiedAt,
+    relatedTransfers: exceptionToTransfers[e.id],
+  });
 
   // Filter state (kept simple for prototype – chips are static)
   const [filterStates, setFilterStates] = useState<Record<string, string>>({});
 
-  const isAllSelected    = selected.length === mockExceptions.length;
-  const isIndeterminate  = selected.length > 0 && selected.length < mockExceptions.length;
+  const filteredExceptions = mockExceptions.filter((e) => {
+    if (selectedTypes.length > 0 && !selectedTypes.includes(e.type)) return false;
+    return true;
+  });
+
+  const selectedException =
+    selectedExceptionIdx != null ? enrichException(filteredExceptions[selectedExceptionIdx]) : null;
+
+  const isAllSelected    = selected.length === filteredExceptions.length && filteredExceptions.length > 0;
+  const isIndeterminate  = selected.length > 0 && selected.length < filteredExceptions.length;
 
   const handleSelectAll = (_: React.ChangeEvent<HTMLInputElement>) =>
-    setSelected(isAllSelected ? [] : mockExceptions.map((e) => e.id));
+    setSelected(isAllSelected ? [] : filteredExceptions.map((e) => e.id));
 
   const handleSelectRow = (id: string) =>
     setSelected((prev) => prev.includes(id) ? prev.filter((s) => s !== id) : [...prev, id]);
@@ -109,14 +191,6 @@ function Exceptions() {
         { value: 'summit', label: 'Summit Energy Partners' },
         { value: 'aws', label: 'AWS S3' },
         { value: 'johnDeere', label: 'John Deere' },
-      ],
-    },
-    {
-      id: 'type',
-      label: 'Type',
-      options: [
-        { value: '', label: 'All' },
-        { value: 'late', label: 'Late Rule' },
       ],
     },
     {
@@ -158,12 +232,37 @@ function Exceptions() {
     },
   ];
 
-  // Active filter chips (static for prototype)
-  const activeFilterChips = [
-    { id: 'date-chip',      label: 'Date: 2/1/2026 – 3/3/2026' },
-    { id: 'status-pending', label: 'Status: Pending' },
-    { id: 'status-ip',      label: 'Status: In Progress' },
+  const typeOptions: { value: ExceptionType; label: string }[] = [
+    { value: 'missing_file',           label: 'Missing File' },
+    { value: 'frequent_failures',      label: 'Frequent Transfer Failures' },
+    { value: 'transfer_failure',       label: 'Transfer Failure' },
+    { value: 'zero_byte',              label: 'Zero Byte File' },
+    { value: 'staged_not_picked_up',   label: 'Staged but Not Picked Up' },
+    { value: 'expected_file_received', label: 'Expected File Received' },
+    { value: 'staged_downloaded',      label: 'Staged File Downloaded' },
+    { value: 'file_delivered',         label: 'File Delivered to Partner' },
   ];
+
+  const toggleType = (val: ExceptionType) =>
+    setSelectedTypes((prev) =>
+      prev.includes(val) ? prev.filter((v) => v !== val) : [...prev, val],
+    );
+
+  const typeLabelFor = (val: ExceptionType) =>
+    typeOptions.find((o) => o.value === val)?.label ?? val;
+
+  // Active filter chips — static placeholders plus dynamic type chips
+  const staticFilterChips = [
+    { id: 'date-chip',      label: 'Date: 2/1/2026 – 3/3/2026', onDelete: () => {} },
+    { id: 'status-pending', label: 'Status: Pending',           onDelete: () => {} },
+    { id: 'status-ip',      label: 'Status: In Progress',       onDelete: () => {} },
+  ];
+  const typeFilterChips = selectedTypes.map((t) => ({
+    id: `type-${t}`,
+    label: `Type: ${typeLabelFor(t)}`,
+    onDelete: () => toggleType(t),
+  }));
+  const activeFilterChips = [...staticFilterChips, ...typeFilterChips];
 
   // ── Table columns ──────────────────────────────────────────────────────────
 
@@ -191,28 +290,31 @@ function Exceptions() {
       id: 'status',
       label: 'Status',
       width: 70,
-      render: (row) => (
-        <RadioButtonUncheckedIcon
-          sx={{
-            fontSize: 18,
-            color: row.status === 'pending' ? '#F97316' : '#3B82F6',
-          }}
-        />
-      ),
+      render: (row) => {
+        const cfg = exceptionStatusConfig[row.status];
+        const StatusIcon = cfg.Icon;
+        return <StatusIcon sx={{ fontSize: 18, color: cfg.color }} />;
+      },
     },
     {
       id: 'exception',
       label: 'Exception',
-      render: (row) => (
-        <Typography variant="body2" sx={{ lineHeight: 1.5 }}>
-          <strong>{row.partnerName}</strong>
-          {' was supposed to send a file'}
-          {row.fileName ? <> named <strong>{row.fileName}</strong></> : null}
-          {' by '}
-          <strong>{row.frequency}</strong>
-          {'.'}
-        </Typography>
-      ),
+      render: (row) => {
+        const idx = filteredExceptions.findIndex((e) => e.id === row.id);
+        return (
+          <Typography
+            variant="body2"
+            onClick={() => setSelectedExceptionIdx(idx)}
+            sx={{
+              lineHeight: 1.5,
+              cursor: 'pointer',
+              '&:hover': { color: 'primary.main' },
+            }}
+          >
+            {renderExceptionSentence(enrichException(row))}
+          </Typography>
+        );
+      },
     },
     {
       id: 'severity',
@@ -386,12 +488,80 @@ function Exceptions() {
       >
         {/* Row 1: Filter dropdowns + view controls + Bulk Actions */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+          {/* Type filter (multi-select) */}
+          <Button
+            variant="outlined"
+            color="secondary"
+            size="small"
+            endIcon={<ExpandMoreIcon />}
+            onClick={(e) => setTypeMenuAnchor(e.currentTarget)}
+            sx={{
+              textTransform: 'none',
+              fontSize: '14px',
+              fontWeight: 400,
+              justifyContent: 'space-between',
+              minWidth: 120,
+            }}
+          >
+            {selectedTypes.length === 0
+              ? 'Type'
+              : selectedTypes.length === 1
+                ? `Type: ${typeLabelFor(selectedTypes[0])}`
+                : `Type (${selectedTypes.length})`}
+          </Button>
+          <Menu
+            anchorEl={typeMenuAnchor}
+            open={Boolean(typeMenuAnchor)}
+            onClose={() => setTypeMenuAnchor(null)}
+            PaperProps={{ sx: { borderRadius: '8px', boxShadow: 3, minWidth: 260, mt: 0.5 } }}
+          >
+            {typeOptions.map((o) => (
+              <MuiMenuItem
+                key={o.value}
+                dense
+                onClick={() => toggleType(o.value)}
+                sx={{ py: 0.5 }}
+              >
+                <Checkbox
+                  size="small"
+                  checked={selectedTypes.includes(o.value)}
+                  sx={{ p: 0.5, mr: 1 }}
+                />
+                <Typography variant="body2">{o.label}</Typography>
+              </MuiMenuItem>
+            ))}
+            <Divider sx={{ my: 0.5 }} />
+            <Box sx={{ display: 'flex', gap: 1, px: 1.5, py: 1 }}>
+              <Button
+                variant="outlined"
+                color="secondary"
+                size="small"
+                fullWidth
+                onClick={() => setSelectedTypes(typeOptions.map((o) => o.value))}
+                sx={{ textTransform: 'none', fontSize: '13px', fontWeight: 400 }}
+              >
+                Select all
+              </Button>
+              <Button
+                variant="outlined"
+                color="secondary"
+                size="small"
+                fullWidth
+                onClick={() => setSelectedTypes([])}
+                sx={{ textTransform: 'none', fontSize: '13px', fontWeight: 400 }}
+              >
+                Select none
+              </Button>
+            </Box>
+          </Menu>
           {filterDefs.map((f) => (
             <Dropdown
               key={f.id}
               options={f.options}
               value={filterStates[f.id] ?? ''}
               onSelect={(val) => setFilterStates((prev) => ({ ...prev, [f.id]: String(val) }))}
+              hugContents
+              minWidth={240}
               trigger={
                 <Button
                   variant="outlined"
@@ -469,7 +639,7 @@ function Exceptions() {
               label={chip.label}
               variant="rounded"
               size="small"
-              onDelete={() => {}}
+              onDelete={chip.onDelete}
               sx={{
                 fontSize: '12px',
                 fontWeight: 400,
@@ -508,7 +678,7 @@ function Exceptions() {
       >
         <Table
           columns={columns}
-          rows={mockExceptions}
+          rows={filteredExceptions}
           stickyHeader
           sx={{
             border: 'none',
@@ -529,6 +699,25 @@ function Exceptions() {
         <MuiMenuItem onClick={() => setRowMenuAnchor(null)}>Watch</MuiMenuItem>
         <MuiMenuItem onClick={() => setRowMenuAnchor(null)}>View Details</MuiMenuItem>
       </Menu>
+
+      <ExceptionDetailModal
+        open={selectedExceptionIdx != null}
+        exception={selectedException}
+        onClose={() => setSelectedExceptionIdx(null)}
+        onPrev={() =>
+          setSelectedExceptionIdx((i) => (i != null && i > 0 ? i - 1 : i))
+        }
+        onNext={() =>
+          setSelectedExceptionIdx((i) =>
+            i != null && i < filteredExceptions.length - 1 ? i + 1 : i,
+          )
+        }
+        hasPrev={selectedExceptionIdx != null && selectedExceptionIdx > 0}
+        hasNext={
+          selectedExceptionIdx != null &&
+          selectedExceptionIdx < filteredExceptions.length - 1
+        }
+      />
     </PageLayout>
   );
 }
