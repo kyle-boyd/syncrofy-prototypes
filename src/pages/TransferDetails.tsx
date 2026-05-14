@@ -20,9 +20,17 @@ import EmailIcon from '@mui/icons-material/Email';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import DataObjectIcon from '@mui/icons-material/DataObject';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { Button, Tag, Chips } from '@design-system';
 import { RawEventsModal } from '../components/RawEventsModal';
 import { PageLayout } from '../components/PageLayout';
+import {
+  ExceptionDetailModal,
+  renderExceptionSentence,
+  exceptionStatusConfig,
+} from '../components/ExceptionDetailModal';
+import { defaultRelatedExceptions, exceptionToTransfers } from '../mocks/exceptionTransferLinks';
 
 interface TimelineItem {
   time: string;
@@ -57,6 +65,24 @@ function TransferDetails() {
   const [rawEvents, setRawEvents] = useState<unknown[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [selectedExceptionIdx, setSelectedExceptionIdx] = useState<number | null>(null);
+  const [showAllExceptions, setShowAllExceptions] = useState(false);
+
+  const severityRank: Record<'critical' | 'high' | 'medium' | 'low', number> = {
+    critical: 0,
+    high: 1,
+    medium: 2,
+    low: 3,
+  };
+  const sortedRelatedExceptions = [...defaultRelatedExceptions].sort(
+    (a, b) => severityRank[a.severity] - severityRank[b.severity],
+  );
+  const INITIAL_VISIBLE_EXCEPTIONS = 3;
+  const visibleRelatedExceptions = showAllExceptions
+    ? sortedRelatedExceptions
+    : sortedRelatedExceptions.slice(0, INITIAL_VISIBLE_EXCEPTIONS);
+  const hiddenExceptionCount =
+    sortedRelatedExceptions.length - INITIAL_VISIBLE_EXCEPTIONS;
 
   const timelineData: TimelineItem[] = [
     {
@@ -313,6 +339,145 @@ function TransferDetails() {
         </Grid>
       </Paper>
 
+      {/* Related Exceptions Card */}
+      {sortedRelatedExceptions.length > 0 && (
+        <Paper
+          elevation={0}
+          sx={{
+            p: 3,
+            mb: 3,
+            border: '1px solid',
+            borderColor: 'error.main',
+            bgcolor: 'error.lighter',
+            backgroundColor: (theme) =>
+              theme.palette.error.lighter ?? '#FEF2F2',
+          }}
+        >
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              mb: 2,
+            }}
+          >
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                Related Exceptions
+              </Typography>
+              <Box
+                sx={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  minWidth: 22,
+                  height: 22,
+                  px: 0.75,
+                  borderRadius: '999px',
+                  bgcolor: 'error.main',
+                  color: '#fff',
+                  fontSize: 12,
+                  fontWeight: 700,
+                  lineHeight: 1,
+                }}
+              >
+                {sortedRelatedExceptions.length}
+              </Box>
+            </Box>
+            <Button
+              variant="outlined"
+              size="small"
+              endIcon={<ChevronRightIcon />}
+              onClick={() => navigate('/exceptions')}
+              sx={{
+                textTransform: 'none',
+                color: 'text.primary',
+                borderColor: 'divider',
+                bgcolor: '#ffffff',
+              }}
+            >
+              Go to all exceptions
+            </Button>
+          </Box>
+          <Stack spacing={1}>
+            {visibleRelatedExceptions.map((ex, idx) => {
+              const sevConfig =
+                ex.severity === 'critical'
+                  ? { label: 'Critical', variant: 'error' as const, icon: <ArrowUpwardIcon /> }
+                  : ex.severity === 'high'
+                  ? { label: 'High', variant: 'warning' as const, icon: <ArrowUpwardIcon /> }
+                  : ex.severity === 'medium'
+                  ? { label: 'Medium', variant: 'primary' as const, icon: <ArrowForwardIcon /> }
+                  : { label: 'Low', variant: 'neutral' as const, icon: <ArrowForwardIcon /> };
+              const statusCfg = exceptionStatusConfig[ex.status];
+              const StatusIcon = statusCfg.Icon;
+              return (
+                <Box
+                  key={ex.id}
+                  onClick={() => setSelectedExceptionIdx(idx)}
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1.5,
+                    px: 1.5,
+                    py: 1.25,
+                    border: '1px solid',
+                    borderColor: 'divider',
+                    borderRadius: '6px',
+                    bgcolor: '#ffffff',
+                    cursor: 'pointer',
+                    '&:hover': {
+                      borderColor: 'error.main',
+                      bgcolor: 'action.hover',
+                    },
+                  }}
+                >
+                  <StatusIcon sx={{ fontSize: 18, color: statusCfg.color }} />
+                  <Box sx={{ flex: 1, minWidth: 0 }}>
+                    <Typography sx={{ fontSize: 13, color: 'text.primary', lineHeight: 1.4 }}>
+                      {renderExceptionSentence(ex)}
+                    </Typography>
+                    {(ex.openedAt || ex.lastModifiedAt) && (
+                      <Typography
+                        sx={{ fontSize: 12, color: 'text.secondary', mt: 0.25 }}
+                      >
+                        {ex.openedAt ? `Opened ${ex.openedAt}` : null}
+                        {ex.openedAt && ex.lastModifiedAt ? ' · ' : null}
+                        {ex.lastModifiedAt ? `Last modified ${ex.lastModifiedAt}` : null}
+                      </Typography>
+                    )}
+                  </Box>
+                  <Tag
+                    label={sevConfig.label}
+                    variant={sevConfig.variant}
+                    icon={sevConfig.icon}
+                    size="small"
+                  />
+                  <ChevronRightIcon sx={{ fontSize: 18, color: 'text.secondary' }} />
+                </Box>
+              );
+            })}
+          </Stack>
+          {hiddenExceptionCount > 0 && (
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 1.5 }}>
+              <Button
+                variant="outlined"
+                size="small"
+                onClick={() => setShowAllExceptions((v) => !v)}
+                sx={{
+                  textTransform: 'none',
+                  color: 'text.primary',
+                  borderColor: 'divider',
+                  bgcolor: '#ffffff',
+                }}
+              >
+                {showAllExceptions ? 'Show less' : `+${hiddenExceptionCount} more`}
+              </Button>
+            </Box>
+          )}
+        </Paper>
+      )}
+
       {/* Timeline Card */}
       <Paper elevation={0} sx={{ p: 3, mb: 3, border: '1px solid', borderColor: 'divider', bgcolor: '#ffffff' }}>
         <Typography variant="h6" sx={{ fontWeight: 600, mb: 4 }}>
@@ -458,7 +623,7 @@ function TransferDetails() {
                               borderRadius: '50%',
                               bgcolor: 'success.main',
                               border: '2px solid white',
-                              boxShadow: '0 0 0 1px #4caf50'
+                              boxShadow: '0 0 0 1px #067A57'
                             }} />
                           </Box>
 
@@ -501,6 +666,7 @@ function TransferDetails() {
           })}
         </Box>
       </Paper>
+
 
       {/* Comments Card */}
       <Paper elevation={0} sx={{ p: 3, border: '1px solid', borderColor: 'divider', bgcolor: '#ffffff' }}>
@@ -553,6 +719,34 @@ function TransferDetails() {
         loading={loading}
         error={error}
         onRetry={loadRawEvents}
+      />
+
+      <ExceptionDetailModal
+        open={selectedExceptionIdx != null}
+        exception={
+          selectedExceptionIdx != null
+            ? {
+                ...sortedRelatedExceptions[selectedExceptionIdx],
+                relatedTransfers:
+                  sortedRelatedExceptions[selectedExceptionIdx].relatedTransfers ??
+                  exceptionToTransfers[sortedRelatedExceptions[selectedExceptionIdx].id],
+              }
+            : null
+        }
+        onClose={() => setSelectedExceptionIdx(null)}
+        onPrev={() =>
+          setSelectedExceptionIdx((i) => (i != null && i > 0 ? i - 1 : i))
+        }
+        onNext={() =>
+          setSelectedExceptionIdx((i) =>
+            i != null && i < sortedRelatedExceptions.length - 1 ? i + 1 : i,
+          )
+        }
+        hasPrev={selectedExceptionIdx != null && selectedExceptionIdx > 0}
+        hasNext={
+          selectedExceptionIdx != null &&
+          selectedExceptionIdx < sortedRelatedExceptions.length - 1
+        }
       />
     </PageLayout>
   );
