@@ -137,6 +137,11 @@ export interface FilterControlsProps extends BaseComponentProps {
    * If true, shows the "Clear all filters" button
    */
   showClearAll?: boolean;
+  /**
+   * Position of the clear-all button. 'right' (default) places it after the spacer at the far right.
+   * 'left' places it immediately after the filter dropdowns, before the spacer.
+   */
+  clearAllPosition?: 'left' | 'right';
 }
 
 /**
@@ -161,6 +166,7 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
   showClearAll = true,
   clearAllLabel = 'Clear all filters',
   alwaysShowClearAll = false,
+  clearAllPosition = 'right',
 }) => {
   const [filterOpenStates, setFilterOpenStates] = useState<Record<string, boolean>>({});
 
@@ -297,8 +303,29 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
           </Box>
         )}
 
-        {/* Spacer (or replaced by Actions when actions.secondary is provided) */}
-        {actions?.secondary ? (
+        {/* Clear All / Reset Filters — left position (immediately after filters) */}
+        {showClearAllButton && clearAllPosition === 'left' && (
+          <Button
+            variant="text"
+            color="secondary"
+            size="small"
+            startIcon={<ClearIcon />}
+            onClick={onClearAll}
+            disabled={clearAllDisabled}
+            sx={{
+              textTransform: 'none',
+              fontSize: '14px',
+              fontWeight: 400,
+              minWidth: 'auto',
+              padding: '6px 8px',
+            }}
+          >
+            {clearAllLabel}
+          </Button>
+        )}
+
+        {/* Secondary action button — when clearAll is on the left, this goes on the right */}
+        {actions?.secondary && clearAllPosition === 'left' ? null : actions?.secondary ? (
           <Dropdown
             options={actions.secondary.options || []}
             onSelect={actions.secondary.onSelect}
@@ -322,8 +349,8 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
         ) : null}
         <Box sx={{ flex: 1 }} />
 
-        {/* Clear All / Reset Filters */}
-        {showClearAllButton && (
+        {/* Clear All / Reset Filters — right position (default) */}
+        {showClearAllButton && clearAllPosition === 'right' && (
           <Button
             variant="text"
             color="secondary"
@@ -341,6 +368,32 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
           >
             {clearAllLabel}
           </Button>
+        )}
+
+        {/* Secondary action button on the right (when clearAll is on the left) */}
+        {actions?.secondary && clearAllPosition === 'left' && (
+          <Dropdown
+            options={actions.secondary.options || []}
+            onSelect={actions.secondary.onSelect}
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+            transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+            trigger={
+              <Button
+                variant="contained"
+                color="primary"
+                size="small"
+                disabled={actions.secondary.disabled}
+                onClick={actions.secondary.onClick}
+                sx={{
+                  textTransform: 'none',
+                  fontSize: '14px',
+                  fontWeight: 400,
+                }}
+              >
+                {actions.secondary.label}
+              </Button>
+            }
+          />
         )}
 
         {/* Layout Toggle */}
