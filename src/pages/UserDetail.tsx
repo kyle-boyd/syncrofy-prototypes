@@ -17,6 +17,7 @@ import {
   Alert,
   Snackbar,
   IconButton as MuiIconButton,
+  Tooltip,
 } from '@mui/material';
 import MuiAvatar from '@mui/material/Avatar';
 import Checkbox from '@mui/material/Checkbox';
@@ -146,7 +147,20 @@ function GroupPermissionsContent({ groupId, groupName }: { groupId: string; grou
           size="sm"
           onChange={(id) => setTab(id)}
         />
-        {groupId !== 'all-users' && (
+        {groupId === 'all-users' ? (
+          <Tooltip title="Users can't be removed from All Users" placement="top" arrow>
+            <span>
+              <Button
+                variant="outlined"
+                color="error"
+                size="small"
+                disabled
+              >
+                Remove from Group
+              </Button>
+            </span>
+          </Tooltip>
+        ) : (
           <Button
             variant="outlined"
             color="error"
@@ -318,6 +332,226 @@ const getDefaultDetail = (_userId: string): UserDetailData => ({
     { id: 'group-102', name: 'Group 102', description: 'Standard access group with limited permissions.', isFixed: false },
   ],
 });
+
+// Master list of all groups in the company that a user could be added to.
+const ALL_AVAILABLE_GROUPS: Array<{ id: string; name: string; description: string }> = [
+  { id: 'all-users', name: 'All Users', description: 'This group includes all users in the company. All active company users are automatically added to this group.' },
+  { id: 'administrators', name: 'Administrators', description: 'Reserved for CoEnterprise users who have full access within the company. This group cannot be edited or deleted.' },
+  { id: 'finance', name: 'Finance', description: 'Access group for finance team members with permissions scoped to financial reporting and transaction data.' },
+  { id: 'group-102', name: 'Group 102', description: 'Standard access group with limited permissions.' },
+  { id: 'group-test-101', name: 'Group test 101', description: 'Test group for development and QA purposes.' },
+  { id: 'test-permission', name: 'test permission', description: 'Custom permission group for testing access controls.' },
+  { id: 'dasnida', name: 'dasnidadasnida dasnida dasnida dasnida dasnida', description: 'Custom access group.' },
+  { id: 'operations', name: 'Operations', description: 'Day-to-day operational access for monitoring transfers and exceptions.' },
+  { id: 'read-only', name: 'Read Only', description: 'View-only access across the platform. Cannot make changes.' },
+  { id: 'trading-partners-admin', name: 'Trading Partners Admin', description: 'Manage trading partner relationships and configurations.' },
+];
+
+export function AddGroupModal({
+  open,
+  onClose,
+  existingGroupIds,
+  userName,
+  recipients,
+  onAdd,
+}: {
+  open: boolean;
+  onClose: () => void;
+  existingGroupIds: string[];
+  /** Used in single-user mode (e.g. user detail page) */
+  userName: string;
+  /** When provided, the modal is in bulk mode and renders these users at the top */
+  recipients?: Array<{ id: string; name: string; email: string }>;
+  onAdd: (groupIds: string[]) => void;
+}) {
+  const isBulk = !!recipients && recipients.length > 0;
+  const [search, setSearch] = useState('');
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+
+  const filtered = ALL_AVAILABLE_GROUPS.filter(
+    (g) =>
+      g.name.toLowerCase().includes(search.toLowerCase()) ||
+      g.description.toLowerCase().includes(search.toLowerCase()),
+  );
+  const addableCount = ALL_AVAILABLE_GROUPS.filter((g) => !existingGroupIds.includes(g.id)).length;
+
+  const handleClose = () => {
+    setSearch('');
+    setSelected(new Set());
+    onClose();
+  };
+
+  const handleToggle = (groupId: string) => {
+    if (existingGroupIds.includes(groupId)) return;
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(groupId)) next.delete(groupId);
+      else next.add(groupId);
+      return next;
+    });
+  };
+
+  const handleAdd = () => {
+    onAdd(Array.from(selected));
+    handleClose();
+  };
+
+  return (
+    <Modal
+      open={open}
+      onClose={handleClose}
+      title="Add to Group"
+      maxWidth="sm"
+      actions={
+        <>
+          <Button variant="text" color="secondary" size="small" onClick={handleClose}>
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            size="small"
+            onClick={handleAdd}
+            disabled={selected.size === 0}
+          >
+            {selected.size > 1 ? `Add to ${selected.size} Groups` : 'Add to Group'}
+          </Button>
+        </>
+      }
+    >
+      {isBulk ? (
+        <>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+            Select one or more groups to add the following{' '}
+            <strong>{recipients!.length} user{recipients!.length === 1 ? '' : 's'}</strong> to. Their access will be the most permissive across all groups.
+          </Typography>
+          <Box
+            sx={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: 0.75,
+              p: 1,
+              mb: 2,
+              border: '1px solid',
+              borderColor: 'divider',
+              borderRadius: 1,
+              maxHeight: 120,
+              overflowY: 'auto',
+            }}
+          >
+            {recipients!.map((r) => (
+              <Box
+                key={r.id}
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 0.75,
+                  bgcolor: 'grey.100',
+                  borderRadius: '999px',
+                  pl: 0.5,
+                  pr: 1.25,
+                  py: 0.25,
+                }}
+              >
+                <MuiAvatar
+                  sx={{
+                    width: 22,
+                    height: 22,
+                    fontSize: '0.65rem',
+                    bgcolor: 'rgba(33,33,33,0.05)',
+                    color: 'rgba(33,33,33,0.65)',
+                    border: '1px solid rgba(33,33,33,0.1)',
+                  }}
+                >
+                  {getInitials(r.name)}
+                </MuiAvatar>
+                <Typography variant="body2" sx={{ fontSize: '0.8125rem', fontWeight: 500 }}>
+                  {r.name}
+                </Typography>
+              </Box>
+            ))}
+          </Box>
+        </>
+      ) : (
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+          Select one or more groups to add <strong>{userName}</strong> to. Their access will be the most permissive across all groups.
+        </Typography>
+      )}
+
+      <TextField
+        fullWidth
+        size="small"
+        placeholder="Search groups"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        sx={{ mb: 2 }}
+      />
+
+      <Box
+        sx={{
+          border: '1px solid',
+          borderColor: 'divider',
+          borderRadius: 1,
+          maxHeight: 320,
+          overflowY: 'auto',
+        }}
+      >
+        {filtered.length === 0 ? (
+          <Box sx={{ p: 3, textAlign: 'center' }}>
+            <Typography variant="body2" color="text.secondary">
+              {addableCount === 0
+                ? `${userName} is already a member of every available group.`
+                : 'No groups match your search.'}
+            </Typography>
+          </Box>
+        ) : (
+          filtered.map((group, idx) => {
+            const isExisting = existingGroupIds.includes(group.id);
+            return (
+            <Box key={group.id}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  px: 1.5,
+                  py: 1.25,
+                  gap: 1,
+                  cursor: isExisting ? 'default' : 'pointer',
+                  opacity: isExisting ? 0.6 : 1,
+                  '&:hover': { bgcolor: isExisting ? 'transparent' : 'action.hover' },
+                }}
+                onClick={() => handleToggle(group.id)}
+              >
+                <Checkbox
+                  size="small"
+                  checked={isExisting || selected.has(group.id)}
+                  disabled={isExisting}
+                  sx={{ p: 0.5, mt: -0.25 }}
+                />
+                <Box sx={{ flex: 1, minWidth: 0 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '0.875rem' }}>
+                      {group.name}
+                    </Typography>
+                    {isExisting && (
+                      <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem', fontStyle: 'italic' }}>
+                        Already a member
+                      </Typography>
+                    )}
+                  </Box>
+                  <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.8125rem' }}>
+                    {group.description}
+                  </Typography>
+                </Box>
+              </Box>
+              {idx < filtered.length - 1 && <Divider />}
+            </Box>
+            );
+          })
+        )}
+      </Box>
+    </Modal>
+  );
+}
 
 const getInitials = (name: string) =>
   name
@@ -732,6 +966,7 @@ function UserDetail() {
   const [landingPage, setLandingPage] = useState(detail.defaultLandingPage);
   const [changePasswordOpen, setChangePasswordOpen] = useState(false);
   const [adminResetOpen, setAdminResetOpen] = useState(false);
+  const [addGroupOpen, setAddGroupOpen] = useState(false);
 
   const toggleGroup = (groupId: string) => {
     setExpandedGroups((prev) => {
@@ -1031,7 +1266,7 @@ function UserDetail() {
                   variant="contained"
                   size="small"
                   startIcon={<AddIcon />}
-                  onClick={() => {}}
+                  onClick={() => setAddGroupOpen(true)}
                 >
                   Add Group
                 </Button>
@@ -1099,6 +1334,13 @@ function UserDetail() {
         </Box>
       </Box>
       <ChangePasswordModal open={changePasswordOpen} onClose={() => setChangePasswordOpen(false)} />
+      <AddGroupModal
+        open={addGroupOpen}
+        onClose={() => setAddGroupOpen(false)}
+        existingGroupIds={detail.groups.map((g) => g.id)}
+        userName={user.name}
+        onAdd={(groupIds) => console.log('Added to groups:', groupIds)}
+      />
       <AdminResetPasswordModal
         open={adminResetOpen}
         onClose={() => setAdminResetOpen(false)}

@@ -57,6 +57,7 @@ import {
 } from '@design-system';
 import { PageLayout } from '../components/PageLayout';
 import { mockPartners } from './Partners';
+import { AddGroupModal } from './UserDetail';
 
 // Settings sub-navigation sections (matches screenshot)
 export const SETTINGS_SECTIONS = [
@@ -559,6 +560,7 @@ function Settings() {
   const [selectedUserIds, setSelectedUserIds] = useState<Set<string>>(new Set());
   const [sortBy, setSortBy] = useState<string>('name');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+  const [bulkAddGroupsOpen, setBulkAddGroupsOpen] = useState(false);
 
   const filteredUsers = useMemo(() => {
     let list = [...mockUsers];
@@ -896,6 +898,7 @@ function Settings() {
                   resultCount={`${filteredUsers.length} users`}
                   clearAllLabel="Reset Filters"
                   alwaysShowClearAll
+                  clearAllPosition="left"
                   onClearAll={() => {
                     setGroupsFilter('all');
                     setLastActivityFilter('all');
@@ -904,11 +907,16 @@ function Settings() {
                   actions={{
                     secondary: {
                       label: 'Actions',
+                      disabled: !someSelected,
                       options: [
+                        { value: 'bulk-add-groups', label: 'Add to groups' },
                         { value: 'bulk-invite', label: 'Resend invite' },
                         { value: 'bulk-deactivate', label: 'Deactivate selected' },
                       ],
-                      onSelect: (value) => console.log('Bulk action', value),
+                      onSelect: (value) => {
+                        if (value === 'bulk-add-groups') setBulkAddGroupsOpen(true);
+                        else console.log('Bulk action', value);
+                      },
                     },
                   }}
                 />
@@ -969,6 +977,16 @@ function Settings() {
         </Box>
         </Box>
       </Box>
+      <AddGroupModal
+        open={bulkAddGroupsOpen}
+        onClose={() => setBulkAddGroupsOpen(false)}
+        existingGroupIds={[]}
+        userName=""
+        recipients={mockUsers
+          .filter((u) => selectedUserIds.has(u.id))
+          .map((u) => ({ id: u.id, name: u.name, email: u.email }))}
+        onAdd={(groupIds) => console.log('Bulk add to groups:', { userIds: Array.from(selectedUserIds), groupIds })}
+      />
     </PageLayout>
   );
 }

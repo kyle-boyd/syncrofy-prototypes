@@ -145,8 +145,13 @@ export const Dropdown: React.FC<DropdownProps> = ({
             border: '1px solid rgba(33, 33, 33, 0.10)',
             background: '#FFF',
             boxShadow: '0 8px 8px -4px rgba(0, 0, 0, 0.04), 0 20px 24px -4px rgba(0, 0, 0, 0.08)',
-            ...(menuWidth !== undefined && !hugContents && { width: menuWidth }),
-            ...(hugContents && { width: 'auto', minWidth: minWidth ?? 'auto' }),
+            // When matching trigger width, ensure the menu is at least 220px wide
+            // so short triggers (e.g. filter buttons) don't produce cramped menus.
+            ...(menuWidth !== undefined && !hugContents && {
+              width: Math.max(menuWidth, 220),
+              minWidth: 220,
+            }),
+            ...(hugContents && { width: 'auto', minWidth: minWidth ?? 220 }),
             ...(minWidth !== undefined && { minWidth }),
           },
         }}
